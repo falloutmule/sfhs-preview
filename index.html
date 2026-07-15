@@ -588,7 +588,7 @@ const inp = {
   lookDeltaRad:0,
   _active:false, // true when any touch is on screen
 };
-var BUILD_ID = 'authoredd1bitmap1'; window.BUILD_ID = BUILD_ID;
+var BUILD_ID = 'movementfeel1'; window.BUILD_ID = BUILD_ID;
 const CR_FPV_STREET_SHIMMER_FIX = 1;
 const CR_FPV_STREET_MATTE = true;
 const CR_FPV_WALL_LINE_FIX = 1;
@@ -737,6 +737,77 @@ let _controlEditSelected = 'move';
 const CR_EDITABLE_CONTROL_IDS = ['move','give','look','sprint'];
 const CR_EDIT_CONTROL_LABELS = { move: 'MOVE', give: 'GIVE', look: 'LOOK', sprint: 'SPRINT' };
 
+// MOBILE UI/LAYOUT CACHE — shared counters are consumed by the gated perf probe.
+const _crMobileUiStats = {
+  drawCalls: 0, stableEarlyOuts: 0, uiFlushes: 0, layoutFlushes: 0,
+  domWrites: 0, styleWrites: 0,
+  safeAreaReads: 0, safeAreaCacheHits: 0, safeAreaInvalidations: 0, safeAreaRevision: 0,
+  overrideStorageReads: 0, overrideCacheHits: 0, overrideInvalidations: 0, overrideRevision: 0,
+  lastDirtyReasons: [], lastUiKey: '', lastLayoutKey: '',
+};
+let _crMobileUiDirty = true;
+let _crMobileLayoutDirty = true;
+let _crLastMobileUiKey = '';
+let _crLastMobileLayoutKey = '';
+let _crTouchDeferredUi = false;
+const _crIntendedStyles = new WeakMap();
+const _crIntendedClasses = new WeakMap();
+const _crIntendedHtml = new WeakMap();
+
+function crRememberMobileDirtyReason(reason){
+  const text = String(reason || 'unspecified');
+  const reasons = _crMobileUiStats.lastDirtyReasons;
+  if(reasons[reasons.length - 1] !== text) reasons.push(text);
+  if(reasons.length > 12) reasons.splice(0, reasons.length - 12);
+}
+function crMarkMobileUiDirty(reason){
+  _crMobileUiDirty = true;
+  crRememberMobileDirtyReason(reason);
+}
+function crMarkMobileLayoutDirty(reason){
+  _crMobileLayoutDirty = true;
+  _crMobileUiDirty = true;
+  crRememberMobileDirtyReason(reason);
+}
+function crWriteStyle(el, prop, value){
+  if(!el) return false;
+  let cache = _crIntendedStyles.get(el);
+  if(!cache){ cache = Object.create(null); _crIntendedStyles.set(el, cache); }
+  const want = String(value);
+  if(cache[prop] === want) return false;
+  cache[prop] = want;
+  el.style[prop] = want;
+  _crMobileUiStats.styleWrites++;
+  return true;
+}
+function crToggleClass(el, name, on){
+  if(!el) return false;
+  let cache = _crIntendedClasses.get(el);
+  if(!cache){ cache = Object.create(null); _crIntendedClasses.set(el, cache); }
+  const want = !!on;
+  if(cache[name] === want) return false;
+  cache[name] = want;
+  el.classList.toggle(name, want);
+  _crMobileUiStats.domWrites++;
+  return true;
+}
+function crWriteHtml(el, html){
+  if(!el) return false;
+  const want = String(html);
+  if(_crIntendedHtml.get(el) === want) return false;
+  _crIntendedHtml.set(el, want);
+  el.innerHTML = want;
+  _crMobileUiStats.domWrites++;
+  return true;
+}
+function crGetMobileUiSyncStats(){
+  return Object.freeze(Object.assign({}, _crMobileUiStats, {
+    lastDirtyReasons: Object.freeze(_crMobileUiStats.lastDirtyReasons.slice()),
+    lastUiKey: _crLastMobileUiKey,
+    lastLayoutKey: _crLastMobileLayoutKey,
+  }));
+}
+
 function crClamp(n, lo, hi){ return Math.max(lo, Math.min(hi, n)); }
 
 function crRectToNorm(rect, cw, ch){
@@ -777,14 +848,31 @@ function crSanitizeControlNorm(norm, cfg, cw, ch, sa){
 }
 
 // USER CONTROL OVERRIDES — localStorage only (not game save).
+let _crOverrideCacheReady = false;
+let _crOverrideCacheValue = null;
+function crInvalidateControlOverrideCache(reason){
+  _crOverrideCacheReady = false;
+  _crOverrideCacheValue = null;
+  _crMobileUiStats.overrideInvalidations++;
+  _crMobileUiStats.overrideRevision++;
+  crMarkMobileLayoutDirty(reason || 'control-override-invalidated');
+}
 function crLoadControlOverrides(){
+  if(_crOverrideCacheReady){
+    _crMobileUiStats.overrideCacheHits++;
+    return _crOverrideCacheValue;
+  }
+  _crMobileUiStats.overrideStorageReads++;
   try {
     const raw = localStorage.getItem(CR_CONTROLS_LS_KEY);
-    if(!raw) return null;
+    if(!raw){ _crOverrideCacheReady = true; _crOverrideCacheValue = null; return null; }
     const parsed = JSON.parse(raw);
-    if(!parsed || parsed.v !== INPUT_CONFIG.version || typeof parsed.overrides !== 'object') return null;
-    return parsed;
+    _crOverrideCacheValue = (!parsed || parsed.v !== INPUT_CONFIG.version || typeof parsed.overrides !== 'object') ? null : parsed;
+    _crOverrideCacheReady = true;
+    return _crOverrideCacheValue;
   } catch(_e){
+    _crOverrideCacheReady = true;
+    _crOverrideCacheValue = null;
     return null;
   }
 }
@@ -797,6 +885,10 @@ function crPersistControlOverrides(bundle){
       ts: Date.now(),
     };
     localStorage.setItem(CR_CONTROLS_LS_KEY, JSON.stringify(payload));
+    _crOverrideCacheValue = payload;
+    _crOverrideCacheReady = true;
+    _crMobileUiStats.overrideRevision++;
+    crMarkMobileLayoutDirty('control-override-persist');
     return true;
   } catch(_e){
     return false;
@@ -806,6 +898,7 @@ function crPersistControlOverrides(bundle){
 function crClearControlOverrides(){
   try { localStorage.removeItem(CR_CONTROLS_LS_KEY); } catch(_e){}
   _controlEditDraft = null;
+  crInvalidateControlOverrideCache('control-override-clear');
 }
 
 function crGetActiveControlOverrides(){
@@ -859,15 +952,17 @@ function crResetControlLayoutOverrides(){
   if(_controlEditActive){
     _controlEditDraft = { v: INPUT_CONFIG.version, overrides: {} };
   }
+  crInvalidateSafeAreaCache('control-layout-reset');
+  crMarkMobileLayoutDirty('control-layout-reset');
   applyMobileControlSettings();
   showToast('Controls reset to defaults', 2200);
 }
 
 function crShowControlEditChrome(show){
   const bar = document.getElementById('crCtrlEditBar');
-  if(bar) bar.style.display = show ? 'flex' : 'none';
+  if(bar) crWriteStyle(bar, 'display', show ? 'flex' : 'none');
   const mob = document.getElementById('mob');
-  if(mob) mob.classList.toggle('ctrl-edit-mode', !!show);
+  crToggleClass(mob, 'ctrl-edit-mode', !!show);
 }
 
 function crSnapshotLayoutNorms(){
@@ -895,6 +990,7 @@ function crEnterControlEditMode(){
   _controlEditDraft = loaded ? JSON.parse(JSON.stringify(loaded)) : { v: INPUT_CONFIG.version, overrides: {} };
   if(!_controlEditDraft.overrides) _controlEditDraft.overrides = {};
   _controlEditSelected = 'move';
+  crMarkMobileLayoutDirty('control-edit-enter');
   crShowControlEditChrome(true);
   crSyncControlEditSelectionUI();
   applyMobileControlSettings();
@@ -928,6 +1024,8 @@ function crFinishControlEditMode(save){
   _controlEditDraft = null;
   _controlEditDrag = null;
   _controlEditSelected = 'move';
+  if(!save) crInvalidateControlOverrideCache('control-edit-cancel');
+  crMarkMobileLayoutDirty(save ? 'control-edit-save' : 'control-edit-cancel');
   crShowControlEditChrome(false);
   crSyncControlEditSelectionUI();
   paused = false;
@@ -964,6 +1062,7 @@ function crStepEditControlSize(id, dir){
     w: w / snap.cw,
     h: h / snap.ch,
   }, cfg, snap.cw, snap.ch, snap.sa);
+  crMarkMobileLayoutDirty('control-edit-size');
   applyMobileControlSettings();
   crSyncControlEditSelectionUI();
   return true;
@@ -1013,6 +1112,7 @@ function crInstallControlEditPointerHandlers(){
         w: _controlEditDrag.w / cw,
         h: _controlEditDrag.h / ch,
       }, cfg, cw, ch, sa);
+      crMarkMobileLayoutDirty('control-edit-drag');
       applyMobileControlSettings();
     }, { passive: false });
     const endDrag = e => {
@@ -1041,6 +1141,8 @@ function crWireControlEditBarButtons(){
   if(cancel) cancel.addEventListener('click', () => crFinishControlEditMode(false));
   if(reset) reset.addEventListener('click', () => {
     _controlEditDraft = { v: INPUT_CONFIG.version, overrides: {} };
+    crInvalidateSafeAreaCache('control-edit-reset');
+    crMarkMobileLayoutDirty('control-edit-reset');
     applyMobileControlSettings();
     crSyncControlEditSelectionUI();
   });
@@ -1193,8 +1295,9 @@ function bumpControlHeight(){
   options.controlsYOffsetPx = cycleStepValue(options.controlsYOffsetPx, CONTROL_Y_STEPS);
   options.controlsYOffsetPx = Number(options.controlsYOffsetPx);
   options.save();
-  crMigrateUnsafeControlsYOffset({ quiet: true });
-  applyMobileControlSettings();
+  crMarkMobileLayoutDirty('control-y-change');
+  const migration = crMigrateUnsafeControlsYOffset({ quiet: true });
+  if(!migration.changed) applyMobileControlSettings();
   _optionsMenuStamp++;
   const lbl = controlHeightMenuLabel(options.controlsYOffsetPx);
   setMsg('CONTROL DOCK HEIGHT: ' + lbl);
@@ -1247,8 +1350,19 @@ function layoutCssSize(){
   return { cw, ch };
 }
 let _safeProbeEl;
+let _crSafeAreaCache = null;
+function crInvalidateSafeAreaCache(reason){
+  _crSafeAreaCache = null;
+  _crMobileUiStats.safeAreaInvalidations++;
+  _crMobileUiStats.safeAreaRevision++;
+  crMarkMobileLayoutDirty(reason || 'safe-area-invalidated');
+}
 /** Resolved safe-area insets (px). env() probe; 0 on desktop. CARD 6. */
 function readSafeAreaInsets(){
+  if(_crSafeAreaCache){
+    _crMobileUiStats.safeAreaCacheHits++;
+    return _crSafeAreaCache;
+  }
   if(!_safeProbeEl){
     _safeProbeEl = document.createElement('div');
     _safeProbeEl.id = 'safeprobe';
@@ -1256,15 +1370,17 @@ function readSafeAreaInsets(){
     _safeProbeEl.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);';
     document.body.appendChild(_safeProbeEl);
   }
+  _crMobileUiStats.safeAreaReads++;
   const s = getComputedStyle(_safeProbeEl);
   const px = side => parseFloat(s['padding'+side]) || 0;
-  return { top: px('Top'), right: px('Right'), bottom: px('Bottom'), left: px('Left') };
+  _crSafeAreaCache = Object.freeze({ top: px('Top'), right: px('Right'), bottom: px('Bottom'), left: px('Left') });
+  return _crSafeAreaCache;
 }
 function syncPortraitMenuLabel(){
   const mportmenu = document.getElementById('mportmenu');
   if(!mportmenu) return;
   const want = `<span class="mportmenu-t">MENU</span><span class="mportmenu-b">${BUILD_ID}</span>`;
-  if(mportmenu.innerHTML !== want) mportmenu.innerHTML = want;
+  crWriteHtml(mportmenu, want);
 }
 function isMobilePortrait(){
   if(!mobileInputActive()) return false;
@@ -1288,6 +1404,9 @@ function editRunnerName(){
 function mobileSprintCost(){ return 20; }
 function mobileSprintBurstSec(){ return 0.65 + Math.min(0.25, (player.upgrades.sprint||0)*0.08); }
 function applyMobileControlSettings(){
+  const requestedLayoutKey = typeof crBuildMobileLayoutKey === 'function' ? crBuildMobileLayoutKey() : '';
+  if(requestedLayoutKey && !_crMobileLayoutDirty && requestedLayoutKey === _crLastMobileLayoutKey) return false;
+  _crMobileUiStats.layoutFlushes++;
   const ids=['ml','mlookpad','mg','ms','mm','mp'];
   const els=ids.map(id=>document.getElementById(id)).filter(Boolean);
   const joySize = Number(options.joySizePx)||110;
@@ -1299,13 +1418,13 @@ function applyMobileControlSettings(){
   const mlookpad=document.getElementById('mlookpad');
   function placeRect(el, rect){
     if(!el || !rect) return;
-    el.style.left = rect.left + 'px';
-    el.style.top = rect.top + 'px';
-    el.style.right = 'auto';
-    el.style.bottom = 'auto';
-    el.style.width = rect.width + 'px';
-    el.style.height = rect.height + 'px';
-    el.style.transform = 'none';
+    crWriteStyle(el, 'left', rect.left + 'px');
+    crWriteStyle(el, 'top', rect.top + 'px');
+    crWriteStyle(el, 'right', 'auto');
+    crWriteStyle(el, 'bottom', 'auto');
+    crWriteStyle(el, 'width', rect.width + 'px');
+    crWriteStyle(el, 'height', rect.height + 'px');
+    crWriteStyle(el, 'transform', 'none');
   }
   if(portrait){
     const L = portraitLayout();
@@ -1317,70 +1436,76 @@ function applyMobileControlSettings(){
     placeRect(mlookpad, L.lookRect);
     placeRect(mportmenu, L.menuRect);
     syncPortraitMenuLabel();
-    if(mg) mg.style.fontSize = Math.max(9, Math.round(L.giveRect.width * 0.15)) + 'px';
-    if(ms){ ms.style.fontSize = Math.max(8, Math.round(L.sprintRect.width * 0.14)) + 'px'; ms.style.zIndex = '19'; }
-    if(mlookpad){ mlookpad.style.zIndex = '16'; mlookpad.style.fontSize = Math.max(8, Math.round(L.lookRect.width * 0.09)) + 'px'; }
-    if(mportmenu) mportmenu.classList.add('por-show');
-    if(mob) mob.classList.add('portrait-hide-map');
-    if(mm){ mm.style.display = 'none'; mm.style.pointerEvents = 'none'; }
-    if(mp){ mp.style.display = 'none'; mp.style.pointerEvents = 'none'; }
+    if(mg) crWriteStyle(mg, 'fontSize', Math.max(9, Math.round(L.giveRect.width * 0.15)) + 'px');
+    if(ms){ crWriteStyle(ms, 'fontSize', Math.max(8, Math.round(L.sprintRect.width * 0.14)) + 'px'); crWriteStyle(ms, 'zIndex', '19'); }
+    if(mlookpad){ crWriteStyle(mlookpad, 'zIndex', '16'); crWriteStyle(mlookpad, 'fontSize', Math.max(8, Math.round(L.lookRect.width * 0.09)) + 'px'); }
+    crToggleClass(mportmenu, 'por-show', true);
+    crToggleClass(mob, 'portrait-hide-map', true);
+    if(mm){ crWriteStyle(mm, 'display', 'none'); crWriteStyle(mm, 'pointerEvents', 'none'); }
+    if(mp){ crWriteStyle(mp, 'display', 'none'); crWriteStyle(mp, 'pointerEvents', 'none'); }
   } else {
     const sa = readSafeAreaInsets();
     const mob = document.getElementById('mob');
     const mportmenu = document.getElementById('mportmenu');
-    if(mportmenu) mportmenu.classList.remove('por-show');
-    if(mob) mob.classList.remove('portrait-hide-map');
-    if(mm){ mm.style.display = ''; mm.style.pointerEvents = ''; }
+    crToggleClass(mportmenu, 'por-show', false);
+    crToggleClass(mob, 'portrait-hide-map', false);
+    if(mm){ crWriteStyle(mm, 'display', ''); crWriteStyle(mm, 'pointerEvents', ''); }
     if(ml){
-      ml.style.width=joySize+'px'; ml.style.height=joySize+'px'; ml.style.left=(20+sa.left)+'px';
+      crWriteStyle(ml, 'width', joySize+'px'); crWriteStyle(ml, 'height', joySize+'px'); crWriteStyle(ml, 'left', (20+sa.left)+'px');
       const yOff = Number(options.controlsYOffsetPx) || 0;
-      ml.style.bottom = (Math.max(8, 30 - yOff) + sa.bottom) + 'px';
-      ml.style.top='auto'; ml.style.right='auto'; ml.style.transform='none';
+      crWriteStyle(ml, 'bottom', (Math.max(8, 30 - yOff) + sa.bottom) + 'px');
+      crWriteStyle(ml, 'top', 'auto'); crWriteStyle(ml, 'right', 'auto'); crWriteStyle(ml, 'transform', 'none');
     }
     const lookSize = Math.min(240, Math.max(64, Math.round(Number(options.lookSizePx) || joySize * 0.72)));
     const yOffL = Number(options.controlsYOffsetPx) || 0;
     if(mlookpad){
-      mlookpad.style.width = lookSize + 'px';
-      mlookpad.style.height = lookSize + 'px';
-      mlookpad.style.left = 'auto';
-      mlookpad.style.right = (16 + sa.right) + 'px';
-      mlookpad.style.bottom = (Math.max(8, 24 - yOffL) + sa.bottom) + 'px';
-      mlookpad.style.top = 'auto';
-      mlookpad.style.transform = 'none';
-      mlookpad.style.opacity = '1';
-      mlookpad.style.background = 'rgba(200,150,60,0.35)';
-      mlookpad.style.border = '2px solid rgba(220,190,100,0.80)';
-      mlookpad.style.color = '#e9d8b0';
+      crWriteStyle(mlookpad, 'width', lookSize + 'px');
+      crWriteStyle(mlookpad, 'height', lookSize + 'px');
+      crWriteStyle(mlookpad, 'left', 'auto');
+      crWriteStyle(mlookpad, 'right', (16 + sa.right) + 'px');
+      crWriteStyle(mlookpad, 'bottom', (Math.max(8, 24 - yOffL) + sa.bottom) + 'px');
+      crWriteStyle(mlookpad, 'top', 'auto');
+      crWriteStyle(mlookpad, 'transform', 'none');
+      crWriteStyle(mlookpad, 'opacity', '1');
+      crWriteStyle(mlookpad, 'background', 'rgba(200,150,60,0.35)');
+      crWriteStyle(mlookpad, 'border', '2px solid rgba(220,190,100,0.80)');
+      crWriteStyle(mlookpad, 'color', '#e9d8b0');
     }
-    [mg,ms].forEach(el=>{ if(el){ el.style.width=btnSize+'px'; el.style.height=btnSize+'px'; el.style.fontSize=Math.max(9,Math.round(btnSize*0.15))+'px'; el.style.left='auto'; el.style.right=(20+sa.right)+'px'; }});
-    if(mg){ mg.style.top='42%'; mg.style.bottom='auto'; mg.style.transform='translateY(calc(-50% + '+(-yOffL)+'px))'; }
-    if(ms){ ms.style.top='68%'; ms.style.right=(30+sa.right)+'px'; ms.style.transform='translateY(calc(-50% + '+(-yOffL)+'px))'; }
-    if(mm){ mm.style.width=Math.round(btnSize*0.78)+'px'; mm.style.height=Math.round(btnSize*0.55)+'px'; mm.style.right=(8+sa.right)+'px'; mm.style.top=(12+sa.top)+'px'; mm.style.left='auto'; mm.style.bottom='auto'; mm.style.transform='none'; }
-    if(mp){ mp.style.display='none'; mp.style.pointerEvents='none'; }
+    [mg,ms].forEach(el=>{ if(el){ crWriteStyle(el, 'width', btnSize+'px'); crWriteStyle(el, 'height', btnSize+'px'); crWriteStyle(el, 'fontSize', Math.max(9,Math.round(btnSize*0.15))+'px'); crWriteStyle(el, 'left', 'auto'); crWriteStyle(el, 'right', (20+sa.right)+'px'); }});
+    if(mg){ crWriteStyle(mg, 'top', '42%'); crWriteStyle(mg, 'bottom', 'auto'); crWriteStyle(mg, 'transform', 'translateY(calc(-50% + '+(-yOffL)+'px))'); }
+    if(ms){ crWriteStyle(ms, 'top', '68%'); crWriteStyle(ms, 'right', (30+sa.right)+'px'); crWriteStyle(ms, 'transform', 'translateY(calc(-50% + '+(-yOffL)+'px))'); }
+    if(mm){ crWriteStyle(mm, 'width', Math.round(btnSize*0.78)+'px'); crWriteStyle(mm, 'height', Math.round(btnSize*0.55)+'px'); crWriteStyle(mm, 'right', (8+sa.right)+'px'); crWriteStyle(mm, 'top', (12+sa.top)+'px'); crWriteStyle(mm, 'left', 'auto'); crWriteStyle(mm, 'bottom', 'auto'); crWriteStyle(mm, 'transform', 'none'); }
+    if(mp){ crWriteStyle(mp, 'display', 'none'); crWriteStyle(mp, 'pointerEvents', 'none'); }
   }
   if(mr){
     if(portrait){
-      mr.style.pointerEvents = 'none';
-      mr.style.display = 'none';
+      crWriteStyle(mr, 'pointerEvents', 'none');
+      crWriteStyle(mr, 'display', 'none');
     } else {
-      mr.style.display = 'flex';
-      mr.style.pointerEvents = 'auto';
-      mr.style.top = '0'; mr.style.right = '0'; mr.style.bottom = 'auto'; mr.style.width = '50vw'; mr.style.height = 'var(--app-vh-px)';
+      crWriteStyle(mr, 'display', 'flex');
+      crWriteStyle(mr, 'pointerEvents', 'auto');
+      crWriteStyle(mr, 'top', '0'); crWriteStyle(mr, 'right', '0'); crWriteStyle(mr, 'bottom', 'auto'); crWriteStyle(mr, 'width', '50vw'); crWriteStyle(mr, 'height', 'var(--app-vh-px)');
     }
   }
   {
     const h = document.getElementById('mlookhint');
-    if(h){ h.style.display = portrait ? 'none' : ''; }
+    if(h){ crWriteStyle(h, 'display', portrait ? 'none' : ''); }
   }
   if(mlookpad && portrait){
-    mlookpad.style.opacity = '1';
-    mlookpad.style.background = 'rgba(200,150,60,0.35)';
-    mlookpad.style.border = '2px solid rgba(220,190,100,0.80)';
-    mlookpad.style.color = '#e9d8b0';
+    crWriteStyle(mlookpad, 'opacity', '1');
+    crWriteStyle(mlookpad, 'background', 'rgba(200,150,60,0.35)');
+    crWriteStyle(mlookpad, 'border', '2px solid rgba(220,190,100,0.80)');
+    crWriteStyle(mlookpad, 'color', '#e9d8b0');
   }
-  els.forEach(el=>{ el.style.opacity=String(alpha); });
+  els.forEach(el=>{ crWriteStyle(el, 'opacity', String(alpha)); });
   updateJoyDot(joy.x||0, joy.y||0);
   if(_controlEditActive) crSyncControlEditSelectionUI();
+  _crMobileLayoutDirty = false;
+  if(typeof crBuildMobileLayoutKey === 'function'){
+    _crLastMobileLayoutKey = crBuildMobileLayoutKey();
+    _crMobileUiStats.lastLayoutKey = _crLastMobileLayoutKey;
+  }
+  return true;
 }
 
 function dismissLookHint(){
@@ -1388,9 +1513,9 @@ function dismissLookHint(){
   lookHintUsed = true;
   const h = document.getElementById('mlookhint');
   if(!h) return;
-  h.classList.add('hide');
-  h.style.opacity = '0';
-  h.style.display = 'none';
+  crToggleClass(h, 'hide', true);
+  crWriteStyle(h, 'opacity', '0');
+  crWriteStyle(h, 'display', 'none');
 }
 // ---- touch debug overlay (activated by ?touchdebug=1) ----
 let _tdbElement = null;
@@ -1497,17 +1622,21 @@ function touchDebug(data){
     setInterval(applyOutlines, 2000);
   });
 })();
+let _crLookHintTimer = null;
 function syncLookHintUI(){
   const h = document.getElementById('mlookhint');
   if(!h) return;
   const inPlay = mobileMode && state===STATE.PLAY && !paused;
-  h.style.display = (inPlay && !lookHintUsed && !isMobilePortrait()) ? 'block' : 'none';
+  crWriteStyle(h, 'display', (inPlay && !lookHintUsed && !isMobilePortrait()) ? 'block' : 'none');
   if(!inPlay) return;
-  h.classList.toggle('hide', !!lookHintUsed);
-  h.style.opacity = lookHintUsed ? '0' : '1';
-  // Auto-hide after timeout even without user interaction
-  if(!lookHintUsed && lookHintShownAt && (performance.now()-lookHintShownAt > LOOK_HINT_TIMEOUT_MS)){
-    dismissLookHint();
+  crToggleClass(h, 'hide', !!lookHintUsed);
+  crWriteStyle(h, 'opacity', lookHintUsed ? '0' : '1');
+  if(!lookHintUsed && lookHintShownAt && !_crLookHintTimer){
+    const remaining = Math.max(0, LOOK_HINT_TIMEOUT_MS - (performance.now() - lookHintShownAt));
+    _crLookHintTimer = setTimeout(() => {
+      _crLookHintTimer = null;
+      if(!lookHintUsed){ dismissLookHint(); crMarkMobileUiDirty('look-hint-timeout'); }
+    }, remaining);
   }
 }
 
@@ -1519,13 +1648,47 @@ function isMobile(){
 function setMobileMode(on){
   if(on===mobileMode) return;
   mobileMode = on;
+  crMarkMobileLayoutDirty('mobile-mode-change');
   const mob = document.getElementById('mob');
-  if(mob){ mob.classList.toggle('show', on); }
+  crToggleClass(mob, 'show', on);
   applyMobileControlSettings();
   // Fullscreen/landscape is optional; never gate play behind a recommendation screen.
   const ph = document.getElementById('porthint');
   if(ph) ph.classList.remove('show');
 }
+
+// Event-driven invalidation. Existing handlers continue to own canvas resizing;
+// these listeners only invalidate Lane C caches and dirty state.
+addEventListener('resize', () => {
+  crInvalidateSafeAreaCache('resize');
+  crMarkMobileLayoutDirty('resize');
+}, { passive: true });
+addEventListener('orientationchange', () => {
+  crInvalidateSafeAreaCache('orientationchange');
+  crMarkMobileLayoutDirty('orientationchange');
+}, { passive: true });
+['fullscreenchange','webkitfullscreenchange','msfullscreenchange'].forEach(ev => {
+  document.addEventListener(ev, () => {
+    crInvalidateSafeAreaCache(ev);
+    crMarkMobileLayoutDirty(ev);
+  });
+});
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', () => {
+    crInvalidateSafeAreaCache('visual-viewport-resize');
+    crMarkMobileLayoutDirty('visual-viewport-resize');
+  }, { passive: true });
+  window.visualViewport.addEventListener('scroll', () => {
+    crInvalidateSafeAreaCache('visual-viewport-scroll');
+    crMarkMobileLayoutDirty('visual-viewport-scroll');
+  }, { passive: true });
+}
+addEventListener('storage', e => {
+  if(!e || e.key === CR_CONTROLS_LS_KEY || e.key === null){
+    crInvalidateControlOverrideCache('control-override-storage');
+  }
+  crMarkMobileUiDirty('storage-event');
+});
 function triggerMobileSprintBurst(){
   const ms = ms_element || document.getElementById('ms');
   const nowSec = performance.now()/1000;
@@ -1935,7 +2098,7 @@ function updateJoyDot(nx, ny){
   const dot = document.getElementById('mjdot');
   const joySize = (typeof options!=='undefined' && options.joySizePx) ? Number(options.joySizePx) : 110;
   const travel = Math.round(joySize*0.25);
-  if(dot) dot.style.transform = `translate(calc(-50% + ${nx*travel}px), calc(-50% + ${ny*travel}px))`;
+  if(dot) crWriteStyle(dot, 'transform', `translate(calc(-50% + ${nx*travel}px), calc(-50% + ${ny*travel}px))`);
 }
 function clearMoveInput(){
   inp.fwd = false;
@@ -1959,13 +2122,46 @@ function syncInpFromJoy(){
 // -----------------------------------------------------------------------
 let _rmSel = 0;
 let _optionsMenuStamp = 0;
-function rmenuShow(){ document.getElementById('rmenu').classList.remove('in'); }
-function rmenuHide(){ document.getElementById('rmenu').classList.add('in'); }
+let _crSaveAvailability = false;
+function crCheapMobilePortraitKey(){
+  if(!mobileInputActive()) return false;
+  if(_selfCheckForcePortrait || _forcePortraitLayout) return true;
+  const vv = window.visualViewport;
+  const w = Math.round((vv && vv.width) || innerWidth || 0);
+  const h = Math.round((vv && vv.height) || innerHeight || 0);
+  if(h > w) return true;
+  try { return !!(screen.orientation && String(screen.orientation.type).indexOf('portrait') >= 0); } catch(_e){ return false; }
+}
+function crFullscreenKey(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+}
+function crBuildMobileUiKey(){
+  return [state, paused?1:0, mobileMode?1:0, mobileOverride || 'auto', crCheapMobilePortraitKey()?1:0,
+    crFullscreenKey()?1:0, _controlEditActive?1:0, typeof onboardingOpen !== 'undefined' && onboardingOpen?1:0,
+    lookHintUsed?1:0, _optionsMenuStamp, state === STATE.TITLE && _crSaveAvailability?1:0].join('|');
+}
+function crBuildMobileLayoutKey(){
+  const vv = window.visualViewport;
+  const orientation = (() => { try { return screen.orientation && screen.orientation.type || ''; } catch(_e){ return ''; } })();
+  return [Math.round(innerWidth||0), Math.round(innerHeight||0),
+    Math.round(vv && vv.width || 0), Math.round(vv && vv.height || 0), orientation,
+    _crMobileUiStats.safeAreaRevision, mobileMode?1:0, crCheapMobilePortraitKey()?1:0, crFullscreenKey()?1:0,
+    Number(options.joySizePx)||110, Number(options.buttonSizePx)||85, Number(options.lookSizePx)||0,
+    Number(options.controlsYOffsetPx)||0, Number(options.controlOpacityValue)||0, Number(options.minimapSizePx)||0,
+    _crMobileUiStats.overrideRevision, _controlEditActive?1:0].join('|');
+}
+function rmenuShow(){ crToggleClass(document.getElementById('rmenu'), 'in', false); }
+function rmenuHide(){ crToggleClass(document.getElementById('rmenu'), 'in', true); }
 function rmenuClearForGameplay(){
   const r = document.getElementById('rmenu');
   if(!r) return;
+  if(r._touchAction){
+    _crTouchDeferredUi = true;
+    crMarkMobileUiDirty('active-touch-deferred-clear');
+    return;
+  }
   r._touchAction = '';
-  if(r.innerHTML !== '') r.innerHTML = '';
+  crWriteHtml(r, '');
   rmenuHide();
 }
 function rmenuHTML(html){
@@ -1975,13 +2171,23 @@ function rmenuHTML(html){
   if(!r) return false;
   // If a mobile tap is in progress, keep the touched DOM node alive until touchend.
   // This preserves the real-phone menu-tap fix even if a frame redraw happens mid-tap.
-  if(r._touchAction) return false;
-  if(r.innerHTML !== html){ r.innerHTML = html; return true; }
-  return false;
+  if(r._touchAction){
+    _crTouchDeferredUi = true;
+    crMarkMobileUiDirty('active-touch-deferred-html');
+    return false;
+  }
+  return crWriteHtml(r, html);
 }
 function rmenuSel(len){ _rmSel = Math.max(0, Math.min(len-1, _rmSel||0)); return _rmSel; }
 
 function rmenuAction(action){
+  if(action && action !== 'noop') crMarkMobileUiDirty(action);
+  if(action && action.indexOf('option-') === 0){
+    _optionsMenuStamp++;
+    if(['option-mobile','option-joy','option-buttons','option-looksize','option-ctrlheight','option-opacity','option-mapsize','option-edit-controls','option-reset-controls'].indexOf(action) >= 0){
+      crMarkMobileLayoutDirty(action);
+    }
+  }
   switch(action){
     case 'noop': break;
     case 'toggle-fs': toggleFullscreen(); break;
@@ -2011,7 +2217,7 @@ function rmenuAction(action){
       const c=vals.indexOf(options.mobileControls);
       options.mobileControls=vals[(c+1)%vals.length];
       mobileOverride=options.mobileControls==='auto'?null:options.mobileControls;
-      setMobileMode(isMobile()); options.save(); applyMobileControlSettings(); drawMobileMenu();
+      setMobileMode(isMobile()); options.save(); drawMobileMenu();
       break;
     }
     case 'option-look': options.lookSpeed=cycleStepValue(options.lookSpeed,LOOK_SPEED_STEPS); options.save(); drawMobileMenu(); break;
@@ -2068,11 +2274,28 @@ function rmenuAction(action){
 window._rmenuAction = rmenuAction;
 
 function drawMobileMenu(){
+  _crMobileUiStats.drawCalls++;
+  let uiKey = crBuildMobileUiKey();
+  const layoutKey = crBuildMobileLayoutKey();
+  const needsLayout = _crMobileLayoutDirty || layoutKey !== _crLastMobileLayoutKey;
+  if(!_crMobileUiDirty && !needsLayout && uiKey === _crLastMobileUiKey){
+    _crMobileUiStats.stableEarlyOuts++;
+    return;
+  }
+  // Save availability is refreshed only after the cheap key proves UI work is
+  // necessary, never on stable frames. The key builder itself remains pure.
+  if(state === STATE.TITLE){
+    try { _crSaveAvailability = !!SAVE.hasValid(); } catch(_e){ _crSaveAvailability = false; }
+    uiKey = crBuildMobileUiKey();
+  }
+  _crMobileUiStats.uiFlushes++;
+  _crTouchDeferredUi = false;
+  try {
   // Sync in-game fullscreen button visibility each frame.
   const fsbtn = document.getElementById('fsbtn');
   if(fsbtn){
     const showFs = mobileMode && state===STATE.PLAY && !paused && !isFullscreen() && !isMobilePortrait();
-    fsbtn.classList.toggle('show', showFs);
+    crToggleClass(fsbtn, 'show', showFs);
   }
   const playControls = mobileInputActive() && state===STATE.PLAY && !paused;
   const portraitPlay = playControls && isMobilePortrait();
@@ -2082,31 +2305,31 @@ function drawMobileMenu(){
   const showPortraitControls = portraitPlay || controlEditOverlay || (optionsTunePreview && isMobilePortrait()) || (pauseTunePreview && isMobilePortrait());
   const showLandscapeControlsPreview = optionsTunePreview && !isMobilePortrait();
   const mob = document.getElementById('mob');
-  if(mob) mob.style.pointerEvents = (playControls || pauseTunePreview || controlEditOverlay) ? 'auto' : 'none';
+  if(mob) crWriteStyle(mob, 'pointerEvents', (playControls || pauseTunePreview || controlEditOverlay) ? 'auto' : 'none');
   ['ml','mlookpad','mg','ms'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.style.display = (showPortraitControls || showLandscapeControlsPreview) ? 'flex' : (playControls ? 'flex' : 'none');
+    if(el) crWriteStyle(el, 'display', (showPortraitControls || showLandscapeControlsPreview) ? 'flex' : (playControls ? 'flex' : 'none'));
   });
   const mpEl = document.getElementById('mp');
   if(mpEl){
-    mpEl.style.display = 'none';
-    mpEl.style.pointerEvents = 'none';
+    crWriteStyle(mpEl, 'display', 'none');
+    crWriteStyle(mpEl, 'pointerEvents', 'none');
   }
   const viewEl = document.getElementById('view');
-  if(viewEl) viewEl.classList.toggle('mob-touch-through', !!((mobileInputActive()) && (playControls || pauseTunePreview || controlEditOverlay)));
-  if(showPortraitControls || showLandscapeControlsPreview || playControls || pauseTunePreview) applyMobileControlSettings();
+  if(viewEl) crToggleClass(viewEl, 'mob-touch-through', !!((mobileInputActive()) && (playControls || pauseTunePreview || controlEditOverlay)));
+  if(needsLayout && (showPortraitControls || showLandscapeControlsPreview || playControls || pauseTunePreview)) applyMobileControlSettings();
   const menuEl = document.getElementById('mportmenu');
   if(menuEl){
-    menuEl.style.display = (portraitPlay || (optionsTunePreview && isMobilePortrait()) || (pauseTunePreview && isMobilePortrait())) ? 'flex' : 'none';
-    menuEl.classList.toggle('por-show', !!(portraitPlay || (optionsTunePreview && isMobilePortrait()) || (pauseTunePreview && isMobilePortrait())));
+    crWriteStyle(menuEl, 'display', (portraitPlay || (optionsTunePreview && isMobilePortrait()) || (pauseTunePreview && isMobilePortrait())) ? 'flex' : 'none');
+    crToggleClass(menuEl, 'por-show', !!(portraitPlay || (optionsTunePreview && isMobilePortrait()) || (pauseTunePreview && isMobilePortrait())));
   }
   const mmEl = document.getElementById('mm');
-  if(mmEl) mmEl.style.display = (playControls && !isMobilePortrait()) ? 'flex' : 'none';
+  if(mmEl) crWriteStyle(mmEl, 'display', (playControls && !isMobilePortrait()) ? 'flex' : 'none');
   const mrEl = document.getElementById('mr');
-  if(mrEl) mrEl.style.display = (playControls && !isMobilePortrait()) ? 'flex' : 'none';
+  if(mrEl) crWriteStyle(mrEl, 'display', (playControls && !isMobilePortrait()) ? 'flex' : 'none');
 
   if(!mobileMode){
-    if(fsbtn) fsbtn.classList.remove('show');
+    crToggleClass(fsbtn, 'show', false);
     syncLookHintUI();
     return;
   }
@@ -2116,7 +2339,7 @@ function drawMobileMenu(){
   // Control edit mode: hide all menu panels; gameplay overlay + edit chrome only.
   if(_controlEditActive){
     rmenuClearForGameplay();
-    r.classList.remove('options-tune');
+    crToggleClass(r, 'options-tune', false);
     syncLookHintUI();
     return;
   }
@@ -2139,7 +2362,7 @@ function drawMobileMenu(){
   }
 
   syncLookHintUI();
-  if(state !== STATE.OPTIONS) r.classList.remove('options-tune');
+  if(state !== STATE.OPTIONS) crToggleClass(r, 'options-tune', false);
 
   // ── TITLE ──
   if(state === STATE.TITLE){
@@ -2217,7 +2440,7 @@ function drawMobileMenu(){
 
   // ── OPTIONS ──
   if(state === STATE.OPTIONS){
-    r.classList.toggle('options-tune', mobileMode);
+    crToggleClass(r, 'options-tune', mobileMode);
     rmenuShow();
     rmenuHTML(`
       <div class="options-scroll-body">
@@ -2295,6 +2518,19 @@ function drawMobileMenu(){
   }
 
   rmenuHide();
+  } finally {
+    _crLastMobileLayoutKey = layoutKey;
+    _crMobileUiStats.lastLayoutKey = layoutKey;
+    _crMobileLayoutDirty = false;
+    if(_crTouchDeferredUi){
+      _crMobileUiDirty = true;
+      crRememberMobileDirtyReason('active-touch-deferred');
+    } else {
+      _crLastMobileUiKey = uiKey;
+      _crMobileUiStats.lastUiKey = uiKey;
+      _crMobileUiDirty = false;
+    }
+  }
 }
 
 // -----------------------------------------------------------------------
@@ -10580,7 +10816,7 @@ function crDrawPrefabFaceColumn(ctx, col, drawStart, sliceH, mapX, mapY, side, s
   }
   return true;
 }
-function drawScene(now){
+function drawScene(now, renderPose){
   if(_crHarnessDepth > 0) _crSpriteGroundHarnessSamples = [];
 
   // --- SKY (rebuild only if modifier changed) ---
@@ -10594,7 +10830,9 @@ function drawScene(now){
   bctx.fillStyle=gfloor; bctx.fillRect(0,RH/2,RW,RH/2);
   crDrawFpvStreetReadabilityCues();
 
-  const px=player.x, py=player.y, a=player.angle;
+  const px=renderPose ? renderPose.x : player.x,
+        py=renderPose ? renderPose.y : player.y,
+        a=renderPose ? renderPose.angle : player.angle;
   const dirX=Math.cos(a), dirY=Math.sin(a);
   const planeX=-Math.sin(a)*cfg.fov, planeY=Math.cos(a)*cfg.fov;
   const visRange = game.modifier==='rainy'?9.0:17.0;
@@ -12518,26 +12756,102 @@ let _crPerf = null;
 let _crPerfLastFrameNow = 0;
 let _crPerfLastHudAt = 0;
 let _crPerfSnap = null;
+let _crPerfMobileBaseline = null;
+
+function _crPerfEmptyBuckets() {
+  return {
+    under9_5: 0,
+    from9_5To13_5: 0,
+    from13_5To20: 0,
+    from20To33: 0,
+    from33To50: 0,
+    over50: 0,
+  };
+}
+
+function _crPerfReadMobileStats() {
+  if (typeof crGetMobileUiSyncStats !== 'function') return null;
+  try {
+    const value = crGetMobileUiSyncStats();
+    return value && typeof value === 'object' ? value : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function _crPerfFinite(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function _crPerfCounterDelta(current, baseline, key) {
+  if (!current) return 0;
+  return Math.max(0, _crPerfFinite(current[key]) - _crPerfFinite(baseline && baseline[key]));
+}
 
 function crPerfProbeReset() {
+  if (!CR_PERF_PROBE) return;
   _crPerf = {
     frameMs: [],
+    frameBuckets: _crPerfEmptyBuckets(),
     over33: 0,
     over50: 0,
     drawSceneMs: [],
     minimapMs: [],
     chromeMs: [],
     hudMs: [],
+    simulationMs: [],
+    simulationTotal: 0,
+    simulationCalls: 0,
+    simulationWorst: 0,
+    stepFrames0: 0,
+    stepFrames1: 0,
+    stepFrames2: 0,
+    stepFrames3Plus: 0,
+    fixedStepDrops: 0,
+    accumulatorAlphaTotal: 0,
+    accumulatorAlphaCount: 0,
+    accumulatorAlphaMin: null,
+    accumulatorAlphaMax: null,
+    alphaTotal: 0,
+    alphaCount: 0,
+    alphaMin: null,
+    alphaMax: null,
+    interpolationActive: false,
+    interpolatedFrames: 0,
+    zeroStepInterpolatedFrames: 0,
+    repeatedRenderPoseFrames: 0,
+    renderDeltaTotal: 0,
+    renderDeltaCount: 0,
+    renderDeltaWorst: 0,
+    renderDeltaDiscontinuityWorst: 0,
+    lastRenderDelta: null,
+    lastRenderPose: null,
+    lastAuthoritativePose: null,
+    lastFrameSteps: 0,
+    mobileMenuMs: [],
+    mobileMenuTotal: 0,
+    mobileMenuCalls: 0,
+    mobileLayoutMs: [],
+    mobileLayoutTotal: 0,
+    mobileLayoutCalls: 0,
+    bitmapMs: [],
+    bitmapTotal: 0,
+    bitmapCalls: 0,
+    bitmapHandled: 0,
+    bitmapFailureColumns: null,
     spriteCount: 0,
     framesSampled: 0,
   };
+  _crPerfMobileBaseline = _crPerfReadMobileStats();
   _crPerfLastFrameNow = 0;
   _crPerfLastHudAt = 0;
   _crPerfSnap = null;
 }
 
-function _crPerfCap(arr, v, max) {
-  arr.push(v);
+function _crPerfCap(arr, value, max) {
+  const finite = _crPerfFinite(value);
+  arr.push(finite);
   if (arr.length > max) arr.shift();
 }
 
@@ -12556,12 +12870,78 @@ function _crPerfSummarize(arr) {
     if (arr[i] > worst) worst = arr[i];
   }
   const sorted = arr.slice().sort((a, b) => a - b);
-  return {
-    avg: sum / arr.length,
-    p95: _crPerfPct(sorted, 95),
-    worst,
-    n: arr.length,
+  return { avg: sum / arr.length, p95: _crPerfPct(sorted, 95), worst, n: arr.length };
+}
+
+function _crPerfTimeCall(original, receiver, args, sampleArray, totalKey, countKey) {
+  const started = performance.now();
+  try {
+    return original.apply(receiver, args);
+  } finally {
+    const elapsed = Math.max(0, _crPerfFinite(performance.now() - started));
+    _crPerfCap(sampleArray, elapsed, 720);
+    if (totalKey) _crPerf[totalKey] += elapsed;
+    if (countKey) _crPerf[countKey]++;
+  }
+}
+
+function _crPerfRecordInterpolation() {
+  if (!_crPerf || typeof crGetInterpolatedRenderPose !== 'function') return;
+  _crPerf.interpolationActive = true;
+  let pose;
+  try {
+    pose = crGetInterpolatedRenderPose();
+  } catch (e) {
+    return;
+  }
+  if (!pose || !Number.isFinite(Number(pose.x)) || !Number.isFinite(Number(pose.y))) return;
+
+  let alpha = Number(pose.alpha);
+  if (!Number.isFinite(alpha) && typeof crGetRenderInterpolationAlpha === 'function') {
+    try { alpha = Number(crGetRenderInterpolationAlpha()); } catch (e) { alpha = NaN; }
+  }
+  if (Number.isFinite(alpha)) {
+    _crPerf.alphaTotal += alpha;
+    _crPerf.alphaCount++;
+    _crPerf.alphaMin = _crPerf.alphaMin == null ? alpha : Math.min(_crPerf.alphaMin, alpha);
+    _crPerf.alphaMax = _crPerf.alphaMax == null ? alpha : Math.max(_crPerf.alphaMax, alpha);
+  }
+
+  if (pose.interpolatedPosition !== true) return;
+  _crPerf.interpolatedFrames++;
+  const current = { x: Number(pose.x), y: Number(pose.y) };
+  const authoritative = {
+    x: Number.isFinite(Number(pose.authoritativeX)) ? Number(pose.authoritativeX) : current.x,
+    y: Number.isFinite(Number(pose.authoritativeY)) ? Number(pose.authoritativeY) : current.y,
   };
+  if (_crPerf.lastRenderPose) {
+    const dx = current.x - _crPerf.lastRenderPose.x;
+    const dy = current.y - _crPerf.lastRenderPose.y;
+    const delta = Math.hypot(dx, dy);
+    const authoritativeMoved = !_crPerf.lastAuthoritativePose ||
+      Math.hypot(authoritative.x - _crPerf.lastAuthoritativePose.x,
+        authoritative.y - _crPerf.lastAuthoritativePose.y) > 1e-9 ||
+      Math.hypot(Number(pose.authoritativeX) - Number(pose.previousX),
+        Number(pose.authoritativeY) - Number(pose.previousY)) > 1e-9;
+    if (authoritativeMoved) {
+      if (delta <= 1e-9) _crPerf.repeatedRenderPoseFrames++;
+      _crPerf.renderDeltaTotal += delta;
+      _crPerf.renderDeltaCount++;
+      _crPerf.renderDeltaWorst = Math.max(_crPerf.renderDeltaWorst, delta);
+      if (_crPerf.lastRenderDelta != null) {
+        _crPerf.renderDeltaDiscontinuityWorst = Math.max(
+          _crPerf.renderDeltaDiscontinuityWorst,
+          Math.abs(delta - _crPerf.lastRenderDelta)
+        );
+      }
+      _crPerf.lastRenderDelta = delta;
+      if (_crPerf.lastFrameSteps === 0 && delta > 1e-9) {
+        _crPerf.zeroStepInterpolatedFrames++;
+      }
+    }
+  }
+  _crPerf.lastRenderPose = current;
+  _crPerf.lastAuthoritativePose = authoritative;
 }
 
 function crPerfProbeEnsureInstalled() {
@@ -12570,60 +12950,130 @@ function crPerfProbeEnsureInstalled() {
   crPerfProbeReset();
 
   if (typeof drawScene === 'function') {
-    const orig = drawScene;
-    drawScene = function (now) {
-      const t0 = performance.now();
-      orig(now);
-      _crPerfCap(_crPerf.drawSceneMs, performance.now() - t0, 240);
+    const original = drawScene;
+    drawScene = function () {
+      const result = _crPerfTimeCall(original, this, arguments, _crPerf.drawSceneMs);
       try {
         const props = (game.props && game.props.length) || 0;
         const npcs = (game.npcs && game.npcs.filter((n) => !n.helped).length) || 0;
-        const cans = (game.pickups && game.pickups.filter((c) => !c.taken).length) || 0;
+        const cans = (game.pickups && game.pickups.filter((item) => !item.taken).length) || 0;
         _crPerf.spriteCount = props + npcs + cans + (game.exit ? 1 : 0);
       } catch (e) {}
+      _crPerfRecordInterpolation();
+      return result;
     };
   }
   if (typeof drawMinap === 'function') {
-    const orig = drawMinap;
+    const original = drawMinap;
     drawMinap = function () {
-      const t0 = performance.now();
-      orig();
-      _crPerfCap(_crPerf.minimapMs, performance.now() - t0, 240);
+      return _crPerfTimeCall(original, this, arguments, _crPerf.minimapMs);
     };
   }
   if (typeof drawPortraitDashboardChrome === 'function') {
-    const orig = drawPortraitDashboardChrome;
+    const original = drawPortraitDashboardChrome;
     drawPortraitDashboardChrome = function () {
-      const t0 = performance.now();
-      orig();
-      _crPerfCap(_crPerf.chromeMs, performance.now() - t0, 240);
+      return _crPerfTimeCall(original, this, arguments, _crPerf.chromeMs);
     };
   }
   if (typeof drawHUD === 'function') {
-    const orig = drawHUD;
-    drawHUD = function (now) {
-      const t0 = performance.now();
-      orig(now);
-      _crPerfCap(_crPerf.hudMs, performance.now() - t0, 240);
+    const original = drawHUD;
+    drawHUD = function () {
+      return _crPerfTimeCall(original, this, arguments, _crPerf.hudMs);
     };
+  }
+  if (typeof crStepSimulationFixed === 'function') {
+    const original = crStepSimulationFixed;
+    crStepSimulationFixed = function () {
+      let beforeDrops = null;
+      let fixedStepDt = null;
+      if (typeof crGetFixedStepState === 'function') {
+        try {
+          const fixedState = crGetFixedStepState();
+          beforeDrops = _crPerfFinite(fixedState.droppedFrames);
+          if (Number(fixedState.stepDt) > 0) fixedStepDt = Number(fixedState.stepDt);
+        } catch (e) {}
+      }
+      const started = performance.now();
+      let result;
+      try {
+        result = original.apply(this, arguments);
+        return result;
+      } finally {
+        const elapsed = Math.max(0, _crPerfFinite(performance.now() - started));
+        _crPerfCap(_crPerf.simulationMs, elapsed, 720);
+        _crPerf.simulationTotal += elapsed;
+        _crPerf.simulationCalls++;
+        _crPerf.simulationWorst = Math.max(_crPerf.simulationWorst, elapsed);
+        if (result && Number.isFinite(Number(result.steps))) {
+          const steps = Math.max(0, Math.floor(Number(result.steps)));
+          _crPerf.lastFrameSteps = steps;
+          if (steps === 0) _crPerf.stepFrames0++;
+          else if (steps === 1) _crPerf.stepFrames1++;
+          else if (steps === 2) _crPerf.stepFrames2++;
+          else _crPerf.stepFrames3Plus++;
+          const afterDrops = _crPerfFinite(result.droppedFrames);
+          if (beforeDrops != null) _crPerf.fixedStepDrops += Math.max(0, afterDrops - beforeDrops);
+          if (fixedStepDt && Number.isFinite(Number(result.accumulator))) {
+            const accumulatorAlpha = Math.max(0, Number(result.accumulator) / fixedStepDt);
+            _crPerf.accumulatorAlphaTotal += accumulatorAlpha;
+            _crPerf.accumulatorAlphaCount++;
+            _crPerf.accumulatorAlphaMin = _crPerf.accumulatorAlphaMin == null ? accumulatorAlpha :
+              Math.min(_crPerf.accumulatorAlphaMin, accumulatorAlpha);
+            _crPerf.accumulatorAlphaMax = _crPerf.accumulatorAlphaMax == null ? accumulatorAlpha :
+              Math.max(_crPerf.accumulatorAlphaMax, accumulatorAlpha);
+          }
+        }
+      }
+    };
+  }
+  if (typeof drawMobileMenu === 'function') {
+    const original = drawMobileMenu;
+    drawMobileMenu = function () {
+      return _crPerfTimeCall(
+        original, this, arguments, _crPerf.mobileMenuMs, 'mobileMenuTotal', 'mobileMenuCalls'
+      );
+    };
+  }
+  if (typeof applyMobileControlSettings === 'function') {
+    const original = applyMobileControlSettings;
+    applyMobileControlSettings = function () {
+      return _crPerfTimeCall(
+        original, this, arguments, _crPerf.mobileLayoutMs, 'mobileLayoutTotal', 'mobileLayoutCalls'
+      );
+    };
+  }
+  if (typeof drawWholeFaceBitmapBuildingColumn === 'function') {
+    const original = drawWholeFaceBitmapBuildingColumn;
+    drawWholeFaceBitmapBuildingColumn = function () {
+      const started = performance.now();
+      let result;
+      try {
+        result = original.apply(this, arguments);
+        return result;
+      } finally {
+        const elapsed = Math.max(0, _crPerfFinite(performance.now() - started));
+        _crPerfCap(_crPerf.bitmapMs, elapsed, 1440);
+        _crPerf.bitmapTotal += elapsed;
+        _crPerf.bitmapCalls++;
+        if (result === true) _crPerf.bitmapHandled++;
+      }
+    };
+  }
+
+  if (globalThis.CR && typeof globalThis.CR === 'object') {
+    globalThis.CR.crPerfProbeGetReport = crPerfProbeGetReport;
+    globalThis.CR.crPerfProbeReset = crPerfProbeReset;
   }
 
   const viewEl = document.getElementById('view');
   if (viewEl) {
-    viewEl.addEventListener(
-      'pointerdown',
-      (ev) => {
-        if (!CR_PERF_PROBE || state !== STATE.PLAY) return;
-        const r = viewEl.getBoundingClientRect();
-        const x = ev.clientX - r.left;
-        const y = ev.clientY - r.top;
-        if (x <= 172 && y <= 132) {
-          crPerfProbeReset();
-          _crPerfInstalled = true;
-        }
-      },
-      { passive: true }
-    );
+    viewEl.addEventListener('pointerdown', (event) => {
+      if (state !== STATE.PLAY) return;
+      const rect = viewEl.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      if (x <= 172 && y <= 156) crPerfProbeReset();
+    }, { passive: true });
   }
 }
 
@@ -12632,26 +13082,41 @@ function crPerfProbeFrameStart(now) {
   if (_crPerfLastFrameNow > 0 && state === STATE.PLAY && !paused) {
     const gap = now - _crPerfLastFrameNow;
     if (gap > 0 && gap < 500) {
-      _crPerfCap(_crPerf.frameMs, gap, 360);
+      _crPerfCap(_crPerf.frameMs, gap, 720);
       _crPerf.framesSampled++;
       if (gap > 33) _crPerf.over33++;
       if (gap > 50) _crPerf.over50++;
+      if (gap < 9.5) _crPerf.frameBuckets.under9_5++;
+      else if (gap < 13.5) _crPerf.frameBuckets.from9_5To13_5++;
+      else if (gap < 20) _crPerf.frameBuckets.from13_5To20++;
+      else if (gap < 33) _crPerf.frameBuckets.from20To33++;
+      else if (gap <= 50) _crPerf.frameBuckets.from33To50++;
+      else _crPerf.frameBuckets.over50++;
     }
   }
   _crPerfLastFrameNow = now;
 }
 
-function crPerfProbeRefreshSnap(now) {
+function _crPerfRound(value, digits) {
+  const scale = Math.pow(10, digits == null ? 2 : digits);
+  return Math.round(_crPerfFinite(value) * scale) / scale;
+}
+
+function crPerfProbeRefreshSnap(now, force) {
   if (!CR_PERF_PROBE || !_crPerf) return;
-  if (_crPerfLastHudAt && now - _crPerfLastHudAt < 500) return;
+  if (!force && _crPerfLastHudAt && now - _crPerfLastHudAt < 500) return;
   _crPerfLastHudAt = now;
 
   const frame = _crPerfSummarize(_crPerf.frameMs);
-  const ds = _crPerfSummarize(_crPerf.drawSceneMs);
-  const mm = _crPerfSummarize(_crPerf.minimapMs);
-  const ch = _crPerfSummarize(_crPerf.chromeMs);
-  const hud = _crPerfSummarize(_crPerf.hudMs);
-  const fps = frame.avg > 0 ? 1000 / frame.avg : 0;
+  const scene = _crPerfSummarize(_crPerf.drawSceneMs);
+  const minimapSummary = _crPerfSummarize(_crPerf.minimapMs);
+  const chromeSummary = _crPerfSummarize(_crPerf.chromeMs);
+  const hudSummary = _crPerfSummarize(_crPerf.hudMs);
+  const simulation = _crPerfSummarize(_crPerf.simulationMs);
+  const mobileMenu = _crPerfSummarize(_crPerf.mobileMenuMs);
+  const mobileLayout = _crPerfSummarize(_crPerf.mobileLayoutMs);
+  const bitmap = _crPerfSummarize(_crPerf.bitmapMs);
+  const mobileStats = _crPerfReadMobileStats();
 
   let district = '?';
   let seed = '?';
@@ -12659,85 +13124,130 @@ function crPerfProbeRefreshSnap(now) {
     district = String(game.district != null ? game.district : crGetSelectedStartDistrict());
     seed = String(game.seed != null ? game.seed : '');
   } catch (e) {}
-
   const mob = typeof mobileMode !== 'undefined' && mobileMode ? 'mob' : 'desk';
-  const port =
-    typeof isMobilePortrait === 'function' && isMobilePortrait()
-      ? 'port'
-      : typeof crIsPortraitLayout === 'function' && crIsPortraitLayout()
-        ? 'port'
-        : 'land';
+  const portrait =
+    typeof isMobilePortrait === 'function' && isMobilePortrait() ? 'port' :
+      typeof crIsPortraitLayout === 'function' && crIsPortraitLayout() ? 'port' : 'land';
+  const externalLayoutFlushes = mobileStats ?
+    _crPerfCounterDelta(mobileStats, _crPerfMobileBaseline, 'layoutFlushes') : null;
 
   _crPerfSnap = {
-    BUILD_ID: typeof BUILD_ID !== 'undefined' ? BUILD_ID : '?',
-    fps: fps.toFixed(1),
-    frameAvg: frame.avg.toFixed(2),
-    frameP95: frame.p95.toFixed(2),
-    frameWorst: frame.worst.toFixed(2),
+    BUILD_ID: typeof BUILD_ID !== 'undefined' ? String(BUILD_ID) : '?',
+    fps: _crPerfRound(frame.avg > 0 ? 1000 / frame.avg : 0, 1),
+    frameAvg: _crPerfRound(frame.avg),
+    frameP95: _crPerfRound(frame.p95),
+    frameWorst: _crPerfRound(frame.worst),
     over33: _crPerf.over33,
     over50: _crPerf.over50,
-    drawScene: ds.avg.toFixed(2),
-    minimap: mm.avg.toFixed(2),
-    chrome: ch.avg.toFixed(2),
-    hud: hud.avg.toFixed(2),
+    simulationTotal: _crPerfRound(_crPerf.simulationTotal),
+    simulationAvg: _crPerfRound(_crPerf.simulationCalls ? _crPerf.simulationTotal / _crPerf.simulationCalls : 0),
+    simulationP95: _crPerfRound(simulation.p95),
+    simulationWorst: _crPerfRound(_crPerf.simulationWorst),
+    stepFrames0: _crPerf.stepFrames0,
+    stepFrames1: _crPerf.stepFrames1,
+    stepFrames2: _crPerf.stepFrames2,
+    stepFrames3Plus: _crPerf.stepFrames3Plus,
+    fixedStepDrops: _crPerf.fixedStepDrops,
+    accumulatorAlphaAvg: _crPerfRound(_crPerf.accumulatorAlphaCount ?
+      _crPerf.accumulatorAlphaTotal / _crPerf.accumulatorAlphaCount : 0, 4),
+    accumulatorAlphaMin: _crPerf.accumulatorAlphaMin == null ? 0 :
+      _crPerfRound(_crPerf.accumulatorAlphaMin, 4),
+    accumulatorAlphaMax: _crPerf.accumulatorAlphaMax == null ? 0 :
+      _crPerfRound(_crPerf.accumulatorAlphaMax, 4),
+    interpolationActive: _crPerf.interpolationActive ||
+      (typeof crGetInterpolatedRenderPose === 'function' &&
+        typeof crGetRenderInterpolationAlpha === 'function'),
+    interpolationAlphaAvg: _crPerfRound(_crPerf.alphaCount ? _crPerf.alphaTotal / _crPerf.alphaCount : 0, 4),
+    interpolationAlphaMin: _crPerf.alphaMin == null ? 0 : _crPerfRound(_crPerf.alphaMin, 4),
+    interpolationAlphaMax: _crPerf.alphaMax == null ? 0 : _crPerfRound(_crPerf.alphaMax, 4),
+    interpolatedFrames: _crPerf.interpolatedFrames,
+    zeroStepInterpolatedFrames: _crPerf.zeroStepInterpolatedFrames,
+    repeatedRenderPoseFrames: _crPerf.repeatedRenderPoseFrames,
+    renderDeltaAvg: _crPerfRound(_crPerf.renderDeltaCount ? _crPerf.renderDeltaTotal / _crPerf.renderDeltaCount : 0, 4),
+    renderDeltaWorst: _crPerfRound(_crPerf.renderDeltaWorst, 4),
+    renderDeltaDiscontinuityWorst: _crPerfRound(_crPerf.renderDeltaDiscontinuityWorst, 4),
+    drawScene: _crPerfRound(scene.avg),
+    minimap: _crPerfRound(minimapSummary.avg),
+    chrome: _crPerfRound(chromeSummary.avg),
+    hud: _crPerfRound(hudSummary.avg),
+    mobileMenuTotal: _crPerfRound(_crPerf.mobileMenuTotal),
+    mobileMenuAvg: _crPerfRound(_crPerf.mobileMenuCalls ? _crPerf.mobileMenuTotal / _crPerf.mobileMenuCalls : mobileMenu.avg),
+    mobileMenuCalls: _crPerf.mobileMenuCalls,
+    drawMobileMenuCalls: _crPerf.mobileMenuCalls,
+    mobileMenuDomWorkCalls: _crPerfCounterDelta(mobileStats, _crPerfMobileBaseline, 'uiFlushes'),
+    mobileLayoutTotal: _crPerfRound(_crPerf.mobileLayoutTotal),
+    mobileLayoutAvg: _crPerfRound(_crPerf.mobileLayoutCalls ? _crPerf.mobileLayoutTotal / _crPerf.mobileLayoutCalls : mobileLayout.avg),
+    applyMobileControlSettingsCalls: _crPerf.mobileLayoutCalls,
+    mobileLayoutFlushes: externalLayoutFlushes == null ? _crPerf.mobileLayoutCalls : externalLayoutFlushes,
+    mobileStableEarlyOuts: _crPerfCounterDelta(mobileStats, _crPerfMobileBaseline, 'stableEarlyOuts'),
+    safeAreaReads: _crPerfCounterDelta(mobileStats, _crPerfMobileBaseline, 'safeAreaReads'),
+    overrideStorageReads: _crPerfCounterDelta(mobileStats, _crPerfMobileBaseline, 'overrideStorageReads'),
+    bitmapTotal: _crPerfRound(_crPerf.bitmapTotal),
+    bitmapAvg: _crPerfRound(_crPerf.bitmapCalls ? _crPerf.bitmapTotal / _crPerf.bitmapCalls : 0),
+    bitmapP95: _crPerfRound(bitmap.p95),
+    bitmapColumns: _crPerf.bitmapHandled,
+    bitmapCalls: _crPerf.bitmapCalls,
+    bitmapHandledCalls: _crPerf.bitmapHandled,
+    bitmapFailureColumns: _crPerf.bitmapFailureColumns,
+    frameBuckets: Object.assign({}, _crPerf.frameBuckets),
     sprites: _crPerf.spriteCount,
     district,
     seed,
-    canvas: view ? view.width + 'x' + view.height : '?',
-    css: view ? Math.round(view.clientWidth) + 'x' + Math.round(view.clientHeight) : '?',
-    dpr: (devicePixelRatio || 1).toFixed(2),
-    layout: mob + '/' + port,
-    tap: 'tap TL reset',
+    canvas: typeof view !== 'undefined' && view ? view.width + 'x' + view.height : '?',
+    css: typeof view !== 'undefined' && view ? Math.round(view.clientWidth) + 'x' + Math.round(view.clientHeight) : '?',
+    dpr: _crPerfRound(typeof devicePixelRatio !== 'undefined' ? devicePixelRatio : 1, 2),
+    layout: mob + '/' + portrait,
+    frameSamples: _crPerf.frameMs.length,
+    framesSampled: _crPerf.framesSampled,
   };
 }
 
 function crPerfProbeDrawOverlay(ctx, now) {
   if (!CR_PERF_PROBE || !_crPerf) return;
-  crPerfProbeRefreshSnap(now);
+  crPerfProbeRefreshSnap(now, false);
   if (!_crPerfSnap) return;
-
   const s = _crPerfSnap;
+  const buckets = s.frameBuckets;
   const lines = [
     'perf ' + s.BUILD_ID,
-    'fps ' + s.fps + ' avg ' + s.frameAvg + 'ms',
-    'p95 ' + s.frameP95 + ' worst ' + s.frameWorst,
-    '>33ms ' + s.over33 + ' >50ms ' + s.over50,
-    'scene ' + s.drawScene + ' map ' + s.minimap,
-    'chrome ' + s.chrome + ' hud ' + s.hud,
+    'fps ' + s.fps + ' a/p/w ' + s.frameAvg + '/' + s.frameP95 + '/' + s.frameWorst,
+    '>33/50 ' + s.over33 + '/' + s.over50,
+    'sim a/p/w ' + s.simulationAvg + '/' + s.simulationP95 + '/' + s.simulationWorst,
+    'steps 0/1/2/3+ ' + s.stepFrames0 + '/' + s.stepFrames1 + '/' + s.stepFrames2 + '/' + s.stepFrames3Plus,
+    'drops ' + s.fixedStepDrops + ' alpha ' + s.interpolationAlphaAvg,
+    'interp ' + (s.interpolationActive ? 'on ' : 'off ') + s.interpolatedFrames + ' z ' + s.zeroStepInterpolatedFrames,
+    'repeat ' + s.repeatedRenderPoseFrames + ' d ' + s.renderDeltaAvg + '/' + s.renderDeltaWorst,
+    'scene/map ' + s.drawScene + '/' + s.minimap + ' hud ' + s.hud,
+    'mobile ' + s.mobileMenuAvg + '/' + s.mobileLayoutAvg + ' f/e ' + s.mobileLayoutFlushes + '/' + s.mobileStableEarlyOuts,
+    'bitmap ' + s.bitmapAvg + '/' + s.bitmapP95 + ' n ' + s.bitmapColumns,
+    'bkt ' + buckets.under9_5 + '/' + buckets.from9_5To13_5 + '/' + buckets.from13_5To20 + '/' + buckets.from20To33 + '/' + buckets.from33To50 + '/' + buckets.over50,
     'spr ' + s.sprites + ' D' + s.district + ' seed ' + s.seed,
     s.canvas + ' css ' + s.css + ' dpr ' + s.dpr,
-    s.layout + ' ' + s.tap,
+    s.layout + ' tap TL reset',
   ];
-
   const pad = 4;
-  const lh = 10;
-  const w = 168;
-  const h = pad * 2 + lines.length * lh;
+  const lineHeight = 10;
+  const width = 168;
+  const height = pad * 2 + lines.length * lineHeight;
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.fillStyle = 'rgba(0,0,0,0.62)';
-  ctx.fillRect(pad, pad, w, h);
-  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(0,0,0,0.68)';
+  ctx.fillRect(pad, pad, width, height);
+  ctx.font = '8px monospace';
   ctx.fillStyle = '#8fdc8f';
   ctx.textBaseline = 'top';
-  for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], pad + 4, pad + 4 + i * lh);
-  }
+  for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], pad + 4, pad + 4 + i * lineHeight);
   ctx.restore();
 }
 
 function crPerfProbeGetReport() {
   if (!CR_PERF_PROBE || !_crPerf) return null;
-  crPerfProbeRefreshSnap(performance.now());
-  return Object.assign({}, _crPerfSnap, {
-    frameSamples: _crPerf.frameMs.length,
-    framesSampled: _crPerf.framesSampled,
-  });
+  crPerfProbeRefreshSnap(performance.now(), true);
+  return Object.assign({}, _crPerfSnap, { frameBuckets: Object.assign({}, _crPerfSnap.frameBuckets) });
 }
 
-if (CR_PERF_PROBE && new URLSearchParams(location.search).has('perfreset')) {
-  crPerfProbeReset();
-}// ---------------------------------------------------------------------------
+if (CR_PERF_PROBE && new URLSearchParams(location.search).has('perfreset')) crPerfProbeReset();
+// ---------------------------------------------------------------------------
 // SECTION 13 — MAIN LOOP
 // ---------------------------------------------------------------------------
 // Portrait gameplay area: fixed landscape-aspect window at top, controls below.
@@ -12999,12 +13509,92 @@ let crFixedStepAccumulator = 0;
 let crFixedStepLastFrameDt = 0;
 let crFixedStepLastSteps = 0;
 let crFixedStepDroppedFrames = 0;
+let crRenderPosePrevious = null;
+let crRenderPoseCurrent = null;
+let crRenderPoseLifecycleState = null;
+let crRenderPoseLifecycleDistrict = null;
+let crFixedStepVisibilityResetPending = false;
+
+function crReadAuthoritativeRenderPose(){
+  return { x: player.x, y: player.y, angle: player.angle };
+}
+
+function crResetRenderPoseHistory(){
+  const pose = crReadAuthoritativeRenderPose();
+  crRenderPosePrevious = { x: pose.x, y: pose.y, angle: pose.angle };
+  crRenderPoseCurrent = { x: pose.x, y: pose.y, angle: pose.angle };
+  crRenderPoseLifecycleState = state;
+  crRenderPoseLifecycleDistrict = game.district;
+}
+
+function crRenderPoseLifecycleChanged(){
+  return crRenderPoseLifecycleState !== state || crRenderPoseLifecycleDistrict !== game.district;
+}
+
+function crRenderPoseDetachedFromPlayer(){
+  return !crRenderPoseCurrent ||
+    crRenderPoseCurrent.x !== player.x ||
+    crRenderPoseCurrent.y !== player.y;
+}
+
+function crEnsureRenderPoseHistory(){
+  if(!crRenderPosePrevious || !crRenderPoseCurrent || crRenderPoseLifecycleChanged() || crRenderPoseDetachedFromPlayer()){
+    crResetRenderPoseHistory();
+  }
+}
+
+function crCaptureSimulationPoseBeforeStep(){
+  crEnsureRenderPoseHistory();
+  crRenderPosePrevious = {
+    x: crRenderPoseCurrent.x,
+    y: crRenderPoseCurrent.y,
+    angle: crRenderPoseCurrent.angle,
+  };
+}
+
+function crCaptureSimulationPoseAfterStep(){
+  if(crRenderPoseLifecycleChanged()){
+    crResetRenderPoseHistory();
+    return;
+  }
+  const pose = crReadAuthoritativeRenderPose();
+  crRenderPoseCurrent = { x: pose.x, y: pose.y, angle: pose.angle };
+  crRenderPoseLifecycleState = state;
+  crRenderPoseLifecycleDistrict = game.district;
+}
+
+function crGetRenderInterpolationAlpha(){
+  const raw = crFixedStepAccumulator / CR_FIXED_STEP_DT;
+  if(!Number.isFinite(raw) || raw <= 0) return 0;
+  return Math.min(1 - Number.EPSILON, raw);
+}
+
+function crGetInterpolatedRenderPose(){
+  crEnsureRenderPoseHistory();
+  const alpha = crGetRenderInterpolationAlpha();
+  const previous = crRenderPosePrevious;
+  const current = crRenderPoseCurrent;
+  const x = previous.x + (current.x - previous.x) * alpha;
+  const y = previous.y + (current.y - previous.y) * alpha;
+  return {
+    x,
+    y,
+    angle: player.angle,
+    alpha,
+    interpolatedPosition: x !== player.x || y !== player.y,
+    authoritativeX: player.x,
+    authoritativeY: player.y,
+    previousX: previous.x,
+    previousY: previous.y,
+  };
+}
 
 function crResetFixedStepSimulation(){
   crFixedStepAccumulator = 0;
   crFixedStepLastFrameDt = 0;
   crFixedStepLastSteps = 0;
   crFixedStepDroppedFrames = 0;
+  crResetRenderPoseHistory();
 }
 
 function crClampFixedFrameDt(dt){
@@ -13014,12 +13604,15 @@ function crClampFixedFrameDt(dt){
 
 function crStepSimulationFixed(frameDt){
   const dt = crClampFixedFrameDt(frameDt);
+  if(dt !== frameDt) crResetRenderPoseHistory();
   crFixedStepLastFrameDt = dt;
   crFixedStepAccumulator += dt;
 
   let steps = 0;
   while(crFixedStepAccumulator >= CR_FIXED_STEP_DT && steps < CR_FIXED_STEP_MAX_STEPS_PER_FRAME){
+    crCaptureSimulationPoseBeforeStep();
     update(CR_FIXED_STEP_DT);
+    crCaptureSimulationPoseAfterStep();
     crFixedStepAccumulator -= CR_FIXED_STEP_DT;
     steps++;
   }
@@ -13027,6 +13620,7 @@ function crStepSimulationFixed(frameDt){
   if(steps >= CR_FIXED_STEP_MAX_STEPS_PER_FRAME && crFixedStepAccumulator >= CR_FIXED_STEP_DT){
     crFixedStepDroppedFrames++;
     crFixedStepAccumulator = 0;
+    crResetRenderPoseHistory();
   }
 
   crFixedStepLastSteps = steps;
@@ -13051,18 +13645,28 @@ function crGetFixedStepState(){
   };
 }
 
+document.addEventListener('visibilitychange', ()=>{
+  crFixedStepAccumulator = 0;
+  crFixedStepVisibilityResetPending = true;
+  crResetRenderPoseHistory();
+});
+
 let last=performance.now();
 function frame(now){
   if(CR_PERF_PROBE) crPerfProbeEnsureInstalled();
   if(CR_PERF_PROBE) crPerfProbeFrameStart(now);
   if(_crHarnessDepth === 0) crGuardHarnessLeakOutsideCheck();
-  const rawDt = (now-last)/1000; last=now;
+  const rawDt = crFixedStepVisibilityResetPending ? 0 : (now-last)/1000;
+  crFixedStepVisibilityResetPending = false;
+  last=now;
+  crEnsureRenderPoseHistory();
   crApplyPendingInputActions();
   crStepSimulationFixed(rawDt);
+  const renderPose = crGetInterpolatedRenderPose();
 
   if(state===STATE.PLAY || state===STATE.UPGRADE){
     // full game scene render
-    drawScene(now);
+    drawScene(now, renderPose);
     ctx.imageSmoothingEnabled=false;
     ctx.fillStyle='#000'; ctx.fillRect(0,0,innerWidth,innerHeight);
     const {dw,dh,ox,oy} = playfieldLayout();
@@ -13090,7 +13694,7 @@ function frame(now){
   }
   else if(state===STATE.RESULTS){
     // dimmed game scene behind results
-    drawScene(now);
+    drawScene(now, renderPose);
     ctx.imageSmoothingEnabled=false;
     ctx.fillStyle='#000'; ctx.fillRect(0,0,innerWidth,innerHeight);
     const {dw,dh,ox,oy} = playfieldLayout();
@@ -13117,6 +13721,7 @@ function frame(now){
   if(CR_PERF_PROBE && ctx) crPerfProbeDrawOverlay(ctx, now);
   requestAnimationFrame(frame);
 }
+crResetFixedStepSimulation();
 requestAnimationFrame(frame);
 
 function updateSeed(newSeed){
@@ -14017,6 +14622,7 @@ function crRestoreHarnessState(snap){
   Object.assign(lookTouch, snap.lookTouch);
   crLsSetSaveRaw(snap.lsSaveRaw);
   clearInputState();
+  crResetRenderPoseHistory();
 }
 
 function crForceSafeTitleAfterHarness(){

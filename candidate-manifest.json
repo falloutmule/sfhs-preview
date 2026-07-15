@@ -5,20 +5,24 @@
   "project": {
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
-    "sourceBranch": "feature/authored-d1-bitmap-building",
-    "sourceCommit": "f9add6d665c21429b6767db78616d580fbbf482b"
+    "sourceBranch": "feature/samsung-movement-smoothing",
+    "sourceCommit": "b27e930112edef5c8fc05c848906dca688c79e39"
   },
   "candidate": {
-    "candidateId": "authoredd1bitmap1-f9add6d",
-    "buildId": "authoredd1bitmap1",
-    "indexHtmlBytes": 1236246,
-    "indexHtmlSha256": "0a410a2279041be94b2db8b0ad966a23f289f0d79c182b2f7d8fa79c06e8bf96"
+    "candidateId": "movementfeel1",
+    "buildId": "movementfeel1",
+    "indexHtmlBytes": 1263401,
+    "indexHtmlSha256": "52f20be446949111394315617e3b576fb09e386990ce17d5c5a38fc90346284f",
+    "authoredStaticSha256": "98168c6d1b5c72bbf802ad69caf2badfa2228d878a9b712f72f4a4cae00bdd82",
+    "authoredStaticUnchanged": true,
+    "bitmapSha256": "bffb437c0c6772669233bd58124cded53fe8e32faa9b0e3c96736c4f87ec140c",
+    "bitmapUnchanged": true
   },
   "verification": {
-    "ordinaryGameSmoke": "PASS_33_OF_33",
-    "independentChecker": "PASS",
-    "userVisualAcceptance": "pending",
-    "samsungAcceptance": "pending"
+    "technicalChecker": "PASS",
+    "technicalCheckerReportSha256": "3fb8e409dbdd906dcfb8344602f3ad2d4a546fe7739f58c741f838488f98dab8",
+    "samsungSmoothnessAcceptance": "pending",
+    "productionRelease": "pending"
   },
-  "updatedAtUtc": "2026-07-15T14:23:11Z"
+  "updatedAtUtc": "2026-07-15T19:12:33Z"
 }
