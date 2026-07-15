@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "previewRepository": "falloutmule/sfhs-preview",
+  "previewPolicy": "latest-candidate-only",
+  "project": {
+    "id": "solidarity-not-charity-can-run",
+    "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+    "sourceBranch": "feature/authored-d1-bitmap-building",
+    "sourceCommit": "f9add6d665c21429b6767db78616d580fbbf482b"
+  },
+  "candidate": {
+    "candidateId": "authoredd1bitmap1-f9add6d",
+    "buildId": "authoredd1bitmap1",
+    "indexHtmlBytes": 1236246,
+    "indexHtmlSha256": "0a410a2279041be94b2db8b0ad966a23f289f0d79c182b2f7d8fa79c06e8bf96"
+  },
+  "verification": {
+    "ordinaryGameSmoke": "PASS_33_OF_33",
+    "independentChecker": "PASS",
+    "userVisualAcceptance": "pending",
+    "samsungAcceptance": "pending"
+  },
+  "updatedAtUtc": "2026-07-15T14:23:11Z"
+}
