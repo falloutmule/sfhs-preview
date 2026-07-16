@@ -5,36 +5,42 @@
   "project": {
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
-    "sourceBranch": "feature/far-field-smoothing-lab",
-    "sourceCommit": "421d9f4520a58c540fa25edf5484f139cf967d43"
+    "sourceBranch": "feature/far-field-option2-final",
+    "sourceCommit": "7b6c71f1f1c417c1f552cbee11926b8e6769021a",
+    "sourceTree": "19a6e5fc10052e8e8f03b61bef7d31c0fd61d89a"
   },
   "candidate": {
-    "candidateId": "farfieldlab1",
-    "buildId": "farfieldlab1",
-    "indexHtmlBytes": 1302779,
-    "indexHtmlSha256": "859dd714e12017e2759114e88b2f06274130664ec2f6145f8b7ffb859f17e717",
+    "candidateId": "farfieldsmooth1",
+    "buildId": "farfieldsmooth1",
+    "indexHtmlBytes": 1302797,
+    "indexHtmlSha256": "316fca1b500e4077a3619ee2b1be5e04309fc08c9e14cfe9377bc4be8ebffb82",
     "authoredStaticSha256": "98168c6d1b5c72bbf802ad69caf2badfa2228d878a9b712f72f4a4cae00bdd82",
     "authoredStaticUnchanged": true,
+    "bitmapBytes": 185412,
     "bitmapSha256": "bffb437c0c6772669233bd58124cded53fe8e32faa9b0e3c96736c4f87ec140c",
     "bitmapUnchanged": true,
-    "modes": {
-      "ffres": ["320", "400", "480"],
-      "ffangle": ["raw", "interp", "smooth"],
-      "ffproj": ["legacy", "subpixel"]
-    },
-    "selected": {
+    "defaults": {
       "ffres": "400",
       "ffangle": "interp",
       "ffproj": "subpixel"
     },
-    "controlUrl": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1&ffres=320&ffangle=raw&ffproj=legacy",
-    "candidateUrl": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1&ffres=400&ffangle=interp&ffproj=subpixel"
+    "diagnosticModes": {
+      "ffres": ["320", "400", "480"],
+      "ffangle": ["raw", "interp", "smooth"],
+      "ffproj": ["legacy", "subpixel"]
+    },
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1",
+    "explicitOption2Url": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1&ffres=400&ffangle=interp&ffproj=subpixel"
   },
   "verification": {
+    "deterministicSuite": "PASS",
+    "deterministicSuiteSha256": "07337c8644f00c7df919fe465a9fbeceb8062a87fcd2f0b431931345afff0de5",
+    "browserEquivalence": "PASS",
+    "browserEquivalenceSha256": "fef4d33f276b07e75ca3d97961575524dda63278479933e0c7792d73b4ec6937",
     "technicalChecker": "PASS",
-    "technicalCheckerReportSha256": "38afca11ca54cf7c2199a711b7fb8bcb35fd70b3b0d073a6983a4456cc4c2b74",
-    "samsungSmoothnessAcceptance": "pending",
-    "productionRelease": "pending"
+    "technicalCheckerReportSha256": "df3e4a900867b2f74e5bf63de95606709b5bcc4c6685a74738fb8a009d3ab194",
+    "finalSamsungAcceptance": "pending",
+    "productionRelease": "not-authorized"
   },
-  "updatedAtUtc": "2026-07-16T01:17:41Z"
+  "updatedAtUtc": "2026-07-16T09:45:02Z"
 }

@@ -397,13 +397,13 @@ function crResolveRenderProfile(params){
       query = null;
     }
   }
-  if(!query || typeof query.get !== 'function') return CR_RENDER_PROFILES['320'];
+  if(!query || typeof query.get !== 'function') return CR_RENDER_PROFILES['400'];
   let id;
   try { id = query.get('ffres'); }
-  catch(_err) { return CR_RENDER_PROFILES['320']; }
+  catch(_err) { return CR_RENDER_PROFILES['400']; }
   return Object.prototype.hasOwnProperty.call(CR_RENDER_PROFILES, id)
     ? CR_RENDER_PROFILES[id]
-    : CR_RENDER_PROFILES['320'];
+    : CR_RENDER_PROFILES['400'];
 }
 
 let crResolvedRenderProfile = crResolveRenderProfile();
@@ -413,13 +413,13 @@ let crRenderProjectionTables = null;
 let crRenderTargetRebuildCount = 0;
 
 function crCanonicalRenderProfile(profile){
-  if(!profile || typeof profile !== 'object') return CR_RENDER_PROFILES['320'];
+  if(!profile || typeof profile !== 'object') return CR_RENDER_PROFILES['400'];
   let id;
   try { id = profile.id; }
-  catch(_err) { return CR_RENDER_PROFILES['320']; }
+  catch(_err) { return CR_RENDER_PROFILES['400']; }
   return Object.prototype.hasOwnProperty.call(CR_RENDER_PROFILES, id)
     ? CR_RENDER_PROFILES[id]
-    : CR_RENDER_PROFILES['320'];
+    : CR_RENDER_PROFILES['400'];
 }
 
 function crGetRenderProfile(){
@@ -711,7 +711,7 @@ const inp = {
   lookDeltaRad:0,
   _active:false, // true when any touch is on screen
 };
-var BUILD_ID = 'farfieldlab1'; window.BUILD_ID = BUILD_ID;
+var BUILD_ID = 'farfieldsmooth1'; window.BUILD_ID = BUILD_ID;
 const CR_FPV_STREET_SHIMMER_FIX = 1;
 const CR_FPV_STREET_MATTE = true;
 const CR_FPV_WALL_LINE_FIX = 1;
@@ -11279,10 +11279,10 @@ function drawScene(now, renderPose){
 const CR_FFPROJ_ALLOWLIST = Object.freeze(['legacy', 'subpixel']);
 
 function crParseFarFieldProjectionMode(params){
-  if(!params || typeof params.get !== 'function') return 'legacy';
+  if(!params || typeof params.get !== 'function') return 'subpixel';
   let value;
-  try{ value = params.get('ffproj'); }catch(_error){ return 'legacy'; }
-  return CR_FFPROJ_ALLOWLIST.indexOf(value) >= 0 ? value : 'legacy';
+  try{ value = params.get('ffproj'); }catch(_error){ return 'subpixel'; }
+  return CR_FFPROJ_ALLOWLIST.indexOf(value) >= 0 ? value : 'subpixel';
 }
 
 function crInitialFarFieldProjectionParams(){
@@ -12893,12 +12893,12 @@ function crResolveRenderAngleMode(params){
       const search = typeof location !== 'undefined' && location ? location.search : '';
       query = new URLSearchParams(search || '');
     } catch(_e){
-      return 'raw';
+      return 'interp';
     }
   }
   let value;
-  try { value = query.get('ffangle'); } catch(_e){ return 'raw'; }
-  return CR_RENDER_ANGLE_MODES.indexOf(value) >= 0 ? value : 'raw';
+  try { value = query.get('ffangle'); } catch(_e){ return 'interp'; }
+  return CR_RENDER_ANGLE_MODES.indexOf(value) >= 0 ? value : 'interp';
 }
 
 const _crSelectedRenderAngleMode = crResolveRenderAngleMode();
