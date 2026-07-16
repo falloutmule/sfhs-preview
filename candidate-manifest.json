@@ -27,8 +27,8 @@
       "ffangle": "interp",
       "ffproj": "subpixel"
     },
-    "controlUrl": "https://falloutmule.github.io/sfhs-preview/",
-    "candidateUrl": "https://falloutmule.github.io/sfhs-preview/?ffres=400&ffangle=interp&ffproj=subpixel"
+    "controlUrl": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1&ffres=320&ffangle=raw&ffproj=legacy",
+    "candidateUrl": "https://falloutmule.github.io/sfhs-preview/?perfprobe=1&mobile=on&portraitlayout=1&ffres=400&ffangle=interp&ffproj=subpixel"
   },
   "verification": {
     "technicalChecker": "PASS",
@@ -36,5 +36,5 @@
     "samsungSmoothnessAcceptance": "pending",
     "productionRelease": "pending"
   },
-  "updatedAtUtc": "2026-07-16T01:08:55Z"
+  "updatedAtUtc": "2026-07-16T01:17:41Z"
 }
