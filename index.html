@@ -372,11 +372,134 @@ window.addEventListener('unhandledrejection', e=>{
 // ---------------------------------------------------------------------------
 const view = document.getElementById('view');
 const ctx  = view.getContext('2d');
-const RW = 320, RH = 200;                      // internal render resolution
-const buf = document.createElement('canvas'); buf.width = RW; buf.height = RH;
-const bctx = buf.getContext('2d');
-const zbuffer = new Float32Array(RW);          // per-column wall distance (sprite occlusion)
+let RW = 320, RH = 200;                        // profile-driven internal render resolution
+let buf = document.createElement('canvas'); buf.width = RW; buf.height = RH;
+let bctx = buf.getContext('2d');
+bctx.imageSmoothingEnabled = false;
+let zbuffer = new Float32Array(RW);            // per-column wall distance (sprite occlusion)
 
+// ---------------------------------------------------------------------------
+// FAR-FIELD LAB — SELECTABLE INTERNAL RENDER RESOLUTION PROFILES
+// ---------------------------------------------------------------------------
+const CR_FFRES_ALLOWLIST = Object.freeze(['320', '400', '480']);
+const CR_RENDER_PROFILES = Object.freeze({
+  '320': Object.freeze({ id: '320', width: 320, height: 200, scale: 1 }),
+  '400': Object.freeze({ id: '400', width: 400, height: 250, scale: 1.25 }),
+  '480': Object.freeze({ id: '480', width: 480, height: 300, scale: 1.5 })
+});
+
+function crResolveRenderProfile(params){
+  let query = params;
+  if(query == null){
+    try {
+      query = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;
+    } catch(_err) {
+      query = null;
+    }
+  }
+  if(!query || typeof query.get !== 'function') return CR_RENDER_PROFILES['320'];
+  let id;
+  try { id = query.get('ffres'); }
+  catch(_err) { return CR_RENDER_PROFILES['320']; }
+  return Object.prototype.hasOwnProperty.call(CR_RENDER_PROFILES, id)
+    ? CR_RENDER_PROFILES[id]
+    : CR_RENDER_PROFILES['320'];
+}
+
+let crResolvedRenderProfile = crResolveRenderProfile();
+let crAppliedRenderProfile = null;
+let crRenderProfileProof = null;
+let crRenderProjectionTables = null;
+let crRenderTargetRebuildCount = 0;
+
+function crCanonicalRenderProfile(profile){
+  if(!profile || typeof profile !== 'object') return CR_RENDER_PROFILES['320'];
+  let id;
+  try { id = profile.id; }
+  catch(_err) { return CR_RENDER_PROFILES['320']; }
+  return Object.prototype.hasOwnProperty.call(CR_RENDER_PROFILES, id)
+    ? CR_RENDER_PROFILES[id]
+    : CR_RENDER_PROFILES['320'];
+}
+
+function crGetRenderProfile(){
+  return crAppliedRenderProfile || crResolvedRenderProfile;
+}
+
+function crRenderTargetsMatch(profile){
+  return RW === profile.width && RH === profile.height &&
+    !!buf && buf.width === profile.width && buf.height === profile.height &&
+    !!bctx && zbuffer instanceof Float32Array && zbuffer.length === profile.width;
+}
+
+function crResetRenderTargets(profile){
+  const selected = crCanonicalRenderProfile(profile);
+  const rebuilt = !crRenderTargetsMatch(selected);
+  let nextBuf = buf;
+  let nextBctx = bctx;
+  let nextZbuffer = zbuffer;
+
+  // Build replacement targets first so the renderer cannot observe mixed dimensions.
+  if(rebuilt){
+    nextBuf = document.createElement('canvas');
+    nextBuf.width = selected.width;
+    nextBuf.height = selected.height;
+    nextBctx = nextBuf.getContext('2d');
+    if(!nextBctx) throw new Error('Unable to create internal render context');
+    nextBctx.imageSmoothingEnabled = false;
+    nextZbuffer = new Float32Array(selected.width);
+  } else {
+    bctx.imageSmoothingEnabled = false;
+  }
+
+  if(rebuilt){
+    RW = selected.width;
+    RH = selected.height;
+    buf = nextBuf;
+    bctx = nextBctx;
+    zbuffer = nextZbuffer;
+    if(typeof skyCanvas !== 'undefined') skyCanvas = null;
+    if(typeof skyBuilt !== 'undefined') skyBuilt = null;
+    crRenderProjectionTables = null;
+    crRenderTargetRebuildCount++;
+  }
+
+  crRenderProfileProof = Object.freeze({
+    profile: selected,
+    bufferWidth: buf.width,
+    bufferHeight: buf.height,
+    zbufferLength: zbuffer.length,
+    skyInvalidated: rebuilt,
+    rebuilt
+  });
+  return crRenderProfileProof;
+}
+
+function crGetRenderResolutionStats(){
+  const profile = crGetRenderProfile();
+  return Object.freeze({
+    profileId: profile.id,
+    internalWidth: RW,
+    internalHeight: RH,
+    wallColumnsPerFrame: RW,
+    // The renderer/profiler coordinator supplies measured column/timing facts.
+    spriteColumnsDrawn: null,
+    sceneAverage: null,
+    sceneP95: null,
+    sceneWorst: null,
+    frameP95: null,
+    targetRebuildCount: crRenderTargetRebuildCount
+  });
+}
+
+function crApplyRenderProfile(profile){
+  const selected = crCanonicalRenderProfile(profile);
+  if(crAppliedRenderProfile === selected && crRenderTargetsMatch(selected)) return selected;
+  crResetRenderTargets(selected);
+  crAppliedRenderProfile = selected;
+  crResolvedRenderProfile = selected;
+  return selected;
+}
 // ---------------------------------------------------------------------------
 // SECTION 0b — FULLSCREEN API HELPERS
 // ---------------------------------------------------------------------------
@@ -588,7 +711,7 @@ const inp = {
   lookDeltaRad:0,
   _active:false, // true when any touch is on screen
 };
-var BUILD_ID = 'movementfeel1'; window.BUILD_ID = BUILD_ID;
+var BUILD_ID = 'farfieldlab1'; window.BUILD_ID = BUILD_ID;
 const CR_FPV_STREET_SHIMMER_FIX = 1;
 const CR_FPV_STREET_MATTE = true;
 const CR_FPV_WALL_LINE_FIX = 1;
@@ -678,23 +801,85 @@ const tzone = { active:false, id:null, lastX:0 };
 const lookTouch = { id:null, lastX:0 };
 /** Incremented when a LOOK pad drag applies angle (tests / dedupe verification). */
 let _crLookPadApplyCount = 0;
+const CR_RAW_LOOK_SAMPLE_CAP = 512;
+let _crRawLookDeltas = [];
+let _crRawLookEventTimestamps = [];
+let _crPendingLookEventTimestamp = null;
 function crResetLookPadApplyCount(){ _crLookPadApplyCount = 0; }
 function crGetLookPadApplyCount(){ return _crLookPadApplyCount; }
+function crRawLookProfilerActive(){
+  try { return typeof CR_PERF_PROBE !== 'undefined' && !!CR_PERF_PROBE; } catch(_e){ return false; }
+}
+function crRawLookNowMs(){
+  try {
+    if(typeof performance !== 'undefined' && performance && typeof performance.now === 'function'){
+      const now = Number(performance.now());
+      if(Number.isFinite(now)) return now;
+    }
+  } catch(_e){}
+  return 0;
+}
+function crResetRawTouchLookStats(){
+  _crRawLookDeltas = [];
+  _crRawLookEventTimestamps = [];
+  _crPendingLookEventTimestamp = null;
+}
+function crResetPauseRenderHistory(reason){
+  try {
+    if(typeof crResetRenderPoseHistory === 'function') return crResetRenderPoseHistory(reason);
+    if(typeof crResetRenderAngleHistory === 'function') return crResetRenderAngleHistory(reason);
+  } catch(_e){}
+  return null;
+}
+function crGetRawTouchLookStats(){
+  return Object.freeze({
+    rawLookEvents: _crRawLookDeltas.length,
+    rawDeltas: Object.freeze(_crRawLookDeltas.slice()),
+    eventTimestamps: Object.freeze(_crRawLookEventTimestamps.slice()),
+  });
+}
+function crApplyRawTouchLookDelta(deltaRad, eventTimestamp){
+  const delta = Number(deltaRad);
+  if(!Number.isFinite(delta) || delta === 0) return false;
+  inp.lookDeltaRad += delta;
+  if(crRawLookProfilerActive()){
+    const rawTime = Number(eventTimestamp);
+    const timestamp = Number.isFinite(rawTime) ? rawTime : crRawLookNowMs();
+    _crRawLookDeltas.push(delta);
+    _crRawLookEventTimestamps.push(timestamp);
+    if(_crRawLookDeltas.length > CR_RAW_LOOK_SAMPLE_CAP){
+      _crRawLookDeltas.splice(0, _crRawLookDeltas.length - CR_RAW_LOOK_SAMPLE_CAP);
+      _crRawLookEventTimestamps.splice(0, _crRawLookEventTimestamps.length - CR_RAW_LOOK_SAMPLE_CAP);
+    }
+    if(_crPendingLookEventTimestamp === null) _crPendingLookEventTimestamp = timestamp;
+  }
+  return true;
+}
 /** Single apply site for #mlookpad horizontal look drag (deadband unchanged). */
-function crApplyLookPadDx(dx){
+function crApplyLookPadDx(dx, eventTimestamp){
   if(state!==STATE.PLAY || paused) return false;
   if(Math.abs(dx) <= 0.2) return false;
-  inp.lookDeltaRad += dx * mobileLookSens();
+  crApplyRawTouchLookDelta(dx * mobileLookSens(), eventTimestamp);
   _crLookPadApplyCount++;
   return true;
 }
 /** Apply accumulated look delta from input handlers (simulation step). */
 function crApplyPendingInputActions(){
   if(inp.lookDeltaRad){
+    const before = player.angle;
+    const eventTimestamp = _crPendingLookEventTimestamp;
+    const appliedTimestamp = crRawLookNowMs();
     player.angle += inp.lookDeltaRad;
     inp.lookDeltaRad = 0;
+    _crPendingLookEventTimestamp = null;
+    try {
+      if(typeof crRecordAuthoritativeAngleChange === 'function'){
+        crRecordAuthoritativeAngleChange(eventTimestamp, appliedTimestamp, before, player.angle);
+      }
+    } catch(_e){}
   }
 }
+
 let lookHintUsed = false;
 let lookHintShownAt = 0;
 const LOOK_HINT_TIMEOUT_MS = 5000;
@@ -982,6 +1167,7 @@ function crEnterControlEditMode(){
   if(!isMobilePortrait()){ showToast('EDIT CONTROLS: portrait layout only', 2600); return; }
   clearInputState();
   paused = true;
+  crResetPauseRenderHistory('pause-entry');
   rmenuClearForGameplay();
   const r = document.getElementById('rmenu');
   if(r) r.classList.remove('options-tune');
@@ -1029,6 +1215,7 @@ function crFinishControlEditMode(save){
   crShowControlEditChrome(false);
   crSyncControlEditSelectionUI();
   paused = false;
+  crResetPauseRenderHistory('pause-resume');
   clearInputState();
   applyMobileControlSettings();
   drawMobileMenu();
@@ -1819,14 +2006,14 @@ function bindMobileControls(){
     if(lpadTouchPtr && e.pointerId === lpadTouchPtr.id){
       e.preventDefault(); e.stopPropagation();
       const dx = e.clientX - lpadTouchPtr.lastX;
-      if(crApplyLookPadDx(dx)){ lpadTouchPtr.lastX = e.clientX; lookTouch.lastX = e.clientX; }
+      if(crApplyLookPadDx(dx, e.timeStamp)){ lpadTouchPtr.lastX = e.clientX; lookTouch.lastX = e.clientX; }
       return;
     }
     if(e.pointerType === 'touch') return;
     if(!lpadMousePtr || e.pointerId !== lpadMousePtr.id) return;
     e.preventDefault(); e.stopPropagation();
     const dx = e.clientX - lpadMousePtr.startX;
-    if(crApplyLookPadDx(dx)) lpadMousePtr.startX = e.clientX;
+    if(crApplyLookPadDx(dx, e.timeStamp)) lpadMousePtr.startX = e.clientX;
     touchDebug({type:'look_circle_move', orient:isMobilePortrait()?'port':'land', dx, angle:player.angle});
   },{passive:false});
 
@@ -1880,7 +2067,7 @@ function bindMobileControls(){
     if(Math.abs(dx) > 0.5){
       mrPtr.startX = e.clientX;
       if(state===STATE.PLAY && !paused){
-        inp.lookDeltaRad += dx * mobileLookSens();
+        crApplyRawTouchLookDelta(dx * mobileLookSens(), e.timeStamp);
       }
     }
     touchDebug({type:'land_look_move', dx, angle:player.angle});
@@ -1949,6 +2136,7 @@ function bindMobileControls(){
       if(!paused){
         clearInputState();
         paused=true; SAVE.save(); crTriggerSoundCue('menuHelp');
+        crResetPauseRenderHistory('pause-entry');
         drawMobileMenu();
       }
     };
@@ -1993,7 +2181,7 @@ function bindMobileControls(){
         tzone.lastX = t.clientX;
         if(state===STATE.PLAY && !paused){
           if(Math.abs(dx) > 2) dismissLookHint();
-          inp.lookDeltaRad += dx * mobileLookSens();
+          crApplyRawTouchLookDelta(dx * mobileLookSens(), e.timeStamp);
         }
       }
       if(lookTouch.id !== null && t.identifier === lookTouch.id){
@@ -2002,7 +2190,7 @@ function bindMobileControls(){
           // Pointer capture on #mlookpad owns touch/pen drags; skip doc touchmove dup (Chrome Android).
           if(lpadTouchPtr === null){
             const dx = t.clientX - lookTouch.lastX;
-            if(crApplyLookPadDx(dx)){
+            if(crApplyLookPadDx(dx, e.timeStamp)){
               lookTouch.lastX = t.clientX;
               touchDebug({type:'look_circle_touch_move', orient:isMobilePortrait()?'port':'land', dx, angle:player.angle, joyId:joy.id, lookId:lookTouch.id});
             }
@@ -2256,7 +2444,7 @@ function rmenuAction(action){
       break;
     case 'result-lb': state=STATE.LB; _rmSel=0; break;
     case 'result-title': state=STATE.TITLE; _rmSel=0; break;
-    case 'pause-resume': paused=false; rmenuHide(); clearInputState(); break;
+    case 'pause-resume': paused=false; crResetPauseRenderHistory('pause-resume'); rmenuHide(); clearInputState(); break;
     case 'pause-help': showOnboardingHelp({ fromPause: true }); break;
     case 'show-onboarding': showOnboardingHelp({}); break;
     case 'pause-restart': paused=false; rmenuHide(); SAVE.clear(); restartRun(false); break;
@@ -10973,6 +11161,40 @@ function drawScene(now, renderPose){
     const groundBottomY = proj.groundBottomY;
     const startCol=Math.floor(screenX-screenW/2);
     const endCol=Math.ceil(screenX+screenW/2);
+    let farFieldProjection = null;
+    let useSubpixelProjection = false;
+    try {
+      if(typeof crProjectFarFieldSprite === 'function'){
+        const spriteKind = s.obj && s.obj.kind ? s.obj.kind : (s.tex === TEX.can ? 'can' : (s.obj === game.exit ? 'exit' : 'sprite'));
+        farFieldProjection = crProjectFarFieldSprite({
+          projection: proj,
+          depth,
+          textureWidth: s.tex.width,
+          renderWidth: RW,
+          moving: !!(renderPose && renderPose.interpolatedPosition),
+          spriteKey: spriteKind + ':' + String(s.obj && s.obj.x) + ':' + String(s.obj && s.obj.y)
+        });
+        const farFieldNumbers = farFieldProjection ? [
+          farFieldProjection.depth, farFieldProjection.screenX, farFieldProjection.screenW,
+          farFieldProjection.screenH, farFieldProjection.topY, farFieldProjection.groundBottomY,
+          farFieldProjection.visualLeft, farFieldProjection.visualRight, farFieldProjection.visualWidth,
+          farFieldProjection.occlusionStartCol, farFieldProjection.occlusionEndCol,
+          farFieldProjection.sourceWidth
+        ] : [];
+        useSubpixelProjection = !!(farFieldProjection && farFieldProjection.mode === 'subpixel' &&
+          farFieldNumbers.every(Number.isFinite) &&
+          Number.isInteger(farFieldProjection.occlusionStartCol) &&
+          Number.isInteger(farFieldProjection.occlusionEndCol) &&
+          farFieldProjection.occlusionStartCol >= 0 &&
+          farFieldProjection.occlusionEndCol >= farFieldProjection.occlusionStartCol &&
+          farFieldProjection.occlusionEndCol <= RW &&
+          farFieldProjection.sourceWidth === s.tex.width &&
+          typeof crDrawFarFieldSpriteRuns === 'function');
+      }
+    } catch(_farFieldProjectionError){
+      farFieldProjection = null;
+      useSubpixelProjection = false;
+    }
     const midCol = Math.min(RW - 1, Math.max(0, ((startCol + endCol) / 2) | 0));
     const spriteFront = midCol >= 0 && midCol < RW && depth < zbuffer[midCol];
     if(spriteFront && !proj.floating && CR_SPRITE_GROUND_ANCHOR){
@@ -10985,13 +11207,22 @@ function drawScene(now, renderPose){
     // SPRITE HALO REGRESSION GUARD — no full-rect sprite fog overlay.
     // Per-column or bbox fillRect fog draws through transparent sprite pixels and
     // creates phone-visible rectangular halos. Walls own distance fog; sprites stay clean.
-    for(let col=startCol; col<endCol; col++){
-      if(col<0||col>=RW) continue;
-      if(depth >= zbuffer[col]) continue;   // OCCLUSION GUARD: per-column zbuffer vs sprite depth
-      const u=(col-(screenX-screenW/2))/screenW;
-      const srcX=Math.max(0,Math.min(s.tex.width-1, (u*s.tex.width)|0));
-      const yoff = 0;
-      bctx.drawImage(s.tex, srcX,0,1,s.tex.height, col, top, 1, screenH);
+    if(useSubpixelProjection){
+      try {
+        crDrawFarFieldSpriteRuns(bctx, s.tex, farFieldProjection, zbuffer);
+      } catch(_farFieldDrawError){
+        useSubpixelProjection = false;
+      }
+    }
+    if(!useSubpixelProjection){
+      for(let col=startCol; col<endCol; col++){
+        if(col<0||col>=RW) continue;
+        if(depth >= zbuffer[col]) continue;   // OCCLUSION GUARD: per-column zbuffer vs sprite depth
+        const u=(col-(screenX-screenW/2))/screenW;
+        const srcX=Math.max(0,Math.min(s.tex.width-1, (u*s.tex.width)|0));
+        const yoff = 0;
+        bctx.drawImage(s.tex, srcX,0,1,s.tex.height, col, top, 1, screenH);
+      }
     }
     if(_crHarnessDepth > 0 && _crSpriteGroundHarnessSamples.length < 24){
       _crSpriteGroundHarnessSamples.push({
@@ -11006,15 +11237,17 @@ function drawScene(now, renderPose){
     const isNpc = s.obj && game.npcs.indexOf(s.obj) >= 0;
     const isExit = s.obj === game.exit;
     const exitReady = isExit && game.exit && game.exit.active && game.helped >= game.quota;
+    const visualStartCol = useSubpixelProjection ? farFieldProjection.visualLeft : startCol;
+    const visualEndCol = useSubpixelProjection ? farFieldProjection.visualRight : endCol;
     if(spriteFront && isCan && depth < 14 && CR_VISUAL_READABILITY.entityOutlines){
       bctx.fillStyle = 'rgba(255,230,100,0.9)';
-      const lc = Math.max(0, startCol), rc = Math.min(RW - 1, endCol - 1);
+      const lc = Math.max(0, visualStartCol), rc = Math.min(RW - 1, visualEndCol - 1);
       if(lc < RW) bctx.fillRect(lc, top, 1, screenH);
       if(rc >= 0) bctx.fillRect(rc, top, 1, screenH);
     }
     if(spriteFront && isNpc && depth < 18 && CR_VISUAL_READABILITY.entityOutlines){
       bctx.strokeStyle = 'rgba(120,220,255,0.75)'; bctx.lineWidth = 1;
-      const lc = Math.max(0, startCol), rc = Math.min(RW - 1, endCol - 1);
+      const lc = Math.max(0, visualStartCol), rc = Math.min(RW - 1, visualEndCol - 1);
       if(lc < RW){ bctx.beginPath(); bctx.moveTo(lc, top); bctx.lineTo(lc, top + screenH); bctx.stroke(); }
       if(rc >= 0){ bctx.beginPath(); bctx.moveTo(rc, top); bctx.lineTo(rc, top + screenH); bctx.stroke(); }
     }
@@ -11022,7 +11255,7 @@ function drawScene(now, renderPose){
       const pulse = 0.5 + 0.5 * Math.sin((now || 0) / 200);
       bctx.strokeStyle = 'rgba(255,230,120,' + pulse.toFixed(2) + ')';
       bctx.lineWidth = 1;
-      const lc = Math.max(0, startCol), rc = Math.min(RW - 1, endCol - 1);
+      const lc = Math.max(0, visualStartCol), rc = Math.min(RW - 1, visualEndCol - 1);
       if(lc < RW){ bctx.beginPath(); bctx.moveTo(lc, top); bctx.lineTo(rc, top); bctx.stroke(); }
       if(rc >= 0){ bctx.beginPath(); bctx.moveTo(lc, top + screenH); bctx.lineTo(rc, top + screenH); bctx.stroke(); }
     }
@@ -11041,6 +11274,243 @@ function drawScene(now, renderPose){
 
 }
 
+'use strict';
+
+const CR_FFPROJ_ALLOWLIST = Object.freeze(['legacy', 'subpixel']);
+
+function crParseFarFieldProjectionMode(params){
+  if(!params || typeof params.get !== 'function') return 'legacy';
+  let value;
+  try{ value = params.get('ffproj'); }catch(_error){ return 'legacy'; }
+  return CR_FFPROJ_ALLOWLIST.indexOf(value) >= 0 ? value : 'legacy';
+}
+
+function crInitialFarFieldProjectionParams(){
+  try{
+    if(typeof URLSearchParams === 'function' && typeof location !== 'undefined'){
+      return new URLSearchParams(location.search || '');
+    }
+  }catch(_error){}
+  return null;
+}
+
+const _crFarFieldProjectionMode = crParseFarFieldProjectionMode(crInitialFarFieldProjectionParams());
+
+function crResolveFarFieldProjectionMode(params){
+  if(arguments.length > 0) return crParseFarFieldProjectionMode(params);
+  return _crFarFieldProjectionMode;
+}
+
+const CR_FAR_FIELD_DEPTH_THRESHOLD = 8;
+const _crProjectionQuantizationStats = {
+  projectedSpriteCount: 0,
+  distantSpriteCount: 0,
+  projectedWidthSum: 0,
+  fractionalScreenXSum: 0,
+  legacySnapCount: 0,
+  subpixelMovementCount: 0,
+  repeatedProjectedXFramesWhileMoving: 0
+};
+const _crProjectionContinuity = new Map();
+
+function crFiniteCumulativeAdd(value, delta, integer){
+  const ceiling = integer ? Number.MAX_SAFE_INTEGER : Number.MAX_VALUE;
+  if(value >= ceiling || delta >= ceiling - value) return ceiling;
+  return value + delta;
+}
+
+function crRecordProjectionQuantization(input, projected, floatingLeft, floatingRight){
+  const stats = _crProjectionQuantizationStats;
+  stats.projectedSpriteCount = crFiniteCumulativeAdd(stats.projectedSpriteCount, 1, true);
+  stats.projectedWidthSum = crFiniteCumulativeAdd(stats.projectedWidthSum, projected.screenW, false);
+  const fractionalX = Math.abs(projected.screenX - Math.round(projected.screenX));
+  stats.fractionalScreenXSum = crFiniteCumulativeAdd(stats.fractionalScreenXSum, fractionalX, false);
+  if(!projected.distant) return;
+
+  stats.distantSpriteCount = crFiniteCumulativeAdd(stats.distantSpriteCount, 1, true);
+  const representation = projected.mode === 'legacy'
+    ? `${Math.floor(floatingLeft)}:${Math.ceil(floatingRight)}`
+    : projected.screenX;
+  const previous = _crProjectionContinuity.get(input.spriteKey);
+  if(input.moving && previous){
+    const floatingChanged = projected.screenX !== previous.screenX;
+    if(projected.mode === 'legacy' && floatingChanged && representation === previous.representation){
+      stats.legacySnapCount = crFiniteCumulativeAdd(stats.legacySnapCount, 1, true);
+    }
+    if(projected.mode === 'subpixel' && floatingChanged){
+      stats.subpixelMovementCount = crFiniteCumulativeAdd(stats.subpixelMovementCount, 1, true);
+    }
+    if(representation === previous.representation){
+      stats.repeatedProjectedXFramesWhileMoving = crFiniteCumulativeAdd(
+        stats.repeatedProjectedXFramesWhileMoving, 1, true
+      );
+    }
+  }
+  _crProjectionContinuity.set(input.spriteKey, {
+    screenX: projected.screenX,
+    representation
+  });
+}
+
+function crGetProjectionQuantizationStats(){
+  const stats = _crProjectionQuantizationStats;
+  return Object.freeze({
+    mode: _crFarFieldProjectionMode,
+    depthThreshold: CR_FAR_FIELD_DEPTH_THRESHOLD,
+    projectedSpriteCount: stats.projectedSpriteCount,
+    distantSpriteCount: stats.distantSpriteCount,
+    projectedWidthSum: stats.projectedWidthSum,
+    fractionalScreenXSum: stats.fractionalScreenXSum,
+    legacySnapCount: stats.legacySnapCount,
+    subpixelMovementCount: stats.subpixelMovementCount,
+    repeatedProjectedXFramesWhileMoving: stats.repeatedProjectedXFramesWhileMoving
+  });
+}
+
+function crFiniteProjectionGeometry(input){
+  if(!input || typeof input !== 'object' || Array.isArray(input)) return false;
+  const projection = input.projection;
+  if(!projection || typeof projection !== 'object' || Array.isArray(projection)) return false;
+  const required = [
+    input.depth, input.textureWidth, input.renderWidth,
+    projection.screenX, projection.screenW, projection.screenH,
+    projection.groundBottomY, projection.topY, projection.feetY,
+    projection.footAnchor, projection.yoffUsed
+  ];
+  if(!required.every(Number.isFinite)) return false;
+  if(projection.groundedDelta !== null && !Number.isFinite(projection.groundedDelta)) return false;
+  return typeof input.moving === 'boolean' && typeof input.spriteKey === 'string' &&
+    input.depth > 0 && input.textureWidth > 0 && Number.isInteger(input.textureWidth) &&
+    input.renderWidth > 0 && Number.isInteger(input.renderWidth) &&
+    projection.screenW > 0 && projection.screenH > 0;
+}
+
+function crProjectFarFieldSprite(input){
+  if(!crFiniteProjectionGeometry(input)) return null;
+  const projection = input.projection;
+  const depth = input.depth;
+  const sourceWidth = input.textureWidth;
+  const renderWidth = input.renderWidth;
+  const distant = depth >= CR_FAR_FIELD_DEPTH_THRESHOLD;
+  const mode = distant && _crFarFieldProjectionMode === 'subpixel' ? 'subpixel' : 'legacy';
+  const floatingLeft = projection.screenX - projection.screenW / 2;
+  const floatingRight = projection.screenX + projection.screenW / 2;
+  if(!Number.isFinite(floatingLeft) || !Number.isFinite(floatingRight) || floatingRight <= floatingLeft) return null;
+  const coverageStart = Math.max(0, Math.min(renderWidth, Math.floor(floatingLeft)));
+  const coverageEnd = Math.max(0, Math.min(renderWidth, Math.ceil(floatingRight)));
+  const visualLeft = mode === 'subpixel' ? floatingLeft : Math.floor(floatingLeft);
+  const visualRight = mode === 'subpixel' ? floatingRight : Math.ceil(floatingRight);
+
+  const result = Object.freeze({
+    mode,
+    distant,
+    depth,
+    screenX: projection.screenX,
+    screenW: projection.screenW,
+    screenH: projection.screenH,
+    topY: projection.topY,
+    groundBottomY: projection.groundBottomY,
+    visualLeft,
+    visualRight,
+    visualWidth: visualRight - visualLeft,
+    occlusionStartCol: coverageStart,
+    occlusionEndCol: coverageEnd,
+    sourceWidth
+  });
+  crRecordProjectionQuantization(input, result, floatingLeft, floatingRight);
+  return result;
+}
+
+function crFarFieldRun(startCol, endCol, destLeft, destRight, sourceLeft, sourceRight){
+  return Object.freeze({
+    startCol,
+    endCol,
+    destLeft,
+    destRight,
+    destWidth: destRight - destLeft,
+    sourceLeft,
+    sourceRight,
+    sourceWidth: sourceRight - sourceLeft
+  });
+}
+
+function crValidProjectedSprite(projected){
+  if(!projected || typeof projected !== 'object') return false;
+  const finite = [
+    projected.depth, projected.screenX, projected.screenW, projected.screenH,
+    projected.topY, projected.groundBottomY, projected.visualLeft,
+    projected.visualRight, projected.visualWidth, projected.occlusionStartCol,
+    projected.occlusionEndCol, projected.sourceWidth
+  ];
+  return finite.every(Number.isFinite) &&
+    (projected.mode === 'legacy' || projected.mode === 'subpixel') &&
+    projected.depth > 0 && projected.screenW > 0 && projected.screenH > 0 &&
+    projected.sourceWidth > 0 && Number.isInteger(projected.sourceWidth) &&
+    Number.isInteger(projected.occlusionStartCol) && Number.isInteger(projected.occlusionEndCol) &&
+    projected.occlusionStartCol >= 0 && projected.occlusionEndCol >= projected.occlusionStartCol;
+}
+
+function crBuildFarFieldSpriteDrawRuns(projected, zbuffer){
+  if(!crValidProjectedSprite(projected) || !zbuffer || typeof zbuffer.length !== 'number') return Object.freeze([]);
+  if(zbuffer.length < projected.occlusionEndCol) return Object.freeze([]);
+  const visible = [];
+  for(let col = projected.occlusionStartCol; col < projected.occlusionEndCol; col++){
+    if(projected.depth < zbuffer[col]) visible.push(col);
+  }
+  if(visible.length === 0) return Object.freeze([]);
+
+  const floatingLeft = projected.screenX - projected.screenW / 2;
+  const floatingRight = projected.screenX + projected.screenW / 2;
+  const runs = [];
+  if(projected.mode === 'legacy'){
+    for(const col of visible){
+      const u = (col - floatingLeft) / projected.screenW;
+      const sourceX = Math.max(0, Math.min(projected.sourceWidth - 1, (u * projected.sourceWidth) | 0));
+      runs.push(crFarFieldRun(col, col + 1, col, col + 1, sourceX, sourceX + 1));
+    }
+    return Object.freeze(runs);
+  }
+
+  let runStart = visible[0];
+  let previous = visible[0];
+  function appendSubpixelRun(startCol, endCol){
+    const destLeft = Math.max(floatingLeft, startCol);
+    const destRight = Math.min(floatingRight, endCol);
+    if(!(destRight > destLeft)) return;
+    const sourceLeft = Math.max(0, Math.min(projected.sourceWidth,
+      (destLeft - floatingLeft) / projected.screenW * projected.sourceWidth));
+    const sourceRight = Math.max(0, Math.min(projected.sourceWidth,
+      (destRight - floatingLeft) / projected.screenW * projected.sourceWidth));
+    if(!(sourceRight > sourceLeft)) return;
+    runs.push(crFarFieldRun(startCol, endCol, destLeft, destRight, sourceLeft, sourceRight));
+  }
+  for(let index = 1; index < visible.length; index++){
+    const col = visible[index];
+    if(col !== previous + 1){
+      appendSubpixelRun(runStart, previous + 1);
+      runStart = col;
+    }
+    previous = col;
+  }
+  appendSubpixelRun(runStart, previous + 1);
+  return Object.freeze(runs);
+}
+
+function crDrawFarFieldSpriteRuns(ctx, texture, projected, zbuffer){
+  if(!ctx || typeof ctx.drawImage !== 'function' || !texture || !crValidProjectedSprite(projected) ||
+      !Number.isFinite(texture.width) || !Number.isFinite(texture.height) ||
+      texture.width !== projected.sourceWidth || texture.height <= 0) return 0;
+  const runs = crBuildFarFieldSpriteDrawRuns(projected, zbuffer);
+  ctx.imageSmoothingEnabled = false;
+  for(const run of runs){
+    ctx.drawImage(
+      texture,
+      run.sourceLeft, 0, run.sourceWidth, texture.height,
+      run.destLeft, projected.topY, run.destWidth, projected.screenH
+    );
+  }
+  return runs.length;
+}
 // ---------------------------------------------------------------------------
 // SECTION 7B — GENERIC WHOLE-FACE BITMAP BUILDING RENDERER
 // ---------------------------------------------------------------------------
@@ -12395,6 +12865,226 @@ function completeRun(){
   beep(880,0.3,'triangle',0.06);
 }
 
+// -----------------------------------------------------------------------
+// FAR-FIELD LAB — RENDER-ONLY ANGLE MODES
+// -----------------------------------------------------------------------
+// Exponential smoothing time constant. This is a Lane-B behavior constant:
+// changing it after acceptance requires a new interface/behavior review.
+const CR_RENDER_ANGLE_SMOOTH_TAU_SECONDS = 0.045;
+const CR_RENDER_ANGLE_MAX_DT_SECONDS = 0.1;
+const CR_RENDER_ANGLE_SAMPLE_CAP = 512;
+const CR_RENDER_ANGLE_MODES = Object.freeze(['raw', 'interp', 'smooth']);
+
+function crNormalizeRenderAngle(value){
+  const angle = Number(value);
+  if(!Number.isFinite(angle)) return 0;
+  const twoPi = Math.PI * 2;
+  return ((angle + Math.PI) % twoPi + twoPi) % twoPi - Math.PI;
+}
+
+function crShortestAngleDelta(from, to){
+  return ((to - from + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
+}
+
+function crResolveRenderAngleMode(params){
+  let query = params;
+  if(!query || typeof query.get !== 'function'){
+    try {
+      const search = typeof location !== 'undefined' && location ? location.search : '';
+      query = new URLSearchParams(search || '');
+    } catch(_e){
+      return 'raw';
+    }
+  }
+  let value;
+  try { value = query.get('ffangle'); } catch(_e){ return 'raw'; }
+  return CR_RENDER_ANGLE_MODES.indexOf(value) >= 0 ? value : 'raw';
+}
+
+const _crSelectedRenderAngleMode = crResolveRenderAngleMode();
+let _crRenderAngleResetCount = 0;
+let _crRenderAngleSmoothed = 0;
+let _crRenderAngleLastNow = null;
+let _crRenderAnglePendingAuthorityAt = null;
+let _crRenderAngleLastRendered = null;
+let _crRenderAngleStats = null;
+
+function crRenderAngleProfilerActive(){
+  try { return typeof CR_PERF_PROBE !== 'undefined' && !!CR_PERF_PROBE; } catch(_e){ return false; }
+}
+
+function crRenderAngleNowMs(){
+  try {
+    if(typeof performance !== 'undefined' && performance && typeof performance.now === 'function'){
+      const now = Number(performance.now());
+      if(Number.isFinite(now)) return now;
+    }
+  } catch(_e){}
+  return null;
+}
+
+function crClearRenderAngleStats(){
+  _crRenderAngleStats = {
+    rawSamples: 0, interpolatedSamples: 0, smoothedSamples: 0,
+    authoritativeChanges: 0, renderedResponses: 0,
+    inputToAuthoritySamples: 0, inputToAuthorityLatencyTotalMs: 0, inputToAuthorityLatencyMaxMs: 0,
+    authorityToRenderSamples: 0, authorityToRenderLatencyTotalMs: 0, authorityToRenderLatencyMaxMs: 0,
+    authoritativeAngles: [], authoritativeTimestamps: [],
+    renderedAngles: [], renderTimestamps: [],
+  };
+  _crRenderAnglePendingAuthorityAt = null;
+  _crRenderAngleLastRendered = null;
+}
+
+function crPushBoundedAngleSample(angles, timestamps, angle, timestamp){
+  angles.push(angle);
+  timestamps.push(timestamp);
+  if(angles.length > CR_RENDER_ANGLE_SAMPLE_CAP){
+    const excess = angles.length - CR_RENDER_ANGLE_SAMPLE_CAP;
+    angles.splice(0, excess);
+    timestamps.splice(0, excess);
+  }
+}
+
+function crRecordRenderedAngle(angle, sampleKind){
+  if(!crRenderAngleProfilerActive() || !_crRenderAngleStats) return;
+  if(sampleKind === 'raw') _crRenderAngleStats.rawSamples++;
+  else if(sampleKind === 'interp') _crRenderAngleStats.interpolatedSamples++;
+  else if(sampleKind === 'smooth') _crRenderAngleStats.smoothedSamples++;
+  const normalized = crNormalizeRenderAngle(angle);
+  const sampledNow = crRenderAngleNowMs();
+  const renderTimestamp = sampledNow === null ? 0 : sampledNow;
+  crPushBoundedAngleSample(_crRenderAngleStats.renderedAngles, _crRenderAngleStats.renderTimestamps, normalized, renderTimestamp);
+  const moved = _crRenderAngleLastRendered === null || Math.abs(crShortestAngleDelta(_crRenderAngleLastRendered, normalized)) > 1e-12;
+  if(moved && _crRenderAnglePendingAuthorityAt !== null){
+    const latency = Math.max(0, renderTimestamp - _crRenderAnglePendingAuthorityAt);
+    _crRenderAngleStats.renderedResponses++;
+    _crRenderAngleStats.authorityToRenderSamples++;
+    _crRenderAngleStats.authorityToRenderLatencyTotalMs += latency;
+    _crRenderAngleStats.authorityToRenderLatencyMaxMs = Math.max(_crRenderAngleStats.authorityToRenderLatencyMaxMs, latency);
+    _crRenderAnglePendingAuthorityAt = null;
+  }
+  _crRenderAngleLastRendered = normalized;
+}
+
+function crRecordAuthoritativeAngleChange(eventTimestamp, appliedTimestamp, before, after){
+  if(!crRenderAngleProfilerActive() || !_crRenderAngleStats) return;
+  const delta = crShortestAngleDelta(crNormalizeRenderAngle(before), crNormalizeRenderAngle(after));
+  if(!Number.isFinite(delta) || Math.abs(delta) <= 1e-12) return;
+  const applied = Number(appliedTimestamp);
+  const eventAt = Number(eventTimestamp);
+  const safeApplied = Number.isFinite(applied) ? applied : (crRenderAngleNowMs() || 0);
+  const latency = Number.isFinite(eventAt) ? Math.max(0, safeApplied - eventAt) : 0;
+  const authoritativeAngle = crNormalizeRenderAngle(after);
+  crPushBoundedAngleSample(_crRenderAngleStats.authoritativeAngles, _crRenderAngleStats.authoritativeTimestamps, authoritativeAngle, safeApplied);
+  _crRenderAngleStats.authoritativeChanges++;
+  _crRenderAngleStats.inputToAuthoritySamples++;
+  _crRenderAngleStats.inputToAuthorityLatencyTotalMs += latency;
+  _crRenderAngleStats.inputToAuthorityLatencyMaxMs = Math.max(_crRenderAngleStats.inputToAuthorityLatencyMaxMs, latency);
+  _crRenderAnglePendingAuthorityAt = safeApplied;
+}
+
+function crGetRenderAngleStats(){
+  const stats = _crRenderAngleStats || {};
+  const inputCount = Number(stats.inputToAuthoritySamples) || 0;
+  const renderCount = Number(stats.authorityToRenderSamples) || 0;
+  return Object.freeze({
+    mode: crGetSelectedRenderAngleMode(),
+    tauSeconds: CR_RENDER_ANGLE_SMOOTH_TAU_SECONDS,
+    resetCount: _crRenderAngleResetCount,
+    rawSamples: Number(stats.rawSamples) || 0,
+    interpolatedSamples: Number(stats.interpolatedSamples) || 0,
+    smoothedSamples: Number(stats.smoothedSamples) || 0,
+    authoritativeChanges: Number(stats.authoritativeChanges) || 0,
+    renderedResponses: Number(stats.renderedResponses) || 0,
+    inputToAuthoritySamples: inputCount,
+    inputToAuthorityLatencyMeanMs: inputCount ? stats.inputToAuthorityLatencyTotalMs / inputCount : null,
+    inputToAuthorityLatencyMaxMs: Number(stats.inputToAuthorityLatencyMaxMs) || 0,
+    authorityToRenderSamples: renderCount,
+    authorityToRenderLatencyMeanMs: renderCount ? stats.authorityToRenderLatencyTotalMs / renderCount : null,
+    authorityToRenderLatencyMaxMs: Number(stats.authorityToRenderLatencyMaxMs) || 0,
+    authoritativeAngles: Object.freeze((stats.authoritativeAngles || []).slice()),
+    authoritativeTimestamps: Object.freeze((stats.authoritativeTimestamps || []).slice()),
+    renderedAngles: Object.freeze((stats.renderedAngles || []).slice()),
+    renderTimestamps: Object.freeze((stats.renderTimestamps || []).slice()),
+  });
+}
+
+function crReadAuthoritativeAngle(){
+  try {
+    if(typeof player !== 'undefined' && player && Number.isFinite(player.angle)) return crNormalizeRenderAngle(player.angle);
+  } catch(_e){}
+  return Number.isFinite(_crRenderAngleSmoothed) ? crNormalizeRenderAngle(_crRenderAngleSmoothed) : 0;
+}
+
+function crGetSelectedRenderAngleMode(){ return _crSelectedRenderAngleMode; }
+function crGetRawRenderAngle(){
+  const angle = crReadAuthoritativeAngle();
+  crRecordRenderedAngle(angle, 'raw');
+  return angle;
+}
+
+function crGetInterpolatedRenderAngle(){
+  const raw = crReadAuthoritativeAngle();
+  let previous = raw;
+  let current = raw;
+  let alpha = 0;
+  try {
+    if(typeof crRenderPosePrevious !== 'undefined' && crRenderPosePrevious && Number.isFinite(crRenderPosePrevious.angle)){
+      previous = crNormalizeRenderAngle(crRenderPosePrevious.angle);
+    }
+    if(typeof crRenderPoseCurrent !== 'undefined' && crRenderPoseCurrent && Number.isFinite(crRenderPoseCurrent.angle)){
+      current = crNormalizeRenderAngle(crRenderPoseCurrent.angle);
+    }
+    if(typeof crGetRenderInterpolationAlpha === 'function') alpha = Number(crGetRenderInterpolationAlpha());
+  } catch(_e){ return raw; }
+  if(!Number.isFinite(alpha)) alpha = 0;
+  alpha = Math.max(0, Math.min(1, alpha));
+  const angle = crNormalizeRenderAngle(previous + crShortestAngleDelta(previous, current) * alpha);
+  crRecordRenderedAngle(angle, 'interp');
+  return angle;
+}
+
+function crGetSmoothedRenderAngle(){
+  const raw = crReadAuthoritativeAngle();
+  const now = crRenderAngleNowMs();
+  let dt = 1 / 60;
+  if(now !== null && _crRenderAngleLastNow !== null) dt = (now - _crRenderAngleLastNow) / 1000;
+  if(!Number.isFinite(dt) || dt < 0) dt = 0;
+  dt = Math.max(0, Math.min(CR_RENDER_ANGLE_MAX_DT_SECONDS, dt));
+  _crRenderAngleLastNow = now;
+  const delta = crShortestAngleDelta(_crRenderAngleSmoothed, raw);
+  if(!Number.isFinite(delta)){
+    crResetRenderAngleHistory('non-finite-sample');
+    return _crRenderAngleSmoothed;
+  }
+  if(Math.abs(delta) <= 1e-12){
+    _crRenderAngleSmoothed = raw;
+  } else if(dt > 0){
+    const k = 1 - Math.exp(-dt / CR_RENDER_ANGLE_SMOOTH_TAU_SECONDS);
+    _crRenderAngleSmoothed = crNormalizeRenderAngle(_crRenderAngleSmoothed + delta * k);
+  }
+  crRecordRenderedAngle(_crRenderAngleSmoothed, 'smooth');
+  return _crRenderAngleSmoothed;
+}
+
+function crResetRenderAngleHistory(reason){
+  const angle = crReadAuthoritativeAngle();
+  _crRenderAngleSmoothed = angle;
+  _crRenderAngleLastNow = null;
+  _crRenderAngleResetCount++;
+  crClearRenderAngleStats();
+  try {
+    if(typeof crResetRawTouchLookStats === 'function') crResetRawTouchLookStats();
+  } catch(_e){}
+  return Object.freeze({
+    reason: typeof reason === 'string' && reason.length ? reason : 'unspecified',
+    angle,
+    resetCount: _crRenderAngleResetCount,
+  });
+}
+
+crResetRenderAngleHistory('initialization');
 // ---------------------------------------------------------------------------
 // SECTION 12 — OVERLAYS
 // ---------------------------------------------------------------------------
@@ -12757,6 +13447,42 @@ let _crPerfLastFrameNow = 0;
 let _crPerfLastHudAt = 0;
 let _crPerfSnap = null;
 let _crPerfMobileBaseline = null;
+let _crPerfAngleBaseline = null;
+let _crPerfProjectionBaseline = null;
+let _crPerfMotionBaseline = null;
+
+function _crPerfReadFarFieldIdentity() {
+  let profile = null;
+  let angle = 'raw';
+  let projection = 'legacy';
+  if (typeof crGetRenderProfile === 'function') {
+    try { profile = crGetRenderProfile(); } catch (e) { profile = null; }
+  }
+  const profileId = profile && (profile.id === '320' || profile.id === '400' || profile.id === '480') ?
+    profile.id : '320';
+  const fallbackDimensions = profileId === '480' ? [480, 300] : profileId === '400' ? [400, 250] : [320, 200];
+  const width = fallbackDimensions[0];
+  const height = fallbackDimensions[1];
+
+  if (typeof crGetSelectedRenderAngleMode === 'function') {
+    try {
+      const value = crGetSelectedRenderAngleMode();
+      if (value === 'raw' || value === 'interp' || value === 'smooth') angle = value;
+    } catch (e) {}
+  }
+  if (typeof crResolveFarFieldProjectionMode === 'function') {
+    try {
+      const value = crResolveFarFieldProjectionMode();
+      if (value === 'legacy' || value === 'subpixel') projection = value;
+    } catch (e) {}
+  }
+  return {
+    ffres: profileId,
+    ffangle: angle,
+    ffproj: projection,
+    internalResolution: { width, height },
+  };
+}
 
 function _crPerfEmptyBuckets() {
   return {
@@ -12777,6 +13503,60 @@ function _crPerfReadMobileStats() {
   } catch (e) {
     return null;
   }
+}
+
+function _crPerfReadAngleStats() {
+  if (typeof crGetRenderAngleCadenceStats !== 'function') return null;
+  try {
+    const value = crGetRenderAngleCadenceStats();
+    if (!value || typeof value !== 'object' || !Array.isArray(value.lookEventGaps) ||
+        !Array.isArray(value.renderAngleDeltas)) return null;
+    const counters = [value.rawLookEvents, value.repeatedRenderAngleFramesDuringActiveLook];
+    if (counters.some((item) => !Number.isFinite(Number(item)) || Number(item) < 0)) return null;
+    if (value.lookEventGaps.some((item) => !Number.isFinite(Number(item)) || Number(item) < 0) ||
+        value.renderAngleDeltas.some((item) => !Number.isFinite(Number(item)) || Number(item) < 0)) return null;
+    return {
+      rawLookEvents: Number(value.rawLookEvents),
+      lookEventGaps: value.lookEventGaps.map(Number),
+      renderAngleDeltas: value.renderAngleDeltas.map(Number),
+      repeatedRenderAngleFramesDuringActiveLook: Number(value.repeatedRenderAngleFramesDuringActiveLook),
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+function _crPerfReadFinitePeer(functionName, keys) {
+  const fn = globalThis[functionName];
+  if (typeof fn !== 'function') return null;
+  try {
+    const value = fn();
+    if (!value || typeof value !== 'object') return null;
+    const out = {};
+    for (const key of keys) {
+      const number = Number(value[key]);
+      if (!Number.isFinite(number) || number < 0) return null;
+      out[key] = number;
+    }
+    return out;
+  } catch (e) {
+    return null;
+  }
+}
+
+function _crPerfReadProjectionStats() {
+  return _crPerfReadFinitePeer('crGetProjectionQuantizationStats', [
+    'projectedSpriteCount', 'distantSpriteCount', 'projectedWidthSum',
+    'fractionalScreenXSum', 'legacySnapCount', 'subpixelMovementCount',
+    'repeatedProjectedXFramesWhileMoving'
+  ]);
+}
+
+function _crPerfReadMotionStats() {
+  return _crPerfReadFinitePeer('crGetFarFieldMotionStats', [
+    'sampleFrames', 'openAreaFrames', 'distantEdgeJumpTotal',
+    'distantEdgeJumpSamples', 'wallColumnsDrawn', 'spriteColumnsDrawn'
+  ]);
 }
 
 function _crPerfFinite(value) {
@@ -12844,6 +13624,9 @@ function crPerfProbeReset() {
     framesSampled: 0,
   };
   _crPerfMobileBaseline = _crPerfReadMobileStats();
+  _crPerfAngleBaseline = _crPerfReadAngleStats();
+  _crPerfProjectionBaseline = _crPerfReadProjectionStats();
+  _crPerfMotionBaseline = _crPerfReadMotionStats();
   _crPerfLastFrameNow = 0;
   _crPerfLastHudAt = 0;
   _crPerfSnap = null;
@@ -12871,6 +13654,101 @@ function _crPerfSummarize(arr) {
   }
   const sorted = arr.slice().sort((a, b) => a - b);
   return { avg: sum / arr.length, p95: _crPerfPct(sorted, 95), worst, n: arr.length };
+}
+
+function _crPerfBuildAngleReport(current) {
+  const unavailable = {
+    rawLookEvents: null,
+    lookEventGapMean: null,
+    lookEventGapP95: null,
+    renderAngleDeltaAverage: null,
+    renderAngleDeltaP95: null,
+    repeatedRenderAngleFramesDuringActiveLook: null,
+    largestRenderAngleJump: null,
+  };
+  const baseline = _crPerfAngleBaseline;
+  if (!current || !baseline || current.rawLookEvents < baseline.rawLookEvents ||
+      current.repeatedRenderAngleFramesDuringActiveLook < baseline.repeatedRenderAngleFramesDuringActiveLook ||
+      current.lookEventGaps.length < baseline.lookEventGaps.length ||
+      current.renderAngleDeltas.length < baseline.renderAngleDeltas.length) return unavailable;
+  const gaps = current.lookEventGaps.slice(baseline.lookEventGaps.length).slice(-720);
+  const deltas = current.renderAngleDeltas.slice(baseline.renderAngleDeltas.length).slice(-720);
+  const gapSummary = _crPerfSummarize(gaps);
+  const deltaSummary = _crPerfSummarize(deltas);
+  return {
+    rawLookEvents: current.rawLookEvents - baseline.rawLookEvents,
+    lookEventGapMean: gaps.length ? _crPerfRound(gapSummary.avg, 4) : null,
+    lookEventGapP95: gaps.length ? _crPerfRound(gapSummary.p95, 4) : null,
+    renderAngleDeltaAverage: deltas.length ? _crPerfRound(deltaSummary.avg, 6) : null,
+    renderAngleDeltaP95: deltas.length ? _crPerfRound(deltaSummary.p95, 6) : null,
+    repeatedRenderAngleFramesDuringActiveLook:
+      current.repeatedRenderAngleFramesDuringActiveLook - baseline.repeatedRenderAngleFramesDuringActiveLook,
+    largestRenderAngleJump: deltas.length ? _crPerfRound(deltaSummary.worst, 6) : null,
+  };
+}
+
+function _crPerfAllMonotonic(current, baseline, keys) {
+  return !!current && !!baseline && keys.every((key) => current[key] >= baseline[key]);
+}
+
+function _crPerfBuildProjectionReport(current) {
+  const unavailable = {
+    distantSpriteCount: null,
+    meanProjectedWidth: null,
+    meanFractionalScreenX: null,
+    legacySnapCount: null,
+    subpixelMovementCount: null,
+    repeatedProjectedXFramesWhileMoving: null,
+  };
+  const keys = ['projectedSpriteCount', 'distantSpriteCount', 'projectedWidthSum',
+    'fractionalScreenXSum', 'legacySnapCount', 'subpixelMovementCount',
+    'repeatedProjectedXFramesWhileMoving'];
+  const baseline = _crPerfProjectionBaseline;
+  if (!_crPerfAllMonotonic(current, baseline, keys)) return unavailable;
+  const projected = current.projectedSpriteCount - baseline.projectedSpriteCount;
+  return {
+    distantSpriteCount: current.distantSpriteCount - baseline.distantSpriteCount,
+    meanProjectedWidth: projected ? _crPerfRound(
+      (current.projectedWidthSum - baseline.projectedWidthSum) / projected, 6) : null,
+    meanFractionalScreenX: projected ? _crPerfRound(
+      (current.fractionalScreenXSum - baseline.fractionalScreenXSum) / projected, 6) : null,
+    legacySnapCount: current.legacySnapCount - baseline.legacySnapCount,
+    subpixelMovementCount: current.subpixelMovementCount - baseline.subpixelMovementCount,
+    repeatedProjectedXFramesWhileMoving:
+      current.repeatedProjectedXFramesWhileMoving - baseline.repeatedProjectedXFramesWhileMoving,
+  };
+}
+
+function _crPerfBuildMotionReport(current) {
+  const unavailable = {
+    wallColumnsPerFrame: null,
+    spriteColumnsDrawn: null,
+    farFieldSampleFrames: null,
+    distantEdgeJumpEstimate: null,
+    subpixelUsage: null,
+    largeAreaSceneClassification: null,
+    largeAreaFrames: null,
+  };
+  const keys = ['sampleFrames', 'openAreaFrames', 'distantEdgeJumpTotal',
+    'distantEdgeJumpSamples', 'wallColumnsDrawn', 'spriteColumnsDrawn'];
+  const baseline = _crPerfMotionBaseline;
+  if (!_crPerfAllMonotonic(current, baseline, keys)) return unavailable;
+  const frames = current.sampleFrames - baseline.sampleFrames;
+  const openFrames = current.openAreaFrames - baseline.openAreaFrames;
+  const jumpSamples = current.distantEdgeJumpSamples - baseline.distantEdgeJumpSamples;
+  const projection = _crPerfBuildProjectionReport(_crPerfReadProjectionStats());
+  return {
+    wallColumnsPerFrame: frames ? _crPerfRound(
+      (current.wallColumnsDrawn - baseline.wallColumnsDrawn) / frames, 4) : null,
+    spriteColumnsDrawn: current.spriteColumnsDrawn - baseline.spriteColumnsDrawn,
+    farFieldSampleFrames: frames,
+    distantEdgeJumpEstimate: jumpSamples ? _crPerfRound(
+      (current.distantEdgeJumpTotal - baseline.distantEdgeJumpTotal) / jumpSamples, 6) : null,
+    subpixelUsage: projection.subpixelMovementCount,
+    largeAreaSceneClassification: frames ?
+      (openFrames / frames >= 0.5 ? 'large-open-area' : 'mixed-or-near') : null,
+    largeAreaFrames: openFrames,
+  };
 }
 
 function _crPerfTimeCall(original, receiver, args, sampleArray, totalKey, countKey) {
@@ -13117,6 +13995,10 @@ function crPerfProbeRefreshSnap(now, force) {
   const mobileLayout = _crPerfSummarize(_crPerf.mobileLayoutMs);
   const bitmap = _crPerfSummarize(_crPerf.bitmapMs);
   const mobileStats = _crPerfReadMobileStats();
+  const farFieldIdentity = _crPerfReadFarFieldIdentity();
+  const angleReport = _crPerfBuildAngleReport(_crPerfReadAngleStats());
+  const projectionReport = _crPerfBuildProjectionReport(_crPerfReadProjectionStats());
+  const motionReport = _crPerfBuildMotionReport(_crPerfReadMotionStats());
 
   let district = '?';
   let seed = '?';
@@ -13133,6 +14015,25 @@ function crPerfProbeRefreshSnap(now, force) {
 
   _crPerfSnap = {
     BUILD_ID: typeof BUILD_ID !== 'undefined' ? String(BUILD_ID) : '?',
+    ffres: farFieldIdentity.ffres,
+    ffangle: farFieldIdentity.ffangle,
+    ffproj: farFieldIdentity.ffproj,
+    internalResolution: farFieldIdentity.internalResolution,
+    rawLookEvents: angleReport.rawLookEvents,
+    lookEventGapMean: angleReport.lookEventGapMean,
+    lookEventGapP95: angleReport.lookEventGapP95,
+    renderAngleDeltaAverage: angleReport.renderAngleDeltaAverage,
+    renderAngleDeltaP95: angleReport.renderAngleDeltaP95,
+    repeatedRenderAngleFramesDuringActiveLook: angleReport.repeatedRenderAngleFramesDuringActiveLook,
+    largestRenderAngleJump: angleReport.largestRenderAngleJump,
+    wallColumnsPerFrame: motionReport.wallColumnsPerFrame,
+    spriteColumnsDrawn: motionReport.spriteColumnsDrawn,
+    farFieldSampleFrames: motionReport.farFieldSampleFrames,
+    distantEdgeJumpEstimate: motionReport.distantEdgeJumpEstimate,
+    subpixelUsage: motionReport.subpixelUsage,
+    largeAreaSceneClassification: motionReport.largeAreaSceneClassification,
+    largeAreaFrames: motionReport.largeAreaFrames,
+    projection: projectionReport,
     fps: _crPerfRound(frame.avg > 0 ? 1000 / frame.avg : 0, 1),
     frameAvg: _crPerfRound(frame.avg),
     frameP95: _crPerfRound(frame.p95),
@@ -13519,12 +14420,15 @@ function crReadAuthoritativeRenderPose(){
   return { x: player.x, y: player.y, angle: player.angle };
 }
 
-function crResetRenderPoseHistory(){
+function crResetRenderPoseHistory(reason){
   const pose = crReadAuthoritativeRenderPose();
   crRenderPosePrevious = { x: pose.x, y: pose.y, angle: pose.angle };
   crRenderPoseCurrent = { x: pose.x, y: pose.y, angle: pose.angle };
   crRenderPoseLifecycleState = state;
   crRenderPoseLifecycleDistrict = game.district;
+  try {
+    if(typeof crResetRenderAngleHistory === 'function') crResetRenderAngleHistory(reason);
+  } catch(_renderAngleResetError){}
 }
 
 function crRenderPoseLifecycleChanged(){
@@ -13539,7 +14443,7 @@ function crRenderPoseDetachedFromPlayer(){
 
 function crEnsureRenderPoseHistory(){
   if(!crRenderPosePrevious || !crRenderPoseCurrent || crRenderPoseLifecycleChanged() || crRenderPoseDetachedFromPlayer()){
-    crResetRenderPoseHistory();
+    crResetRenderPoseHistory('lifecycle-or-pose-discontinuity');
   }
 }
 
@@ -13554,7 +14458,7 @@ function crCaptureSimulationPoseBeforeStep(){
 
 function crCaptureSimulationPoseAfterStep(){
   if(crRenderPoseLifecycleChanged()){
-    crResetRenderPoseHistory();
+    crResetRenderPoseHistory('lifecycle-change');
     return;
   }
   const pose = crReadAuthoritativeRenderPose();
@@ -13594,7 +14498,7 @@ function crResetFixedStepSimulation(){
   crFixedStepLastFrameDt = 0;
   crFixedStepLastSteps = 0;
   crFixedStepDroppedFrames = 0;
-  crResetRenderPoseHistory();
+  crResetRenderPoseHistory('fixed-step-reset');
 }
 
 function crClampFixedFrameDt(dt){
@@ -13604,7 +14508,7 @@ function crClampFixedFrameDt(dt){
 
 function crStepSimulationFixed(frameDt){
   const dt = crClampFixedFrameDt(frameDt);
-  if(dt !== frameDt) crResetRenderPoseHistory();
+  if(dt !== frameDt) crResetRenderPoseHistory('fixed-step-clamp');
   crFixedStepLastFrameDt = dt;
   crFixedStepAccumulator += dt;
 
@@ -13620,7 +14524,7 @@ function crStepSimulationFixed(frameDt){
   if(steps >= CR_FIXED_STEP_MAX_STEPS_PER_FRAME && crFixedStepAccumulator >= CR_FIXED_STEP_DT){
     crFixedStepDroppedFrames++;
     crFixedStepAccumulator = 0;
-    crResetRenderPoseHistory();
+    crResetRenderPoseHistory('fixed-step-drop');
   }
 
   crFixedStepLastSteps = steps;
@@ -13648,7 +14552,7 @@ function crGetFixedStepState(){
 document.addEventListener('visibilitychange', ()=>{
   crFixedStepAccumulator = 0;
   crFixedStepVisibilityResetPending = true;
-  crResetRenderPoseHistory();
+  crResetRenderPoseHistory('visibility-change');
 });
 
 let last=performance.now();
@@ -13663,6 +14567,23 @@ function frame(now){
   crApplyPendingInputActions();
   crStepSimulationFixed(rawDt);
   const renderPose = crGetInterpolatedRenderPose();
+  let selectedRenderAngle = player.angle;
+  try {
+    if(typeof crGetSelectedRenderAngleMode === 'function'){
+      const angleMode = crGetSelectedRenderAngleMode();
+      if(angleMode === 'raw' && typeof crGetRawRenderAngle === 'function'){
+        crGetRawRenderAngle();
+        selectedRenderAngle = player.angle;
+      } else if(angleMode === 'interp' && typeof crGetInterpolatedRenderAngle === 'function'){
+        selectedRenderAngle = crGetInterpolatedRenderAngle();
+      } else if(angleMode === 'smooth' && typeof crGetSmoothedRenderAngle === 'function'){
+        selectedRenderAngle = crGetSmoothedRenderAngle();
+      }
+    }
+  } catch(_renderAngleSelectionError){
+    selectedRenderAngle = player.angle;
+  }
+  renderPose.angle = Number.isFinite(selectedRenderAngle) ? selectedRenderAngle : player.angle;
 
   if(state===STATE.PLAY || state===STATE.UPGRADE){
     // full game scene render
@@ -13721,6 +14642,11 @@ function frame(now){
   if(CR_PERF_PROBE && ctx) crPerfProbeDrawOverlay(ctx, now);
   requestAnimationFrame(frame);
 }
+try {
+  if(typeof crApplyRenderProfile === 'function'){
+    crApplyRenderProfile(typeof crGetRenderProfile === 'function' ? crGetRenderProfile() : null);
+  }
+} catch(_renderProfileInitializationError){}
 crResetFixedStepSimulation();
 requestAnimationFrame(frame);
 
@@ -14622,7 +15548,7 @@ function crRestoreHarnessState(snap){
   Object.assign(lookTouch, snap.lookTouch);
   crLsSetSaveRaw(snap.lsSaveRaw);
   clearInputState();
-  crResetRenderPoseHistory();
+  crResetRenderPoseHistory('harness-restore');
 }
 
 function crForceSafeTitleAfterHarness(){
