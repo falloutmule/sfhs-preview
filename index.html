@@ -823,6 +823,7 @@ function crResetRawTouchLookStats(){
   _crRawLookDeltas = [];
   _crRawLookEventTimestamps = [];
   _crPendingLookEventTimestamp = null;
+  if(typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceLifecycle === 'function') crTraceLifecycle('perf-probe-reset', 'native-recorder-reset');
 }
 function crResetPauseRenderHistory(reason){
   try {
@@ -1148,6 +1149,7 @@ function crShowControlEditChrome(show){
   if(bar) crWriteStyle(bar, 'display', show ? 'flex' : 'none');
   const mob = document.getElementById('mob');
   crToggleClass(mob, 'ctrl-edit-mode', !!show);
+  if(typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceLifecycle === 'function') crTraceLifecycle('edit-bar', show ? 'edit-enter' : 'edit-exit');
 }
 
 function crSnapshotLayoutNorms(){
@@ -1806,6 +1808,7 @@ function touchDebug(data){
       if(typeof applyMobileControlSettings === 'function') applyMobileControlSettings();
     }
     applyOutlines();
+    if(typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceLifecycle === 'function') crTraceLifecycle('layoutdebug', 'query-flag');
     setInterval(applyOutlines, 2000);
   });
 })();
@@ -1914,24 +1917,37 @@ function bindMobileControls(){
     joy.active=false; joy.id=null; joy.ptrId=null;
     joy.x=0; joy.y=0; joy.dist=0;
     clearMoveInput();
+    if(CR_CONTROL_TRACE_ENABLED) crTraceLifecycle('control-clear', 'native-joy-end');
     updateJoyDot(0,0);
   };
   ml.addEventListener('pointerdown', e=>{
     if(_controlEditActive) return;
     e.preventDefault(); e.stopPropagation();
-    try{ ml.setPointerCapture(e.pointerId); }catch(_e){}
+    if(CR_CONTROL_TRACE_ENABLED) crTraceCaptureAttempt(ml, e.pointerId);
+    else { try{ ml.setPointerCapture(e.pointerId); }catch(_e){} }
     beginJoy(e.pointerId, e.pointerId, e.clientX, e.clientY);
+    if(CR_CONTROL_TRACE_ENABLED){
+      crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-pointer', accepted:true, capture:crTraceCaptureSnapshot(ml, e.pointerId) });
+      crTraceLifecycle('pointer-ownership-start', 'pointerdown', e);
+    }
   },{passive:false});
   ml.addEventListener('pointermove', e=>{
     if(!joy.active || joy.ptrId !== e.pointerId) return;
     e.preventDefault(); e.stopPropagation();
     applyJoyFromClient(e.clientX, e.clientY);
+    if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-pointer', accepted:true });
   },{passive:false});
   const joyPtrUp = e=>{
     if(joy.ptrId !== e.pointerId) return;
     e.preventDefault(); e.stopPropagation();
-    try{ ml.releasePointerCapture(e.pointerId); }catch(_e){}
+    if(CR_CONTROL_TRACE_ENABLED) crTraceReleaseAttempt(ml, e.pointerId);
+    else { try{ ml.releasePointerCapture(e.pointerId); }catch(_e){} }
     endJoy();
+    if(CR_CONTROL_TRACE_ENABLED){
+      crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-pointer', accepted:true, capture:crTraceCaptureSnapshot(ml, e.pointerId) });
+      crTraceLifecycle('pointer-ownership-end', e.type === 'pointercancel' ? 'pointercancel' : 'pointerup', e);
+      crTraceLifecycle(e.type === 'pointercancel' ? 'pointer-cancel' : 'pointer-up', 'browser-event', e);
+    }
   };
   ml.addEventListener('pointerup', joyPtrUp, {passive:false});
   ml.addEventListener('pointercancel', joyPtrUp, {passive:false});
@@ -1940,6 +1956,7 @@ function bindMobileControls(){
     const t = e.changedTouches[0];
     if(joy.active && joy.id !== null && joy.id !== t.identifier) return;
     beginJoy(t.identifier, null, t.clientX, t.clientY);
+    if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-touch', eventType:'touchstart', eventFamily:'touch', nativeContactId:t.identifier, accepted:true });
   },{passive:false});
   ml.addEventListener('touchmove', e=>{
     if(!joy.active) return;
@@ -1947,16 +1964,17 @@ function bindMobileControls(){
       if(t.identifier !== joy.id) continue;
       e.preventDefault(); e.stopPropagation();
       applyJoyFromClient(t.clientX, t.clientY);
+      if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-touch', eventType:'touchmove', eventFamily:'touch', nativeContactId:t.identifier, accepted:true });
     }
   },{passive:false});
   ml.addEventListener('touchend', e=>{
     for(const t of e.changedTouches){
-      if(t.identifier === joy.id){ e.preventDefault(); e.stopPropagation(); endJoy(); }
+      if(t.identifier === joy.id){ e.preventDefault(); e.stopPropagation(); endJoy(); if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-touch', eventType:'touchend', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-end', 'browser-event', e); } }
     }
   },{passive:false});
   ml.addEventListener('touchcancel', e=>{
     for(const t of e.changedTouches){
-      if(t.identifier === joy.id){ e.preventDefault(); e.stopPropagation(); endJoy(); }
+      if(t.identifier === joy.id){ e.preventDefault(); e.stopPropagation(); endJoy(); if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'move', sourcePath:'move-element-touch', eventType:'touchcancel', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-cancel', 'browser-event', e); } }
     }
   },{passive:false});
 
@@ -1966,10 +1984,12 @@ function bindMobileControls(){
     e.preventDefault(); e.stopPropagation();
     const t = e.changedTouches[0];
     tzone.id = t.identifier; tzone.active = true; tzone.lastX = t.clientX;
+    if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-touch', eventType:'touchstart', eventFamily:'touch', nativeContactId:t.identifier, accepted:true });
   },{passive:false});
 
   // ---- dedicated LOOK circle (#mlookpad) — works in BOTH portrait and landscape ----
   const lpad = document.getElementById('mlookpad');
+  if(typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceInstallCaptureObservers === 'function') crTraceInstallCaptureObservers([ml, lpad, mr]);
   let lpadMousePtr = null;
   let lpadTouchPtr = null;
   const clearLpadPtr = (pid)=>{
@@ -1986,18 +2006,27 @@ function bindMobileControls(){
     if(_controlEditActive) return;
     e.preventDefault(); e.stopPropagation();
     if(e.pointerType === 'touch' || e.pointerType === 'pen'){
-      try{ lpad.setPointerCapture(e.pointerId); }catch(_e){}
+      if(CR_CONTROL_TRACE_ENABLED) crTraceCaptureAttempt(lpad, e.pointerId);
+      else { try{ lpad.setPointerCapture(e.pointerId); }catch(_e){} }
       lpadTouchPtr = { id: e.pointerId, lastX: e.clientX };
       lookTouch.id = e.pointerId;
       lookTouch.lastX = e.clientX;
       lpad.classList.add('pr');
       dismissLookHint();
+      if(CR_CONTROL_TRACE_ENABLED){
+        crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:true, capture:crTraceCaptureSnapshot(lpad, e.pointerId) });
+        crTraceLifecycle('pointer-ownership-start', 'pointerdown', e);
+      }
       return;
     }
     if(e.pointerType === 'mouse'){
       lpadMousePtr = { id: e.pointerId, startX: e.clientX };
       lpad.classList.add('pr');
       dismissLookHint();
+      if(CR_CONTROL_TRACE_ENABLED){
+        crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:true });
+        crTraceLifecycle('pointer-ownership-start', 'pointerdown', e);
+      }
     }
   },{passive:false});
 
@@ -2007,6 +2036,7 @@ function bindMobileControls(){
       e.preventDefault(); e.stopPropagation();
       const dx = e.clientX - lpadTouchPtr.lastX;
       if(crApplyLookPadDx(dx, e.timeStamp)){ lpadTouchPtr.lastX = e.clientX; lookTouch.lastX = e.clientX; }
+      if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:Math.abs(dx) > 0.2, rejectionReason:Math.abs(dx) > 0.2 ? null : 'deadband', dx });
       return;
     }
     if(e.pointerType === 'touch') return;
@@ -2014,18 +2044,31 @@ function bindMobileControls(){
     e.preventDefault(); e.stopPropagation();
     const dx = e.clientX - lpadMousePtr.startX;
     if(crApplyLookPadDx(dx, e.timeStamp)) lpadMousePtr.startX = e.clientX;
+    if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:Math.abs(dx) > 0.2, rejectionReason:Math.abs(dx) > 0.2 ? null : 'deadband', dx });
     touchDebug({type:'look_circle_move', orient:isMobilePortrait()?'port':'land', dx, angle:player.angle});
   },{passive:false});
 
   lpad.addEventListener('pointerup', e=>{
     e.preventDefault(); e.stopPropagation();
-    try{ lpad.releasePointerCapture(e.pointerId); }catch(_e){}
+    if(CR_CONTROL_TRACE_ENABLED) crTraceReleaseAttempt(lpad, e.pointerId);
+    else { try{ lpad.releasePointerCapture(e.pointerId); }catch(_e){} }
     clearLpadPtr(e.pointerId);
+    if(CR_CONTROL_TRACE_ENABLED){
+      crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:true, capture:crTraceCaptureSnapshot(lpad, e.pointerId) });
+      crTraceLifecycle('pointer-ownership-end', e.type === 'pointercancel' ? 'pointercancel' : 'pointerup', e);
+      crTraceLifecycle(e.type === 'pointercancel' ? 'pointer-cancel' : 'pointer-up', 'browser-event', e);
+    }
   },{passive:false});
   lpad.addEventListener('pointercancel', e=>{
     e.preventDefault(); e.stopPropagation();
-    try{ lpad.releasePointerCapture(e.pointerId); }catch(_e){}
+    if(CR_CONTROL_TRACE_ENABLED) crTraceReleaseAttempt(lpad, e.pointerId);
+    else { try{ lpad.releasePointerCapture(e.pointerId); }catch(_e){} }
     clearLpadPtr(e.pointerId);
+    if(CR_CONTROL_TRACE_ENABLED){
+      crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-pointer', accepted:true, capture:crTraceCaptureSnapshot(lpad, e.pointerId) });
+      crTraceLifecycle('pointer-ownership-end', 'pointercancel', e);
+      crTraceLifecycle('pointer-cancel', 'browser-event', e);
+    }
   },{passive:false});
 
   lpad.addEventListener('touchstart', e=>{
@@ -2036,6 +2079,7 @@ function bindMobileControls(){
       lookTouch.lastX = t.clientX;
       lpad.classList.add('pr');
       dismissLookHint();
+      if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-touch', eventType:'touchstart', eventFamily:'touch', nativeContactId:t.identifier, accepted:true });
       break;
     }
   },{passive:false});
@@ -2044,6 +2088,7 @@ function bindMobileControls(){
       if(t.identifier === lookTouch.id){
         lookTouch.id = null; lookTouch.lastX = 0;
         lpad.classList.remove('pr');
+        if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-element-touch', eventType:'touchcancel', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-cancel', 'browser-event', e); }
       }
     }
   },{passive:false});
@@ -2058,6 +2103,10 @@ function bindMobileControls(){
     e.preventDefault(); e.stopPropagation();
     mrPtr = { id: e.pointerId, startX: e.clientX };
     dismissLookHint();
+    if(CR_CONTROL_TRACE_ENABLED){
+      crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-pointer', accepted:true });
+      crTraceLifecycle('pointer-ownership-start', 'pointerdown', e);
+    }
   },{passive:false});
 
   mr.addEventListener('pointermove', e=>{
@@ -2069,12 +2118,13 @@ function bindMobileControls(){
       if(state===STATE.PLAY && !paused){
         crApplyRawTouchLookDelta(dx * mobileLookSens(), e.timeStamp);
       }
+      if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-pointer', accepted:Math.abs(dx) > 0.5, rejectionReason:Math.abs(dx) > 0.5 ? null : 'deadband', dx });
     }
     touchDebug({type:'land_look_move', dx, angle:player.angle});
   },{passive:false});
 
-  mr.addEventListener('pointerup', e=>{ if(mrPtr && e.pointerId===mrPtr.id){ mrPtr=null; } },{passive:false});
-  mr.addEventListener('pointercancel', e=>{ if(mrPtr && e.pointerId===mrPtr.id){ mrPtr=null; } },{passive:false});
+  mr.addEventListener('pointerup', e=>{ if(mrPtr && e.pointerId===mrPtr.id){ mrPtr=null; if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-pointer', accepted:true }); crTraceLifecycle('pointer-ownership-end', 'pointerup', e); crTraceLifecycle('pointer-up', 'browser-event', e); } } },{passive:false});
+  mr.addEventListener('pointercancel', e=>{ if(mrPtr && e.pointerId===mrPtr.id){ mrPtr=null; if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-pointer', accepted:true }); crTraceLifecycle('pointer-ownership-end', 'pointercancel', e); crTraceLifecycle('pointer-cancel', 'browser-event', e); } } },{passive:false});
 
   // ---- GIVE button ----
   mg.addEventListener('touchstart', e=>{
@@ -2174,6 +2224,7 @@ function bindMobileControls(){
       if(t.identifier === joy.id && joy.active){
         handled = true;
         applyJoyFromClient(t.clientX, t.clientY);
+        if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'move', sourcePath:'move-document-touch', eventType:'touchmove', eventFamily:'touch', nativeContactId:t.identifier, accepted:true });
       }
       if(t.identifier === tzone.id && tzone.active){
         handled = true;
@@ -2183,6 +2234,7 @@ function bindMobileControls(){
           if(Math.abs(dx) > 2) dismissLookHint();
           crApplyRawTouchLookDelta(dx * mobileLookSens(), e.timeStamp);
         }
+        if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-touch', eventType:'touchmove', eventFamily:'touch', nativeContactId:t.identifier, accepted:Math.abs(dx) > 0, rejectionReason:Math.abs(dx) > 0 ? null : 'deadband', dx });
       }
       if(lookTouch.id !== null && t.identifier === lookTouch.id){
         handled = true;
@@ -2194,6 +2246,7 @@ function bindMobileControls(){
               lookTouch.lastX = t.clientX;
               touchDebug({type:'look_circle_touch_move', orient:isMobilePortrait()?'port':'land', dx, angle:player.angle, joyId:joy.id, lookId:lookTouch.id});
             }
+            if(CR_CONTROL_TRACE_ENABLED) crTraceRecordEvent(e, { control:'look', sourcePath:'look-document-touch', eventType:'touchmove', eventFamily:'touch', nativeContactId:t.identifier, accepted:Math.abs(dx) > 0.2, rejectionReason:Math.abs(dx) > 0.2 ? null : 'deadband', dx });
           }
         }
       }
@@ -2203,24 +2256,26 @@ function bindMobileControls(){
 
   document.addEventListener('touchend', e=>{
     for(const t of e.changedTouches){
-      if(t.identifier === joy.id){ endJoy(); }
-      if(t.identifier === tzone.id){ tzone.active=false; tzone.id=null; }
+      if(t.identifier === joy.id){ endJoy(); if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'move', sourcePath:'move-document-touch', eventType:'touchend', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-end', 'browser-event', e); } }
+      if(t.identifier === tzone.id){ tzone.active=false; tzone.id=null; if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-touch', eventType:'touchend', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-end', 'browser-event', e); } }
       if(t.identifier === lookTouch.id){
         lookTouch.id = null; lookTouch.lastX = 0;
         const lpadEl = document.getElementById('mlookpad');
         if(lpadEl) lpadEl.classList.remove('pr');
+        if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-document-touch', eventType:'touchend', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-end', 'browser-event', e); }
       }
     }
   },{passive:false});
 
   document.addEventListener('touchcancel', e=>{
     for(const t of e.changedTouches){
-      if(t.identifier === joy.id){ endJoy(); }
-      if(t.identifier === tzone.id){ tzone.active=false; tzone.id=null; }
+      if(t.identifier === joy.id){ endJoy(); if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'move', sourcePath:'move-document-touch', eventType:'touchcancel', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-cancel', 'browser-event', e); } }
+      if(t.identifier === tzone.id){ tzone.active=false; tzone.id=null; if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-landscape-touch', eventType:'touchcancel', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-cancel', 'browser-event', e); } }
       if(t.identifier === lookTouch.id){
         lookTouch.id = null; lookTouch.lastX = 0;
         const lpadEl = document.getElementById('mlookpad');
         if(lpadEl) lpadEl.classList.remove('pr');
+        if(CR_CONTROL_TRACE_ENABLED){ crTraceRecordEvent(e, { control:'look', sourcePath:'look-document-touch', eventType:'touchcancel', eventFamily:'touch', nativeContactId:t.identifier, accepted:true }); crTraceLifecycle('touch-cancel', 'browser-event', e); }
       }
     }
   },{passive:false});
@@ -2230,6 +2285,7 @@ function bindMobileControls(){
     portplay.addEventListener('click', e=>{
       e.preventDefault();
       document.getElementById('porthint').classList.remove('show');
+      if(CR_CONTROL_TRACE_ENABLED) crTraceLifecycle('portrait-hint', 'native-dismiss', e);
     });
   }
 
@@ -2289,12 +2345,14 @@ function updateJoyDot(nx, ny){
   if(dot) crWriteStyle(dot, 'transform', `translate(calc(-50% + ${nx*travel}px), calc(-50% + ${ny*travel}px))`);
 }
 function clearMoveInput(){
+  const wasActive = inp.fwd || inp.back || inp.left || inp.right || inp.turnLeft || inp.turnRight;
   inp.fwd = false;
   inp.back = false;
   inp.left = false;
   inp.right = false;
   inp.turnLeft = false;
   inp.turnRight = false;
+  if(wasActive && typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceLifecycle === 'function') crTraceLifecycle('control-clear', 'native-move-clear');
 }
 function syncInpFromJoy(){
   // joy.x/joy.y are already normalized signed axes: y=forward, x=right.
@@ -2303,6 +2361,784 @@ function syncInpFromJoy(){
   inp.back = joy.y < -0.25;
   inp.left = joy.x < -0.25;
   inp.right = joy.x > 0.25;
+}
+
+// -----------------------------------------------------------------------
+// SECTION 2b — GATED CONTROL TRACE (snc-control-trace-v1)
+// -----------------------------------------------------------------------
+// This recorder is deliberately local, opt-in, and observational. The exact
+// query-value check is the only activation gate; all buffers are created only
+// after that one check succeeds.
+const CR_CONTROL_TRACE_ENABLED = new URLSearchParams(location.search).get('controltrace') === '1';
+const CR_CONTROL_TRACE_INSTRUMENTED_CANDIDATE = 'e994cccb8e556ee7fcd3150c208e917cc68b77c8';
+const CR_CONTROL_TRACE_LIMITS = Object.freeze({
+  eventsMax: 4096,
+  framesMax: 2880,
+  lifecycleMax: 256,
+  errorsMax: 128,
+  nativeSequencesMax: 512,
+  suspectedDuplicateGroupsMax: 512,
+  duplicateStartWindowMs: 12,
+  duplicateStartRadiusCssPx: 8,
+  staleRenderedFrames: 2,
+  staleElapsedMs: 50,
+  renderAngleEpsilonRad: 0.000001,
+  positionEpsilonWorld: 0.000000001,
+  reasonCharsMax: 64,
+  errorMessageCharsMax: 120,
+  consoleStackCharsMax: 2048,
+});
+const CR_TRACE_EVENT_SOURCES = Object.freeze([
+  'move-element-pointer','move-element-touch','move-document-touch',
+  'look-element-pointer','look-element-touch','look-document-touch',
+  'look-landscape-pointer','look-landscape-touch',
+  'button-give-pointer','button-give-touch','button-sprint-pointer','button-sprint-touch',
+  'button-map-pointer','button-map-touch','button-pause-pointer','button-pause-touch',
+  'menu-pointer','menu-touch','edit-bar-pointer','edit-bar-touch',
+  'portrait-hint-pointer','portrait-hint-touch','keyboard-gameplay','keyboard-pause',
+  'perf-probe-reset','visibility-lifecycle','orientation-lifecycle','unknown',
+]);
+const CR_TRACE_EVENT_TYPES = Object.freeze([
+  'pointerdown','pointermove','pointerup','pointercancel','gotpointercapture',
+  'lostpointercapture','touchstart','touchmove','touchend','touchcancel',
+  'keydown','keyup','mousedown','mousemove','mouseup','click','trace-start',
+  'trace-reset','perf-probe-reset','visibilitychange','orientationchange','resize',
+]);
+const CR_TRACE_SOURCE_SET = new Set(CR_TRACE_EVENT_SOURCES);
+const CR_TRACE_EVENT_TYPE_SET = new Set(CR_TRACE_EVENT_TYPES);
+let _crControlTrace = null;
+let _crTraceFrameState = null;
+let _crTraceLastPaused = null;
+let _crTraceLastVisibility = null;
+let _crTraceLastOrientation = null;
+let _crTraceLifecycleInstalled = false;
+let _crTraceCaptureStates = null;
+let _crTraceCaptureObserved = null;
+let _crTraceOverflowRings = new Set();
+
+function crTraceBoundString(value, fallback, max, pattern){
+  const text = String(value == null ? fallback : value);
+  if(text.length > max) return fallback;
+  return pattern && !pattern.test(text) ? fallback : text;
+}
+function crTraceFinite(value, fallback, min, max){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return fallback;
+  if(min !== undefined && n < min) return min;
+  if(max !== undefined && n > max) return max;
+  return n;
+}
+function crTraceInteger(value, fallback, min, max){
+  const n = Number(value);
+  if(!Number.isFinite(n)) return fallback;
+  const i = Math.floor(n);
+  if(min !== undefined && i < min) return min;
+  if(max !== undefined && i > max) return max;
+  return i;
+}
+function crTraceFreeze(value, seen){
+  if(!value || typeof value !== 'object' || Object.isFrozen(value)) return value;
+  const objects = seen || new Set();
+  if(objects.has(value)) return null;
+  objects.add(value);
+  Object.keys(value).forEach(key => crTraceFreeze(value[key], objects));
+  return Object.freeze(value);
+}
+function crTraceClone(value){
+  return JSON.parse(JSON.stringify(value));
+}
+function crTraceSessionId(){
+  let token = '';
+  try {
+    const bytes = new Uint8Array(12);
+    if(globalThis.crypto && typeof globalThis.crypto.getRandomValues === 'function'){
+      globalThis.crypto.getRandomValues(bytes);
+      token = Array.from(bytes, n => n.toString(16).padStart(2, '0')).join('');
+    }
+  } catch(_e){}
+  if(!token) token = Math.floor(Date.now()).toString(36) + '-' + Math.floor(Math.random() * 0xFFFFFF).toString(36);
+  return crTraceBoundString(token, 'trace-session', 36, /^[A-Za-z0-9_-]+$/);
+}
+function crTraceOrientation(){
+  try {
+    if(typeof isMobilePortrait === 'function') return isMobilePortrait() ? 'portrait' : 'landscape';
+  } catch(_e){}
+  try {
+    if(screen.orientation && String(screen.orientation.type).indexOf('portrait') >= 0) return 'portrait';
+  } catch(_e){}
+  return innerHeight >= innerWidth ? 'portrait' : 'landscape';
+}
+function crTraceFlagState(){
+  const params = new URLSearchParams(location.search);
+  return {
+    controltrace: true,
+    debug: params.has('debug'),
+    layoutdebug: params.get('layoutdebug') === '1',
+    touchdebug: params.get('touchdebug') === '1',
+    perfprobe: params.get('perfprobe') === '1',
+    selfcheck: params.get('selfcheck') === '1',
+    portraitlayout: params.get('portraitlayout') === '1',
+  };
+}
+function crTraceQueryKeys(){
+  const params = new URLSearchParams(location.search);
+  return ['controltrace','debug','layoutdebug','touchdebug','perfprobe','selfcheck','portraitlayout']
+    .filter(key => params.has(key)).sort();
+}
+function crTraceRing(max){ return { max, rows: [], total: 0, overwritten: 0, wrapped: false }; }
+function crTraceRingPush(ring, row){
+  ring.total++;
+  if(ring.rows.length >= ring.max){
+    if(_crControlTrace && ring !== _crControlTrace.lifecycle && ring !== _crControlTrace.errors && !_crTraceOverflowRings.has(ring)){
+      _crTraceOverflowRings.add(ring);
+      crTraceLifecycle('trace-overflow', ring === _crControlTrace.events ? 'events-ring' : ring === _crControlTrace.frames ? 'frames-ring' : 'trace-ring');
+    }
+    ring.rows.shift(); ring.overwritten++; ring.wrapped = true;
+  }
+  ring.rows.push(row);
+  return row;
+}
+function crTraceRingStats(ring){
+  const sequenceOf = row => row && row.sequence !== undefined ? row.sequence : (row && row.frameIndex !== undefined ? row.frameIndex : null);
+  const first = ring.rows.length ? sequenceOf(ring.rows[0]) : null;
+  const last = ring.rows.length ? sequenceOf(ring.rows[ring.rows.length - 1]) : null;
+  return {
+    totalObserved: ring.total,
+    retained: ring.rows.length,
+    overwritten: ring.overwritten,
+    wrapped: ring.wrapped,
+    firstRetainedSequence: first,
+    lastRetainedSequence: last,
+  };
+}
+function crTraceState(){
+  let currentState = 'unknown';
+  try { currentState = state === STATE.PLAY ? 'play' : 'other'; } catch(_e){}
+  return {
+    controlEditActive: !!_controlEditActive,
+    paused: typeof paused !== 'undefined' && !!paused,
+    onboardingOpen: typeof onboardingOpen !== 'undefined' && !!onboardingOpen,
+    joyActive: !!(joy && joy.active),
+    lookActive: !!(lookTouch && lookTouch.id !== null) || !!(tzone && tzone.active),
+    joyX: crTraceFinite(joy && joy.x, 0, -1, 1),
+    joyY: crTraceFinite(joy && joy.y, 0, -1, 1),
+    joyStrength: crTraceFinite(typeof joyStrength === 'function' ? joyStrength() : 0, 0, 0, 1),
+    queuedLookDelta: crTraceFinite(inp && inp.lookDeltaRad, 0),
+    playerAngle: crTraceFinite(typeof player !== 'undefined' && player ? player.angle : 0, 0),
+    state: currentState,
+  };
+}
+function crTraceCaptureKey(element, pointerId){
+  const id = crTraceBoundString(pointerId, 'unknown', 24, /^[A-Za-z0-9._+-]+$/);
+  return (element && element.id ? element.id : 'unknown') + ':' + id;
+}
+function crTraceCaptureSnapshot(element, pointerId){
+  if(!_crTraceCaptureStates) return {
+    captureSupported:null, captureAttempted:null, captureCallThrew:null, captureErrorName:null,
+    hasCaptureImmediatelyAfter:null, gotPointerCaptureObserved:null, lostPointerCaptureObserved:null,
+    releaseAttempted:null, releaseCallThrew:null, hasCaptureAfterRelease:null,
+  };
+  const value = _crTraceCaptureStates.get(crTraceCaptureKey(element, pointerId));
+  return value ? Object.assign({}, value) : {
+    captureSupported: typeof (element && element.setPointerCapture) === 'function',
+    captureAttempted:false, captureCallThrew:false, captureErrorName:null,
+    hasCaptureImmediatelyAfter:null, gotPointerCaptureObserved:false,
+    lostPointerCaptureObserved:false, releaseAttempted:false, releaseCallThrew:false,
+    hasCaptureAfterRelease:null,
+  };
+}
+function crTraceCaptureErrorName(error){
+  const name = error && error.name;
+  return ['NotFoundError','InvalidStateError','NotSupportedError','SecurityError','UnknownError'].includes(name) ? name : 'UnknownError';
+}
+function crTraceCaptureAttempt(element, pointerId){
+  if(!CR_CONTROL_TRACE_ENABLED) return;
+  const key = crTraceCaptureKey(element, pointerId);
+  const stateInfo = crTraceCaptureSnapshot(element, pointerId);
+  stateInfo.captureSupported = typeof (element && element.setPointerCapture) === 'function';
+  stateInfo.captureAttempted = false;
+  stateInfo.captureCallThrew = false;
+  stateInfo.captureErrorName = null;
+  if(stateInfo.captureSupported){
+    stateInfo.captureAttempted = true;
+    try { element.setPointerCapture(pointerId); }
+    catch(error){ stateInfo.captureCallThrew = true; stateInfo.captureErrorName = crTraceCaptureErrorName(error); crTraceError('capture', 'capture-call-threw'); }
+    try {
+      stateInfo.hasCaptureImmediatelyAfter = typeof element.hasPointerCapture === 'function' ? !!element.hasPointerCapture(pointerId) : null;
+    } catch(_e){ stateInfo.hasCaptureImmediatelyAfter = null; }
+  }
+  _crTraceCaptureStates.set(key, stateInfo);
+}
+function crTraceReleaseAttempt(element, pointerId){
+  if(!CR_CONTROL_TRACE_ENABLED) return;
+  const key = crTraceCaptureKey(element, pointerId);
+  const stateInfo = crTraceCaptureSnapshot(element, pointerId);
+  stateInfo.releaseAttempted = false;
+  stateInfo.releaseCallThrew = false;
+  if(typeof (element && element.releasePointerCapture) === 'function'){
+    stateInfo.releaseAttempted = true;
+    try { element.releasePointerCapture(pointerId); }
+    catch(error){ stateInfo.releaseCallThrew = true; stateInfo.captureErrorName = crTraceCaptureErrorName(error); crTraceError('capture', 'release-call-threw'); }
+    try {
+      stateInfo.hasCaptureAfterRelease = typeof element.hasPointerCapture === 'function' ? !!element.hasPointerCapture(pointerId) : null;
+    } catch(_e){ stateInfo.hasCaptureAfterRelease = null; }
+  }
+  _crTraceCaptureStates.set(key, stateInfo);
+}
+function crTraceCaptureObservation(element, event, type){
+  if(!CR_CONTROL_TRACE_ENABLED || !event) return;
+  const pointerId = event.pointerId;
+  const key = crTraceCaptureKey(element, pointerId);
+  const stateInfo = crTraceCaptureSnapshot(element, pointerId);
+  if(type === 'gotpointercapture') stateInfo.gotPointerCaptureObserved = true;
+  if(type === 'lostpointercapture') stateInfo.lostPointerCaptureObserved = true;
+  _crTraceCaptureStates.set(key, stateInfo);
+  crTraceLifecycle(type === 'gotpointercapture' ? 'pointer-capture-gained' : 'pointer-capture-lost', 'browser-event', event);
+}
+function crTraceTargetId(event){
+  const target = event && event.target;
+  return target && /^[A-Za-z0-9_-]{1,64}$/.test(String(target.id || '')) ? String(target.id) : null;
+}
+function crTraceTargetTag(event){
+  const tag = event && event.target && String(event.target.tagName || '').toUpperCase();
+  return ['DIV','BUTTON','CANVAS','DOCUMENT','WINDOW'].includes(tag) ? tag : (tag ? 'UNKNOWN' : null);
+}
+function crTraceEventType(value){
+  const type = String(value || '').toLowerCase();
+  return CR_TRACE_EVENT_TYPE_SET.has(type) ? type : 'unknown';
+}
+function crTraceSource(value){
+  return CR_TRACE_SOURCE_SET.has(value) ? value : 'unknown';
+}
+function crTraceControl(value){
+  return ['move','look','give','sprint','map','pause','menu','edit-bar','portrait-hint','unclassified'].includes(value) ? value : 'unclassified';
+}
+function crTraceDefaultEvent(event, info){
+  const stateInfo = crTraceState();
+  const data = info || {};
+  const capture = data.capture || {};
+  const beforeQueue = data.queuedLookDeltaBefore === undefined ? stateInfo.queuedLookDelta : data.queuedLookDeltaBefore;
+  const afterQueue = data.queuedLookDeltaAfter === undefined ? stateInfo.queuedLookDelta : data.queuedLookDeltaAfter;
+  return Object.assign({
+    timeMs: crTraceFinite(crRawLookNowMs() - _crControlTrace.startedPerf, 0, 0, 86400000),
+    eventFamily: data.eventFamily || (event && event.type && String(event.type).indexOf('touch') === 0 ? 'touch' : 'pointer'),
+    eventType: crTraceEventType(data.eventType || (event && event.type)),
+    pointerType: data.pointerType === undefined ? (event && event.pointerType ? String(event.pointerType) : null) : data.pointerType,
+    nativeContactId: data.nativeContactId === undefined ? (event && event.pointerId !== undefined ? String(event.pointerId) : null) : data.nativeContactId,
+    nativeSequenceId: data.nativeSequenceId === undefined ? null : data.nativeSequenceId,
+    control: crTraceControl(data.control),
+    sourcePath: crTraceSource(data.sourcePath),
+    targetId: data.targetId === undefined ? crTraceTargetId(event) : data.targetId,
+    targetTag: data.targetTag === undefined ? crTraceTargetTag(event) : data.targetTag,
+    clientX: data.clientX === undefined ? (event && Number.isFinite(Number(event.clientX)) ? Number(event.clientX) : null) : data.clientX,
+    clientY: data.clientY === undefined ? (event && Number.isFinite(Number(event.clientY)) ? Number(event.clientY) : null) : data.clientY,
+    dx: data.dx === undefined ? null : data.dx,
+    dy: data.dy === undefined ? null : data.dy,
+    buttons: data.buttons === undefined ? (event && Number.isFinite(Number(event.buttons)) ? Number(event.buttons) : null) : data.buttons,
+    cancelable: data.cancelable === undefined ? (event ? !!event.cancelable : null) : data.cancelable,
+    defaultPreventedBefore: data.defaultPreventedBefore === undefined ? (event ? !!event.defaultPrevented : null) : data.defaultPreventedBefore,
+    defaultPreventedAfter: data.defaultPreventedAfter === undefined ? (event ? !!event.defaultPrevented : null) : data.defaultPreventedAfter,
+    propagationStoppedByControl: data.propagationStoppedByControl === undefined ? null : data.propagationStoppedByControl,
+    accepted: data.accepted === undefined ? false : !!data.accepted,
+    rejectionReason: data.rejectionReason === undefined ? null : data.rejectionReason,
+    suspectedDuplicateGroupId: null,
+    suppressedAsDuplicate: false,
+    controlEditActive: stateInfo.controlEditActive,
+    paused: stateInfo.paused,
+    onboardingOpen: stateInfo.onboardingOpen,
+    joyActive: stateInfo.joyActive,
+    lookActive: stateInfo.lookActive,
+    joyStrength: stateInfo.joyStrength,
+    queuedLookDeltaBefore: beforeQueue,
+    queuedLookDeltaAfter: afterQueue,
+    appliedLookDelta: data.appliedLookDelta === undefined ? 0 : data.appliedLookDelta,
+    playerAngleBefore: data.playerAngleBefore === undefined ? stateInfo.playerAngle : data.playerAngleBefore,
+    playerAngleAfter: data.playerAngleAfter === undefined ? stateInfo.playerAngle : data.playerAngleAfter,
+    frameIndex: _crControlTrace ? _crControlTrace.frameIndex : 0,
+    simulationStepIndex: _crControlTrace ? _crControlTrace.simulationStepIndex : 0,
+    captureSupported: capture.captureSupported === undefined ? null : capture.captureSupported,
+    captureAttempted: capture.captureAttempted === undefined ? null : capture.captureAttempted,
+    captureCallThrew: capture.captureCallThrew === undefined ? null : capture.captureCallThrew,
+    captureErrorName: capture.captureErrorName === undefined ? null : capture.captureErrorName,
+    hasCaptureImmediatelyAfter: capture.hasCaptureImmediatelyAfter === undefined ? null : capture.hasCaptureImmediatelyAfter,
+    gotPointerCaptureObserved: capture.gotPointerCaptureObserved === undefined ? null : capture.gotPointerCaptureObserved,
+    lostPointerCaptureObserved: capture.lostPointerCaptureObserved === undefined ? null : capture.lostPointerCaptureObserved,
+    releaseAttempted: capture.releaseAttempted === undefined ? null : capture.releaseAttempted,
+    releaseCallThrew: capture.releaseCallThrew === undefined ? null : capture.releaseCallThrew,
+    hasCaptureAfterRelease: capture.hasCaptureAfterRelease === undefined ? null : capture.hasCaptureAfterRelease,
+    handlerDurationMs: data.handlerDurationMs === undefined ? 0 : data.handlerDurationMs,
+    styleWritesDuringHandler: data.styleWritesDuringHandler === undefined ? null : data.styleWritesDuringHandler,
+    nextFrameIndex: null,
+    eventToNextFrameMs: null,
+  }, data);
+}
+function crTraceSanitizeEvent(row){
+  const out = crTraceDefaultEvent(null, row);
+  out.sequence = _crControlTrace.eventSequence++;
+  out.eventFamily = ['pointer','touch','keyboard','mouse','ui','lifecycle'].includes(out.eventFamily) ? out.eventFamily : 'ui';
+  out.eventType = crTraceEventType(out.eventType);
+  out.pointerType = out.pointerType == null ? null : (['touch','pen','mouse','unknown'].includes(String(out.pointerType)) ? String(out.pointerType) : 'unknown');
+  out.nativeContactId = out.nativeContactId == null ? null : crTraceBoundString(out.nativeContactId, null, 24, /^[A-Za-z0-9._+-]+$/);
+  out.nativeSequenceId = out.nativeSequenceId == null ? null : crTraceBoundString(out.nativeSequenceId, null, 48, /^[A-Za-z0-9._:-]+$/);
+  out.sourcePath = crTraceSource(out.sourcePath);
+  out.targetId = out.targetId == null ? null : crTraceBoundString(out.targetId, null, 64, /^[A-Za-z0-9_-]+$/);
+  out.targetTag = out.targetTag == null ? null : (['DIV','BUTTON','CANVAS','DOCUMENT','WINDOW','UNKNOWN'].includes(out.targetTag) ? out.targetTag : 'UNKNOWN');
+  ['clientX','clientY'].forEach(key => { out[key] = out[key] == null ? null : crTraceFinite(out[key], null, -10000, 20000); });
+  ['dx','dy','queuedLookDeltaBefore','queuedLookDeltaAfter','appliedLookDelta','playerAngleBefore','playerAngleAfter'].forEach(key => { out[key] = out[key] == null ? null : crTraceFinite(out[key], null); });
+  out.buttons = out.buttons == null ? null : crTraceInteger(out.buttons, null, 0, 65535);
+  out.timeMs = crTraceFinite(out.timeMs, 0, 0, 86400000);
+  out.handlerDurationMs = out.handlerDurationMs == null ? null : crTraceFinite(out.handlerDurationMs, null, 0, 1000);
+  out.styleWritesDuringHandler = out.styleWritesDuringHandler == null ? null : crTraceInteger(out.styleWritesDuringHandler, null, 0, 1000);
+  out.frameIndex = crTraceInteger(out.frameIndex, 0, 0);
+  out.simulationStepIndex = crTraceInteger(out.simulationStepIndex, 0, 0);
+  out.synthetic = !!out.synthetic;
+  if(out.synthetic) out.syntheticLabel = 'synthetic fixture';
+  return out;
+}
+function crTraceRecordEvent(event, info){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const row = crTraceSanitizeEvent(crTraceDefaultEvent(event, info));
+  crTraceRingPush(_crControlTrace.events, row);
+  if(row.control === 'move' && row.accepted) _crControlTrace.acceptedMoveSamples++;
+  if(row.control === 'look' && row.accepted && (row.appliedLookDelta !== 0 || row.queuedLookDeltaAfter !== row.queuedLookDeltaBefore)) _crControlTrace.acceptedLookSamples++;
+  if(row.control === 'move' && !row.accepted && ['pointerdown','pointermove','touchstart','touchmove'].includes(row.eventType)) _crControlTrace.rejectedMoveSamples++;
+  if(row.control === 'look' && !row.accepted && ['pointerdown','pointermove','touchstart','touchmove'].includes(row.eventType)) _crControlTrace.rejectedLookSamples++;
+  if(row.eventFamily === 'pointer') _crControlTrace.rawPointerEvents++;
+  if(row.eventFamily === 'touch') _crControlTrace.rawTouchEvents++;
+  if(row.eventFamily === 'keyboard') _crControlTrace.rawKeyboardEvents++;
+  return row.sequence;
+}
+function crTraceLifecycle(type, reason, event, stateBefore, stateAfter){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const before = stateBefore || crTraceState();
+  const after = stateAfter || crTraceState();
+  const row = {
+    sequence: _crControlTrace.lifecycleSequence++,
+    timeMs: crTraceFinite(crRawLookNowMs() - _crControlTrace.startedPerf, 0, 0, 86400000),
+    type: crTraceBoundString(type, 'x-unknown', 64, /^[A-Za-z0-9-]+$/),
+    reason: crTraceBoundString(reason, 'browser-event', CR_CONTROL_TRACE_LIMITS.reasonCharsMax, /^[A-Za-z0-9 ._:-]+$/),
+    activeMoveContacts: after.joyActive ? 1 : 0,
+    activeLookContacts: after.lookActive ? 1 : 0,
+    joyActive: !!after.joyActive,
+    lookActive: !!after.lookActive,
+    queuedLookDelta: crTraceFinite(after.queuedLookDelta, 0),
+    frameIndex: _crControlTrace.frameIndex,
+    activeMoveContactsBefore: before.joyActive ? 1 : 0,
+    activeLookContactsBefore: before.lookActive ? 1 : 0,
+    joyActiveBefore: !!before.joyActive,
+    lookActiveBefore: !!before.lookActive,
+    queuedLookDeltaBefore: crTraceFinite(before.queuedLookDelta, 0),
+    activeMoveContactsAfter: after.joyActive ? 1 : 0,
+    activeLookContactsAfter: after.lookActive ? 1 : 0,
+    joyActiveAfter: !!after.joyActive,
+    lookActiveAfter: !!after.lookActive,
+    queuedLookDeltaAfter: crTraceFinite(after.queuedLookDelta, 0),
+  };
+  if(arguments[5] === true){ row.synthetic = true; row.syntheticLabel = 'synthetic fixture'; }
+  crTraceRingPush(_crControlTrace.lifecycle, row);
+  if(event) crTraceRecordEvent(event, { eventFamily:'lifecycle', eventType:event.type, sourcePath:'visibility-lifecycle', control:'unclassified', accepted:true });
+  return row.sequence;
+}
+function crTraceError(category, message){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return;
+  _crControlTrace.errorTotal++;
+  if(_crControlTrace.errors.rows.length >= CR_CONTROL_TRACE_LIMITS.errorsMax){
+    if(!_crControlTrace.errorCapReached){
+      _crControlTrace.errorCapReached = true;
+      _crControlTrace.errors.rows.push({ sequence:_crControlTrace.errorSequence++, timeMs:0, category:'overflow', message:'error-cap-reached', eventSequence:null, frameIndex:null });
+    }
+    crTraceLifecycle('technical-error', 'trace-error-cap');
+    return;
+  }
+  crTraceRingPush(_crControlTrace.errors, {
+    sequence:_crControlTrace.errorSequence++,
+    timeMs:crTraceFinite(crRawLookNowMs() - _crControlTrace.startedPerf, 0, 0, 86400000),
+    category:['capture','schema','nonfinite','overflow','lifecycle','export','internal'].includes(category) ? category : 'internal',
+    message:crTraceBoundString(message, 'trace-error', CR_CONTROL_TRACE_LIMITS.errorMessageCharsMax, /^[A-Za-z0-9 ._:-]+$/),
+    eventSequence:null,
+    frameIndex:_crControlTrace.frameIndex,
+  });
+  crTraceLifecycle('technical-error', 'runtime-error');
+}
+function crTraceRegisterCaptureObservation(event, type){
+  if(!CR_CONTROL_TRACE_ENABLED || !event) return;
+  const target = event.currentTarget || event.target;
+  const key = crTraceCaptureKey(target, event.pointerId);
+  const stateInfo = crTraceCaptureSnapshot(target, event.pointerId);
+  if(!_crTraceCaptureObserved) _crTraceCaptureObserved = new Set();
+  if(type === 'gotpointercapture') stateInfo.gotPointerCaptureObserved = true;
+  if(type === 'lostpointercapture') stateInfo.lostPointerCaptureObserved = true;
+  _crTraceCaptureStates.set(key, stateInfo);
+  _crTraceCaptureObserved.add(key + ':' + type);
+  crTraceCaptureObservation(target, event, type);
+}
+function crTraceInstallCaptureObservers(elements){
+  if(!CR_CONTROL_TRACE_ENABLED || !elements) return;
+  _crTraceCaptureStates ||= new Map();
+  _crTraceCaptureObserved ||= new Set();
+  elements.filter(Boolean).forEach(element => {
+    ['gotpointercapture','lostpointercapture'].forEach(type => element.addEventListener(type, event => crTraceRegisterCaptureObservation(event, type)));
+  });
+}
+function crTraceFrameStart(now){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const stateInfo = crTraceState();
+  _crTraceFrameState = {
+    now:Number(now),
+    frameIndex:_crControlTrace.frameIndex + 1,
+    queuedLookDeltaAtFrameStart:stateInfo.queuedLookDelta,
+    playerAngleBefore:stateInfo.playerAngle,
+    stateBefore:stateInfo,
+    eventsBefore:_crControlTrace.events.total,
+  };
+  return _crTraceFrameState;
+}
+function crTraceFrameEnd(now, rawDt, stepResult, renderPose, renderAngle, token){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const start = token || _crTraceFrameState || crTraceFrameStart(now);
+  const stateInfo = crTraceState();
+  const previous = _crControlTrace.lastFrame;
+  const step = stepResult || {};
+  const frameDelta = previous ? Math.max(0, Number(now) - previous.now) : 0;
+  const row = {
+    sequence:_crControlTrace.frameIndex + 1,
+    frameIndex:++_crControlTrace.frameIndex,
+    timeMs:crTraceFinite(Number(now) - _crControlTrace.startedPerf, 0, 0, 86400000),
+    frameDeltaMs:crTraceFinite(frameDelta, 0, 0, 500),
+    simulationSteps:crTraceInteger(step.steps, 0, 0, 5),
+    fixedStepAccumulator:crTraceFinite(step.accumulator, 0, 0),
+    fixedStepDrops:crTraceInteger(step.droppedFrames, 0, 0),
+    moveActive:!!stateInfo.joyActive,
+    lookActive:!!stateInfo.lookActive,
+    joyX:crTraceFinite(stateInfo.joyX, 0, -1, 1),
+    joyY:crTraceFinite(stateInfo.joyY, 0, -1, 1),
+    joyStrength:crTraceFinite(stateInfo.joyStrength, 0, 0, 1),
+    queuedLookDeltaAtFrameStart:crTraceFinite(start.queuedLookDeltaAtFrameStart, 0),
+    appliedLookDeltaThisFrame:crTraceFinite(stateInfo.playerAngle - start.playerAngleBefore, 0),
+    authoritativeX:crTraceFinite(typeof player !== 'undefined' && player ? player.x : 0, 0),
+    authoritativeY:crTraceFinite(typeof player !== 'undefined' && player ? player.y : 0, 0),
+    authoritativeAngle:crTraceFinite(stateInfo.playerAngle, 0),
+    renderX:crTraceFinite(renderPose && renderPose.x, 0),
+    renderY:crTraceFinite(renderPose && renderPose.y, 0),
+    renderAngle:crTraceFinite(renderAngle, stateInfo.playerAngle),
+    renderAngleDelta:previous ? crTraceFinite(crTraceShortestAngle(renderAngle, previous.renderAngle), 0) : 0,
+    renderPositionDelta:previous ? crTraceFinite(Math.hypot(Number(renderPose && renderPose.x) - previous.renderX, Number(renderPose && renderPose.y) - previous.renderY), 0) : 0,
+    controlEventsSincePreviousFrame:Math.max(0, _crControlTrace.events.total - (previous ? previous.eventsTotal : start.eventsBefore)),
+    moveEventsSincePreviousFrame:0,
+    lookEventsSincePreviousFrame:0,
+  };
+  const startEvents = previous ? previous.eventsTotal : start.eventsBefore;
+  for(let i = _crControlTrace.events.rows.length - 1; i >= 0; i--){
+    const event = _crControlTrace.events.rows[i];
+    if(event.sequence <= startEvents) break;
+    if(event.control === 'move') row.moveEventsSincePreviousFrame++;
+    if(event.control === 'look') row.lookEventsSincePreviousFrame++;
+  }
+  crTraceRingPush(_crControlTrace.frames, row);
+  _crControlTrace.lastFrame = Object.assign({ now:Number(now), eventsTotal:_crControlTrace.events.total }, row);
+  _crControlTrace.simulationStepIndex += row.simulationSteps;
+  if(_crTraceLastPaused !== null && _crTraceLastPaused !== stateInfo.paused){
+    crTraceLifecycle(stateInfo.paused ? 'pause-enter' : 'pause-exit', 'browser-event', null, _crTraceLastPaused ? Object.assign({}, stateInfo, { paused:true }) : Object.assign({}, stateInfo, { paused:false }), stateInfo);
+  }
+  if(_crTraceLastVisibility !== null && _crTraceLastVisibility !== document.hidden) crTraceLifecycle(document.hidden ? 'visibility-hidden' : 'visibility-visible', document.hidden ? 'document-hidden' : 'document-visible');
+  if(_crTraceLastOrientation !== null && _crTraceLastOrientation !== crTraceOrientation()) crTraceLifecycle('orientation-change', 'browser-event');
+  if(_crTraceLastPaused !== null && _crTraceLastPaused === false && stateInfo.paused === true) crTraceRecordEvent(null, { eventFamily:'keyboard', eventType:'keydown', sourcePath:'keyboard-pause', control:'pause', accepted:true });
+  _crTraceLastPaused = stateInfo.paused;
+  _crTraceLastVisibility = !!document.hidden;
+  _crTraceLastOrientation = crTraceOrientation();
+  _crTraceFrameState = null;
+  return row;
+}
+function crTraceShortestAngle(to, from){
+  const a = crTraceFinite(to, 0) - crTraceFinite(from, 0);
+  return ((a + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI;
+}
+function crTraceRequiredScenarios(){
+  const out = {};
+  ['AUTO-1','AUTO-2','AUTO-3','AUTO-4','AUTO-5','AUTO-6','AUTO-7','AUTO-8','PHONE-0','PHONE-1','PHONE-2','PHONE-3','PHONE-4','PHONE-5','PHONE-6','PHONE-7'].forEach(key => { out[key] = false; });
+  return out;
+}
+function crTraceSummary(){
+  const eventStats = crTraceRingStats(_crControlTrace.events);
+  const frameStats = crTraceRingStats(_crControlTrace.frames);
+  const lifecycleStats = crTraceRingStats(_crControlTrace.lifecycle);
+  return Object.assign({
+    eventsTotal:eventStats.totalObserved,
+    eventsRetained:eventStats.retained,
+    eventsOverwritten:eventStats.overwritten,
+    eventsWrapped:eventStats.wrapped,
+    firstRetainedEventSequence:eventStats.firstRetainedSequence,
+    lastRetainedEventSequence:eventStats.lastRetainedSequence,
+    rawPointerEvents:_crControlTrace.rawPointerEvents,
+    rawTouchEvents:_crControlTrace.rawTouchEvents,
+    rawKeyboardEvents:_crControlTrace.rawKeyboardEvents,
+    acceptedMoveSamples:_crControlTrace.acceptedMoveSamples,
+    acceptedLookSamples:_crControlTrace.acceptedLookSamples,
+    rejectedMoveSamples:_crControlTrace.rejectedMoveSamples,
+    rejectedLookSamples:_crControlTrace.rejectedLookSamples,
+    suspectedDuplicateGroups:0,
+    suppressedDuplicates:0,
+    captureAttempts:_crControlTrace.events.rows.filter(row => row.captureAttempted === true).length,
+    captureSuccessObservations:_crControlTrace.events.rows.filter(row => row.captureAttempted === true && (row.hasCaptureImmediatelyAfter === true || row.gotPointerCaptureObserved === true)).length,
+    captureFailures:_crControlTrace.events.rows.filter(row => row.captureAttempted === true && (row.captureCallThrew === true || row.hasCaptureImmediatelyAfter === false)).length,
+    lostPointerCaptureCount:_crControlTrace.lifecycle.rows.filter(row => row.type === 'pointer-capture-lost').length,
+    pointerCancelCount:_crControlTrace.events.rows.filter(row => row.eventType === 'pointercancel').length,
+    touchCancelCount:_crControlTrace.events.rows.filter(row => row.eventType === 'touchcancel').length,
+    framesWithMoveOnly:_crControlTrace.frames.rows.filter(row => row.moveActive && !row.lookActive).length,
+    framesWithLookOnly:_crControlTrace.frames.rows.filter(row => !row.moveActive && row.lookActive).length,
+    framesWithMoveAndLook:_crControlTrace.frames.rows.filter(row => row.moveActive && row.lookActive).length,
+    framesWithMoveAndLookAndZeroSimSteps:_crControlTrace.frames.rows.filter(row => row.moveActive && row.lookActive && row.simulationSteps === 0).length,
+    repeatedCameraFramesDuringActiveLook:_crControlTrace.frames.rows.filter(row => row.lookActive && Math.abs(row.renderAngleDelta) <= CR_CONTROL_TRACE_LIMITS.renderAngleEpsilonRad && row.frameIndex > 1).length,
+    largestQueuedLookDelta:_crControlTrace.frames.rows.length ? Math.max(..._crControlTrace.frames.rows.map(row => Math.abs(row.queuedLookDeltaAtFrameStart))) : null,
+    largestAppliedLookDelta:_crControlTrace.frames.rows.length ? Math.max(..._crControlTrace.frames.rows.map(row => Math.abs(row.appliedLookDeltaThisFrame))) : null,
+    largestCameraAngleJump:_crControlTrace.frames.rows.length > 1 ? Math.max(..._crControlTrace.frames.rows.slice(1).map(row => Math.abs(row.renderAngleDelta))) : null,
+    traceRowsOverwritten:eventStats.overwritten + frameStats.overwritten + lifecycleStats.overwritten,
+    traceErrors:_crControlTrace.errorTotal,
+    syntheticRecords:_crControlTrace.events.rows.filter(row => row.synthetic).length,
+    buffers:{ events:eventStats, frames:frameStats, lifecycle:lifecycleStats, errors:crTraceRingStats(_crControlTrace.errors) },
+  }, eventStats, {
+    framesTotal:frameStats.totalObserved, framesRetained:frameStats.retained, framesOverwritten:frameStats.overwritten,
+    framesWrapped:frameStats.wrapped, firstRetainedFrameSequence:frameStats.firstRetainedSequence,
+    lastRetainedFrameSequence:frameStats.lastRetainedSequence,
+  });
+}
+function crTraceSnapshot(){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const flags = _crControlTrace.flags;
+  const completedAt = _crControlTrace.completedAt;
+  const envelope = {
+    schema:'snc-control-trace-v1',
+    session:Object.assign({}, _crControlTrace.session, { completedAt }),
+    flags:Object.assign({}, flags),
+    limits:Object.assign({}, CR_CONTROL_TRACE_LIMITS),
+    events:_crControlTrace.events.rows.slice(),
+    frames:_crControlTrace.frames.rows.slice(),
+    lifecycle:_crControlTrace.lifecycle.rows.slice(),
+    summary:crTraceSummary(),
+    verdictInputs:{
+      scenarioId:'unknown', subjectiveVerdict:null, requiredScenarios:crTraceRequiredScenarios(),
+      nativeSequences:_crControlTrace.nativeSequences.slice(), suspectedDuplicateGroups:[], captureObserved:_crControlTrace.events.rows.some(row => row.captureAttempted) ? 'yes' : 'unknown',
+      comparisons:{ moveConcurrentVsSingle:null, lookConcurrentVsSingle:null },
+      evidenceIntegrity:{ identityCertain:false, requiredRowsRetained:false, sameBuildAsVisualVerdict:false, requiredScenarioComplete:false, instrumentationErrorFree:_crControlTrace.errorTotal === 0 },
+    },
+    errors:_crControlTrace.errors.rows.slice(),
+  };
+  return crTraceFreeze(envelope);
+}
+function crTraceCreate(){
+  const startedAt = new Date().toISOString();
+  const now = crRawLookNowMs();
+  return {
+    startedPerf:now,
+    completedAt:null,
+    flags:crTraceFlagState(),
+    session:{
+      traceSessionId:crTraceSessionId(), startedAt, completedAt:null,
+      buildId:crTraceBoundString(typeof BUILD_ID !== 'undefined' ? BUILD_ID : 'unknown', 'unknown', 40, /^[A-Za-z0-9._-]+$/),
+      instrumentedCandidateCommit:CR_CONTROL_TRACE_INSTRUMENTED_CANDIDATE,
+      sourceCommit:'unknown', artifactSha256:'unknown', artifactBytes:0,
+      pageUrlPath:crTraceBoundString(location.pathname || '/', '/', 120, /^\/[A-Za-z0-9._~!{{SCRIPT}}'()*+,;=:@%\/-]*$/),
+      queryKeys:crTraceQueryKeys(), deviceLabel:'unknown', browserLabel:'unknown', orientation:crTraceOrientation(),
+      viewportCss:{ width:crTraceInteger(innerWidth, 0, 0, 10000), height:crTraceInteger(innerHeight, 0, 0, 10000) },
+      devicePixelRatio:crTraceFinite(typeof devicePixelRatio !== 'undefined' ? devicePixelRatio : 0, 0, 0, 10),
+      reportedRefreshRateHz:null, mobileMode:!!mobileMode, inputMode:'unknown',
+    },
+    events:crTraceRing(CR_CONTROL_TRACE_LIMITS.eventsMax), frames:crTraceRing(CR_CONTROL_TRACE_LIMITS.framesMax), lifecycle:crTraceRing(CR_CONTROL_TRACE_LIMITS.lifecycleMax), errors:crTraceRing(CR_CONTROL_TRACE_LIMITS.errorsMax),
+    eventSequence:1, lifecycleSequence:1, errorSequence:1, frameIndex:0, simulationStepIndex:0, lastFrame:null,
+    nativeSequences:[], acceptedMoveSamples:0, acceptedLookSamples:0, rejectedMoveSamples:0, rejectedLookSamples:0,
+    rawPointerEvents:0, rawTouchEvents:0, rawKeyboardEvents:0, errorTotal:0, errorCapReached:false,
+  };
+}
+function crControlTraceStart(){
+  if(!CR_CONTROL_TRACE_ENABLED) return null;
+  _crControlTrace = crTraceCreate();
+  _crTraceCaptureStates = new Map();
+  _crTraceCaptureObserved = new Set();
+  _crTraceOverflowRings = new Set();
+  _crTraceLastPaused = null; _crTraceLastVisibility = !!document.hidden; _crTraceLastOrientation = crTraceOrientation();
+  crTraceLifecycle('trace-start', 'activation');
+  return crTraceSnapshot();
+}
+function crControlTraceExport(){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  crTraceLifecycle('trace-export', 'explicit-user-export');
+  _crControlTrace.completedAt = new Date().toISOString();
+  _crControlTrace.session.completedAt = _crControlTrace.completedAt;
+  return crTraceSnapshot();
+}
+function crControlTraceReset(){
+  if(!CR_CONTROL_TRACE_ENABLED) return null;
+  const before = _crControlTrace;
+  _crControlTrace = crTraceCreate();
+  _crTraceCaptureStates = new Map(); _crTraceCaptureObserved = new Set();
+  _crTraceOverflowRings = new Set();
+  crTraceLifecycle('trace-reset', 'explicit-user-reset', null, before ? crTraceState() : null, crTraceState());
+  return crTraceSnapshot();
+}
+function crControlTraceLegacyCopyText(text){
+  let field = null;
+  try {
+    field = document.createElement('textarea');
+    field.value = text;
+    field.readOnly = true;
+    field.setAttribute('aria-hidden', 'true');
+    field.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+    document.body.appendChild(field);
+    field.focus();
+    field.select();
+    field.setSelectionRange(0, field.value.length);
+    return typeof document.execCommand === 'function' && document.execCommand('copy') === true;
+  } catch(_e){
+    return false;
+  } finally {
+    if(field) field.remove();
+  }
+}
+function crControlTraceCopyText(text){
+  const legacyCopy = () => crControlTraceLegacyCopyText(text);
+  try {
+    if(navigator.clipboard && typeof navigator.clipboard.writeText === 'function') return navigator.clipboard.writeText(text).then(() => true, legacyCopy);
+  } catch(_e){}
+  return Promise.resolve(legacyCopy());
+}
+function crControlTraceCopy(){
+  if(!CR_CONTROL_TRACE_ENABLED) return Promise.resolve(false);
+  return crControlTraceCopyText(JSON.stringify(crControlTraceExport()));
+}
+function crControlTraceDownloadText(text){
+  try {
+    const blob = new Blob([text], { type:'application/json' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = `snc-control-trace-${Date.now()}.json`;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(href), 0);
+    return true;
+  } catch(_e){ return false; }
+}
+function crControlTraceDeliver(){
+  if(!CR_CONTROL_TRACE_ENABLED) return Promise.resolve('disabled');
+  const text = JSON.stringify(crControlTraceExport());
+  return crControlTraceCopyText(text).then(copied => {
+    if(copied) return 'copied';
+    if(crControlTraceDownloadText(text)) return 'downloaded';
+    crTraceError('export', 'clipboard-and-download-unavailable');
+    return 'failed';
+  });
+}
+function crControlTraceInstallExportControl(){
+  if(!CR_CONTROL_TRACE_ENABLED || document.getElementById('crControlTraceExport')) return;
+  const install = () => {
+    if(document.getElementById('crControlTraceExport') || !document.body) return;
+    const button = document.createElement('button');
+    button.id = 'crControlTraceExport';
+    button.type = 'button';
+    button.textContent = 'COPY TRACE';
+    button.dataset.instrumentedCandidate = CR_CONTROL_TRACE_INSTRUMENTED_CANDIDATE;
+    button.setAttribute('aria-label', 'Copy Samsung control trace');
+    button.title = `Trace base ${CR_CONTROL_TRACE_INSTRUMENTED_CANDIDATE.slice(0, 12)} · build ${typeof BUILD_ID !== 'undefined' ? BUILD_ID : 'unknown'}`;
+    button.style.cssText = 'position:fixed;top:8px;right:8px;z-index:2147483647;min-width:112px;min-height:44px;padding:8px 12px;border:2px solid #fff;border-radius:8px;background:#17120d;color:#fff;font:700 13px/1.1 system-ui,sans-serif;letter-spacing:.04em;touch-action:manipulation;';
+    button.addEventListener('click', () => {
+      button.disabled = true;
+      button.textContent = 'EXPORTING…';
+      crControlTraceDeliver().then(result => {
+        button.textContent = result === 'copied' ? 'COPIED' : (result === 'downloaded' ? 'DOWNLOADED' : 'EXPORT FAILED');
+        button.disabled = false;
+      });
+    });
+    document.body.appendChild(button);
+  };
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once:true });
+  else install();
+}
+function crControlTraceRecordSyntheticEvent(info){
+  if(!CR_CONTROL_TRACE_ENABLED) return null;
+  const data = Object.assign({}, info || {}, { synthetic:true, syntheticLabel:'synthetic fixture' });
+  return crTraceRecordEvent(null, data);
+}
+function crControlTraceRecordSyntheticFrame(info){
+  if(!CR_CONTROL_TRACE_ENABLED || !_crControlTrace) return null;
+  const row = Object.assign({
+    sequence:_crControlTrace.frameIndex + 1,
+    frameIndex:_crControlTrace.frameIndex + 1, timeMs:0, frameDeltaMs:0, simulationSteps:0,
+    fixedStepAccumulator:0, fixedStepDrops:0, moveActive:false, lookActive:false, joyX:0, joyY:0,
+    joyStrength:0, queuedLookDeltaAtFrameStart:0, appliedLookDeltaThisFrame:0, authoritativeX:0,
+    authoritativeY:0, authoritativeAngle:0, renderX:0, renderY:0, renderAngle:0, renderAngleDelta:0,
+    renderPositionDelta:0, controlEventsSincePreviousFrame:0, moveEventsSincePreviousFrame:0, lookEventsSincePreviousFrame:0,
+  }, info || {});
+  row.frameIndex = crTraceInteger(row.frameIndex, 0, 0);
+  crTraceRingPush(_crControlTrace.frames, row);
+  _crControlTrace.frameIndex = Math.max(_crControlTrace.frameIndex, row.frameIndex);
+  return row.frameIndex;
+}
+function crControlTraceRecordSyntheticLifecycle(type, reason){
+  if(!CR_CONTROL_TRACE_ENABLED) return null;
+  return crTraceLifecycle(type, reason || 'browser-event', null, null, null, true);
+}
+function crControlTraceInstallLifecycle(){
+  if(!CR_CONTROL_TRACE_ENABLED || _crTraceLifecycleInstalled) return;
+  _crTraceLifecycleInstalled = true;
+  document.addEventListener('visibilitychange', () => crTraceLifecycle(document.hidden ? 'visibility-hidden' : 'visibility-visible', document.hidden ? 'document-hidden' : 'document-visible'));
+  addEventListener('orientationchange', event => { crTraceLifecycle('orientation-change', 'browser-event', event); crTraceRecordEvent(event, { eventFamily:'lifecycle', sourcePath:'orientation-lifecycle', eventType:'orientationchange', accepted:true }); });
+  addEventListener('resize', event => { crTraceLifecycle('resize', 'browser-event', event); crTraceRecordEvent(event, { eventFamily:'lifecycle', sourcePath:'visibility-lifecycle', eventType:'resize', accepted:true }); });
+  document.addEventListener('keydown', event => {
+    const pauseKey = event && (event.code === 'Escape' || event.code === 'KeyP');
+    if(pauseKey) crTraceLifecycle('keyboard-pause', 'browser-event', event);
+    crTraceRecordEvent(event, { eventFamily:'keyboard', sourcePath:pauseKey ? 'keyboard-pause' : 'keyboard-gameplay', control:pauseKey ? 'pause' : 'unclassified', accepted:pauseKey });
+  }, { capture:true });
+  document.addEventListener('pointerdown', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('pointerup', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('pointercancel', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('touchstart', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('touchend', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('touchcancel', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  document.addEventListener('click', event => crTraceRecordUiBoundary(event), { capture:true, passive:true });
+  addEventListener('error', () => crTraceError('internal', 'window-error'));
+  addEventListener('unhandledrejection', () => crTraceError('internal', 'unhandled-rejection'));
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', event => crTraceLifecycle('resize', 'browser-event', event), { passive:true });
+}
+function crTraceRecordUiBoundary(event){
+  if(!CR_CONTROL_TRACE_ENABLED || !event) return;
+  let target = event.target;
+  let id = target && target.id ? String(target.id) : '';
+  if(!id && target && typeof target.closest === 'function'){
+    try { const parent = target.closest('#mg,#ms,#mm,#mp,#mportmenu,#porthint,#crCtrlEditBar,#rmenu'); id = parent && parent.id ? String(parent.id) : ''; } catch(_e){}
+  }
+  const map = {
+    mg:['give','button-give'], ms:['sprint','button-sprint'], mm:['map','button-map'], mp:['pause','button-pause'],
+    mportmenu:['menu','menu'], rmenu:['menu','menu'], porthint:['portrait-hint','portrait-hint'], crCtrlEditBar:['edit-bar','edit-bar'],
+  };
+  if(!map[id]) return;
+  const eventFamily = String(event.type).indexOf('touch') === 0 ? 'touch' : (String(event.type).indexOf('pointer') === 0 ? 'pointer' : 'ui');
+  const sourcePrefix = map[id][1];
+  const sourcePath = sourcePrefix === 'menu' ? (eventFamily === 'touch' ? 'menu-touch' : 'menu-pointer') :
+    sourcePrefix === 'portrait-hint' ? (eventFamily === 'touch' ? 'portrait-hint-touch' : 'portrait-hint-pointer') :
+    sourcePrefix === 'edit-bar' ? (eventFamily === 'touch' ? 'edit-bar-touch' : 'edit-bar-pointer') :
+    (eventFamily === 'touch' ? sourcePrefix + '-touch' : sourcePrefix + '-pointer');
+  crTraceRecordEvent(event, { eventFamily, eventType:event.type, sourcePath, control:map[id][0], accepted:true });
+}
+function crControlTraceInstallCaptureObserversForElement(element){ crTraceInstallCaptureObservers([element]); }
+function crControlTracePublicApi(){
+  if(!CR_CONTROL_TRACE_ENABLED) return;
+  const api = {
+    schema:'snc-control-trace-v1', enabled:true, limits:CR_CONTROL_TRACE_LIMITS,
+    reset:crControlTraceReset, export:crControlTraceExport, copy:crControlTraceCopy, deliver:crControlTraceDeliver,
+    snapshot:crControlTraceExport, summary:() => _crControlTrace ? crTraceSummary() : null,
+    recordSyntheticEvent:crControlTraceRecordSyntheticEvent,
+    recordSyntheticFrame:crControlTraceRecordSyntheticFrame,
+    recordSyntheticLifecycle:crControlTraceRecordSyntheticLifecycle,
+    getSnapshot:crControlTraceExport,
+  };
+  window.__SNC_CONTROL_TRACE__ = Object.freeze(api);
+}
+if(CR_CONTROL_TRACE_ENABLED){
+  crControlTracePublicApi();
+  crControlTraceInstallLifecycle();
+  crControlTraceInstallExportControl();
 }
 
 // -----------------------------------------------------------------------
@@ -13630,6 +14466,10 @@ function crPerfProbeReset() {
   _crPerfLastFrameNow = 0;
   _crPerfLastHudAt = 0;
   _crPerfSnap = null;
+  if(typeof CR_CONTROL_TRACE_ENABLED !== 'undefined' && CR_CONTROL_TRACE_ENABLED && typeof crTraceLifecycle === 'function'){
+    crTraceLifecycle('perf-probe-reset', 'perf-probe-tap');
+    crTraceRecordEvent(null, { eventFamily:'lifecycle', eventType:'perf-probe-reset', sourcePath:'perf-probe-reset', control:'unclassified', accepted:true });
+  }
 }
 
 function _crPerfCap(arr, value, max) {
@@ -14559,13 +15399,14 @@ let last=performance.now();
 function frame(now){
   if(CR_PERF_PROBE) crPerfProbeEnsureInstalled();
   if(CR_PERF_PROBE) crPerfProbeFrameStart(now);
+  const crTraceFrameToken = CR_CONTROL_TRACE_ENABLED ? crTraceFrameStart(now) : null;
   if(_crHarnessDepth === 0) crGuardHarnessLeakOutsideCheck();
   const rawDt = crFixedStepVisibilityResetPending ? 0 : (now-last)/1000;
   crFixedStepVisibilityResetPending = false;
   last=now;
   crEnsureRenderPoseHistory();
   crApplyPendingInputActions();
-  crStepSimulationFixed(rawDt);
+  const crTraceStepResult = crStepSimulationFixed(rawDt);
   const renderPose = crGetInterpolatedRenderPose();
   let selectedRenderAngle = player.angle;
   try {
@@ -14584,6 +15425,7 @@ function frame(now){
     selectedRenderAngle = player.angle;
   }
   renderPose.angle = Number.isFinite(selectedRenderAngle) ? selectedRenderAngle : player.angle;
+  if(CR_CONTROL_TRACE_ENABLED) crTraceFrameEnd(now, rawDt, crTraceStepResult, renderPose, renderPose.angle, crTraceFrameToken);
 
   if(state===STATE.PLAY || state===STATE.UPGRADE){
     // full game scene render
@@ -14648,6 +15490,7 @@ try {
   }
 } catch(_renderProfileInitializationError){}
 crResetFixedStepSimulation();
+if(CR_CONTROL_TRACE_ENABLED && !_crControlTrace) crControlTraceStart();
 requestAnimationFrame(frame);
 
 function updateSeed(newSeed){
