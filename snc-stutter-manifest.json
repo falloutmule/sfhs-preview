@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "comparisonId": "snc-present-010-coherent-touch-pose",
+  "previewRepository": "falloutmule/sfhs-preview",
+  "previewBranch": "main",
+  "previewPolicy": "current-a-b-review-package",
+  "project": {
+    "id": "solidarity-not-charity-can-run",
+    "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+    "productionCommitAtPublication": "130ef52171e5055f496182dc481a94809be228ac"
+  },
+  "baseline": {
+    "label": "A",
+    "sourceBranch": "feature/snc-controls-trace",
+    "sourceCommit": "8592f6a3f48599fc1bdacbf2c4366d634c21e328",
+    "sourceTree": "dc9e2d21a86e4895ef7d1966ad27449691e115d5",
+    "buildId": "farfieldsmooth1",
+    "indexHtmlBytes": 1357742,
+    "indexHtmlSha256": "019e9b21d455d334eb586ac51f70e2f32ff82ca693e8d8b7cf67033aa09a5a8b",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/snc-stutter-a/?controltrace=1&mobile=on&portraitlayout=1"
+  },
+  "candidate": {
+    "label": "B",
+    "sourceBranch": "feature/snc-coherent-touch-pose",
+    "sourceCommit": "13db49974abb676e65fe1e6ff092d6982b854374",
+    "sourceTree": "27fb02dd686c088d4a1fb144d39662179f906592",
+    "buildId": "presentpose1",
+    "indexHtmlBytes": 1359371,
+    "indexHtmlSha256": "54ae272b84c8fd4eced3a8ea5c29022431187f1de36d5ed8695152764bd2acd4",
+    "scope": "coherent final render pose during active mobile touch LOOK in default interp mode",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/snc-stutter-b/?controltrace=1&mobile=on&portraitlayout=1"
+  },
+  "verification": {
+    "localFocusedGate": "PASS",
+    "independentChecker": "PASS — fresh detached clone at 13db49974abb676e65fe1e6ff092d6982b854374",
+    "publicCanonicalBytes": "pending",
+    "publicBrowserSmoke": "pending",
+    "samsungAcceptance": "pending",
+    "productionRelease": "not-authorized"
+  },
+  "updatedAtUtc": "2026-07-18T17:33:51Z"
+}
