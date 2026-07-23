@@ -1,0 +1,21 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "role": "phase-8-dumpster-pilot",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "pullRequest": 23,
+  "sourceCommit": "6feddfbd43818be445d0133e1b2cdc101005bf31",
+  "buildId": "chromeinput2",
+  "artifact": {
+    "path": "index.html",
+    "utf8Bytes": 1059158,
+    "sha256": "ef3f6b9cb6bbcb11eeca3aca6779d9f6aacfdd9c59f65d944b1906e4569f4d2f",
+    "gitBlob": "711ae17cc638df0afcc72846cdadab3bf39c00fb"
+  },
+  "pilotAsset": {
+    "id": "dumpster_001",
+    "footprint": {
+      "widthCells": 1,
+      "depthCells": 2
+    }
+  }
+}
