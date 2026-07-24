@@ -1,0 +1,22 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "role": "phase-8-playable-dumpster-pilot",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "pullRequest": 23,
+  "sourceCommit": "80f6a86ce1bd64b22e17f1fd50819766cc589b82",
+  "buildId": "chromeinput2",
+  "artifact": {
+    "path": "index.html",
+    "utf8Bytes": 1061434,
+    "sha256": "fd11ee4c97ac7c25ce6c0641626ca4b4e858207e395aba4f24089626da82c3b9",
+    "gitBlob": "7a4906e63210efe3ea56837b1e5b99a498dc2dd9"
+  },
+  "pilotAsset": {
+    "id": "dumpster_001",
+    "footprint": {
+      "widthCells": 1,
+      "depthCells": 2
+    },
+    "entryPoint": "Special Levels > Dumpster Pilot"
+  }
+}
