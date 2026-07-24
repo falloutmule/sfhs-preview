@@ -1,0 +1,11 @@
+{
+  "schema": "snc-preview-v1",
+  "role": "draft-pr-23-short-building-background-wall",
+  "sourceCommit": "1a3eced5d1e70a41c9e2685a806c26a847470d52",
+  "buildId": "chromeinput2",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1240178,
+    "sha256": "63dc2068c11a82922bf154af42ce294998ea0d1fa78aea76f1a4f968658a3aef"
+  }
+}
