@@ -1,0 +1,13 @@
+{
+  "schema": "snc-preview-v1",
+  "role": "draft-pr-23-cached-alpha-cutout-spans",
+  "sourceCommit": "3a2e09211623096fc1574e52c7d99d2dcff4346b",
+  "buildId": "dumpstercutout3",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1255526,
+    "sha256": "6799f2ab99bf730d2d8079858bcfecbae6b630970b192a956fd03648f8d4b82a",
+    "gitBlob": "68f4a652f2b973b7b2f9e590c7cfc6096082ec0f"
+  },
+  "physicalAcceptance": "pending"
+}
