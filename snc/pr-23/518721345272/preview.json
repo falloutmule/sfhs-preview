@@ -1,0 +1,11 @@
+{
+  "schema": "snc-preview-v1",
+  "role": "draft-pr-23-opaque-dumpster",
+  "sourceCommit": "518721345272dc9d6b578f6aa1fc4b4816c106c5",
+  "buildId": "chromeinput2",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1235331,
+    "sha256": "a2813e3d535e7130e52aea4344a789eb0bb7a9f88a6c34e0606ee726025d81fa"
+  }
+}
