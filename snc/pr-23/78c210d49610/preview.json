@@ -1,0 +1,11 @@
+{
+  "schema": "snc-preview-v1",
+  "role": "draft-pr-23-dumpstercutout1",
+  "sourceCommit": "78c210d496100dd93effcfc26bd4ded538da9ab7",
+  "buildId": "dumpstercutout1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1242609,
+    "sha256": "35b58835fb201151ca1a41ffe526677e090cb455cc44032782f708c7b822a617"
+  }
+}
