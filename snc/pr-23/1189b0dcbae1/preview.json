@@ -1,0 +1,11 @@
+{
+  "schema": "snc-preview-v1",
+  "role": "draft-pr-23-alpha-cutout-raycaster",
+  "sourceCommit": "1189b0dcbae1f93eb0f7eefd3ad4ba2b8cfa70ec",
+  "buildId": "dumpstercutout2",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1255545,
+    "sha256": "c33a7619adacd98618691e43b797f12e9eb992bc652bba34c869b8aeb23d7536"
+  }
+}
