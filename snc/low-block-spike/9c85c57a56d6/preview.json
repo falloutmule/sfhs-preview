@@ -1,0 +1,22 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "role": "low-block-raycaster-capability-spike",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "spike/low-block-raycaster",
+  "sourceCommit": "9c85c57a56d629ad4bb42e5f27622222a532f221",
+  "buildId": "lowblockspike2",
+  "entryQuery": "?lowblockspike=1&mobile=on&portraitlayout=1",
+  "artifact": {
+    "path": "index.html",
+    "utf8Bytes": 927939,
+    "sha256": "faee75158290cdfb8a8e7d9b573f509251dfefbb8f94d55d576ffec65c41a734",
+    "gitBlob": "2b93deb0a0e5e16ba4550914989e5ee135df1670"
+  },
+  "scope": {
+    "heightScale": 0.6,
+    "footprint": "1x2",
+    "rearCan": true,
+    "normalProductionUnaffected": true,
+    "requiresAndroidChromeAcceptance": true
+  }
+}
