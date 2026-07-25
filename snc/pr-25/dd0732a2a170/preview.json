@@ -1,0 +1,21 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "role": "runtime-asset-gallery-visual-repair-review",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/runtime-asset-gallery-level",
+  "sourceCommit": "dd0732a2a1705ede16bf2016ee5c15e145a4bcf3",
+  "pullRequest": 25,
+  "buildId": "runtimegallery2",
+  "entryQuery": "?assetgallery=1",
+  "artifact": {
+    "path": "index.html",
+    "utf8Bytes": 1096887,
+    "sha256": "8a55da952dee1a68be2d4b45a7ae894fa70ccc73b55dcdf13170fd1b618b6d87",
+    "gitBlob": "bdb2d851ddce56479db5da44ebe0d9be428eef18"
+  },
+  "scope": {
+    "reviewOnly": true,
+    "productionPagesUnchanged": true,
+    "lowBlockBays": "deferred pending the separate renderer spike"
+  }
+}
