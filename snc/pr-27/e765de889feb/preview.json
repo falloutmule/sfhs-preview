@@ -1,0 +1,14 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "pullRequest": 27,
+  "candidateCommit": "e765de889febb7e3daf6184fa00e3df1e7a575ea",
+  "buildId": "runtimegallery4",
+  "repair": "single directional dumpster plane; adjacent footprint faces transparent",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1927802,
+    "sha256": "f863f10d09525b24bd6bbaf38febcbc2e736e44d6e55c7fb8dcef9c03a6825ea"
+  },
+  "scope": "review-only; not production Pages"
+}
