@@ -1,0 +1,69 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "e765de889febb7e3daf6184fa00e3df1e7a575ea",
+  "buildId": "runtimegallery4",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "http": {
+    "assetGallery": 200,
+    "dumpsterPilot": 200,
+    "proof": 200
+  },
+  "gallery": {
+    "active": true,
+    "levelId": "asset-gallery-v1",
+    "exhibitCount": 22,
+    "focusId": "gallery-npc-household-dog-walker-001",
+    "screenshot": "asset-gallery-mobile.png"
+  },
+  "dumpster": {
+    "customLevel": "dumpster_pilot",
+    "diagnostics": {
+      "active": true,
+      "assetId": "dumpster_001",
+      "selectedWorldFace": "west",
+      "selectedLocalFace": "west",
+      "placementId": "dumpster-pilot",
+      "lookupCount": 10145,
+      "playerX": 2.55,
+      "playerY": 5.45
+    },
+    "westOpaqueRuns": 1,
+    "southOpaqueRuns": 0,
+    "southFaceSize": {
+      "width": 1,
+      "height": 1
+    },
+    "screenshot": "dumpster-close-corner-mobile.png"
+  },
+  "proof": {
+    "enabled": true,
+    "opaquePixels": 13289,
+    "transparentPixels": 1936,
+    "opaqueDepthWrites": 13289,
+    "transparentDepthPreserved": 1936,
+    "backgroundDepthWrites": 14007,
+    "spriteVisibleThroughTransparentPixels": 144,
+    "spriteHiddenBehindOpaquePixels": 2248,
+    "sampleOpaque": {
+      "col": 109,
+      "y": 146,
+      "alpha": 255,
+      "depthBefore": 5.5,
+      "depthAfter": 1.5
+    },
+    "sampleTransparent": {
+      "col": 99,
+      "y": 134,
+      "alpha": 0,
+      "depthBefore": 5.5,
+      "depthAfter": 5.5
+    }
+  },
+  "pageErrors": [],
+  "consoleErrors": [],
+  "externalRequests": []
+}
