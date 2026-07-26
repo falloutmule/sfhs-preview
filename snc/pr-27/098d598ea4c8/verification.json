@@ -1,0 +1,31 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "098d598ea4c8c724c561509cbacd6e66e1194b45",
+  "buildId": "runtimegallery4",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "http": {
+    "pagesManifest": 200,
+    "assetGallery": 200,
+    "dumpsterPilot": 200
+  },
+  "gallery": {
+    "active": true,
+    "levelId": "asset-gallery-v1",
+    "exhibitCount": 22,
+    "screenshot": "asset-gallery-mobile.png"
+  },
+  "dumpster": {
+    "customLevel": "dumpster_pilot",
+    "opaquePixels": 13289,
+    "transparentPixels": 1936,
+    "opaqueDepthWrites": 13289,
+    "transparentDepthPreserved": 1936,
+    "screenshot": "dumpster-pilot-mobile.png"
+  },
+  "pageErrors": [],
+  "externalRequests": []
+}
