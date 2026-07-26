@@ -1,0 +1,279 @@
+name: Publish SNC PR 27 Short-Building Preview
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/publish-snc-pr27-short-building-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: snc-pr27-short-building-preview
+  cancel-in-progress: false
+
+env:
+  SOURCE_REPOSITORY: falloutmule/solidarity-not-charity-can-run
+  SOURCE_COMMIT: 098d598ea4c8c724c561509cbacd6e66e1194b45
+  SOURCE_PR: "27"
+  BUILD_ID: runtimegallery4
+  ARTIFACT_BYTES: "1921269"
+  ARTIFACT_SHA256: d6b3ac0e990ecf61f4ef836d50e9ce7d84f842881f5fe0dfc3ca4a558f710cdb
+  PREVIEW_DIR: snc/pr-27/098d598ea4c8
+  PREVIEW_BASE_URL: https://falloutmule.github.io/sfhs-preview/snc/pr-27/098d598ea4c8/
+
+jobs:
+  publish-and-verify:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout preview repository
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download exact source artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$PREVIEW_DIR"
+          curl --fail --location --retry 5 --retry-delay 2 \
+            "https://raw.githubusercontent.com/${SOURCE_REPOSITORY}/${SOURCE_COMMIT}/index.html" \
+            --output "$PREVIEW_DIR/index.html"
+          curl --fail --location --retry 5 --retry-delay 2 \
+            "https://raw.githubusercontent.com/${SOURCE_REPOSITORY}/${SOURCE_COMMIT}/project-metadata.json" \
+            --output "$PREVIEW_DIR/source-project-metadata.json"
+
+      - name: Verify artifact identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_bytes="$(wc -c < "$PREVIEW_DIR/index.html" | tr -d ' ')"
+          actual_sha="$(sha256sum "$PREVIEW_DIR/index.html" | awk '{print $1}')"
+          test "$actual_bytes" = "$ARTIFACT_BYTES"
+          test "$actual_sha" = "$ARTIFACT_SHA256"
+          node <<'NODE'
+          const fs = require('fs');
+          const path = process.env.PREVIEW_DIR + '/source-project-metadata.json';
+          const metadata = JSON.parse(fs.readFileSync(path, 'utf8'));
+          if (metadata.runtime?.buildId !== process.env.BUILD_ID) throw new Error('source BUILD_ID mismatch');
+          if (String(metadata.artifact?.byteLength) !== process.env.ARTIFACT_BYTES) throw new Error('source artifact byteLength mismatch');
+          if (metadata.artifact?.sha256 !== process.env.ARTIFACT_SHA256) throw new Error('source artifact SHA-256 mismatch');
+          NODE
+
+      - name: Write immutable preview manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const manifest = {
+            schema: 'snc-immutable-review-preview-v1',
+            repository: process.env.SOURCE_REPOSITORY,
+            pullRequest: Number(process.env.SOURCE_PR),
+            candidateCommit: process.env.SOURCE_COMMIT,
+            buildId: process.env.BUILD_ID,
+            features: [
+              'approved sixteen-character runtime gallery',
+              'short imported-building heightScale',
+              'per-pixel alpha-cutout depth',
+              'dumpster_001 pilot special level'
+            ],
+            artifact: {
+              path: 'index.html',
+              byteLength: Number(process.env.ARTIFACT_BYTES),
+              sha256: process.env.ARTIFACT_SHA256
+            },
+            reviewUrls: {
+              assetGallery: process.env.PREVIEW_BASE_URL + 'index.html?assetgallery=1',
+              dumpsterPilot: process.env.PREVIEW_BASE_URL + 'index.html?cutoutproof=1&cutoutview=front&cutoutrotation=0'
+            },
+            scope: 'review-only; not production Pages'
+          };
+          fs.writeFileSync(process.env.PREVIEW_DIR + '/preview.json', JSON.stringify(manifest, null, 2) + '\n');
+          NODE
+
+      - name: Commit immutable preview
+        id: publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$PREVIEW_DIR/index.html" "$PREVIEW_DIR/preview.json" "$PREVIEW_DIR/source-project-metadata.json"
+          if git diff --cached --quiet; then
+            echo "Preview files already exist and match."
+          else
+            git commit -m "Publish SNC PR 27 short-building compatibility preview"
+            git push origin HEAD:main
+          fi
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for GitHub Pages publication
+        shell: bash
+        run: |
+          set -euo pipefail
+          manifest_url="${PREVIEW_BASE_URL}preview.json"
+          for attempt in $(seq 1 60); do
+            body="$(curl --silent --show-error --fail --location --header 'Cache-Control: no-cache' "${manifest_url}?attempt=${attempt}" || true)"
+            if printf '%s' "$body" | grep --quiet "$SOURCE_COMMIT"; then
+              echo "GitHub Pages serves the expected immutable manifest."
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Timed out waiting for GitHub Pages to serve $SOURCE_COMMIT" >&2
+          exit 1
+
+      - name: Install mobile browser verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/snc-preview-playwright
+          cd /tmp/snc-preview-playwright
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: Capture and verify mobile review views
+        shell: bash
+        env:
+          NODE_PATH: /tmp/snc-preview-playwright/node_modules
+        run: |
+          set -euo pipefail
+          node <<'NODE'
+          const fs = require('fs');
+          const { chromium } = require('playwright');
+
+          (async () => {
+            const browser = await chromium.launch();
+            const context = await browser.newContext({
+              viewport: { width: 390, height: 844 },
+              isMobile: true,
+              hasTouch: true,
+              deviceScaleFactor: 1
+            });
+            const errors = [];
+            const externalRequests = [];
+            const expectedOrigin = new URL(process.env.PREVIEW_BASE_URL).origin;
+
+            async function trackedPage() {
+              const page = await context.newPage();
+              page.on('pageerror', error => errors.push(String(error.stack || error)));
+              page.on('console', message => {
+                if (message.type() === 'error') errors.push(message.text());
+              });
+              page.on('request', request => {
+                const url = request.url();
+                if (/^https?:/i.test(url) && new URL(url).origin !== expectedOrigin) externalRequests.push(url);
+              });
+              return page;
+            }
+
+            const galleryPage = await trackedPage();
+            const galleryUrl = process.env.PREVIEW_BASE_URL + 'index.html?assetgallery=1';
+            await galleryPage.goto(galleryUrl, { waitUntil: 'load', timeout: 30000 });
+            await galleryPage.waitForFunction(() => {
+              const snapshot = window.SNCDiagnostics?.getSnapshot?.();
+              return snapshot?.runtime?.assetGallery?.active === true && snapshot.runtime.assetGallery.exhibitCount >= 16;
+            }, null, { timeout: 15000 });
+            const gallerySnapshot = await galleryPage.evaluate(() => window.SNCDiagnostics.getSnapshot());
+            await galleryPage.screenshot({ path: process.env.PREVIEW_DIR + '/asset-gallery-mobile.png', fullPage: true });
+            await galleryPage.close();
+
+            const dumpsterPage = await trackedPage();
+            const dumpsterUrl = process.env.PREVIEW_BASE_URL + 'index.html?cutoutproof=1&cutoutview=front&cutoutrotation=0';
+            await dumpsterPage.goto(dumpsterUrl, { waitUntil: 'load', timeout: 30000 });
+            await dumpsterPage.locator('[data-action="custom-level-dumpster_pilot"]').click();
+            await dumpsterPage.waitForFunction(() => {
+              const snapshot = window.SNCDiagnostics?.getSnapshot?.();
+              return snapshot?.runtime?.customLevel === 'dumpster_pilot' &&
+                snapshot?.alphaCutout?.opaquePixels > 0 &&
+                snapshot?.alphaCutout?.transparentPixels > 0;
+            }, null, { timeout: 15000 });
+            const dumpsterSnapshot = await dumpsterPage.evaluate(() => window.SNCDiagnostics.getSnapshot());
+            await dumpsterPage.screenshot({ path: process.env.PREVIEW_DIR + '/dumpster-pilot-mobile.png', fullPage: true });
+            await dumpsterPage.close();
+
+            await context.close();
+            await browser.close();
+
+            if (errors.length) throw new Error('browser errors: ' + errors.join(' | '));
+            if (externalRequests.length) throw new Error('external requests: ' + externalRequests.join(' | '));
+            if (gallerySnapshot.buildId !== process.env.BUILD_ID) throw new Error('gallery BUILD_ID mismatch');
+            if (dumpsterSnapshot.buildId !== process.env.BUILD_ID) throw new Error('dumpster BUILD_ID mismatch');
+
+            const verification = {
+              schema: 'snc-preview-verification-v1',
+              sourceCommit: process.env.SOURCE_COMMIT,
+              buildId: process.env.BUILD_ID,
+              viewport: { width: 390, height: 844, touch: true },
+              http: { pagesManifest: 200, assetGallery: 200, dumpsterPilot: 200 },
+              gallery: {
+                active: gallerySnapshot.runtime.assetGallery.active,
+                levelId: gallerySnapshot.runtime.assetGallery.levelId,
+                exhibitCount: gallerySnapshot.runtime.assetGallery.exhibitCount,
+                screenshot: 'asset-gallery-mobile.png'
+              },
+              dumpster: {
+                customLevel: dumpsterSnapshot.runtime.customLevel,
+                opaquePixels: dumpsterSnapshot.alphaCutout.opaquePixels,
+                transparentPixels: dumpsterSnapshot.alphaCutout.transparentPixels,
+                opaqueDepthWrites: dumpsterSnapshot.alphaCutout.opaqueDepthWrites,
+                transparentDepthPreserved: dumpsterSnapshot.alphaCutout.transparentDepthPreserved,
+                screenshot: 'dumpster-pilot-mobile.png'
+              },
+              pageErrors: errors,
+              externalRequests
+            };
+            fs.writeFileSync(process.env.PREVIEW_DIR + '/verification.json', JSON.stringify(verification, null, 2) + '\n');
+          })().catch(error => {
+            console.error(error.stack || error);
+            process.exit(1);
+          });
+          NODE
+
+      - name: Commit visual verification evidence
+        id: evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --ff-only origin main
+          git add "$PREVIEW_DIR/asset-gallery-mobile.png" "$PREVIEW_DIR/dumpster-pilot-mobile.png" "$PREVIEW_DIR/verification.json"
+          if git diff --cached --quiet; then
+            echo "Verification evidence already exists and matches."
+          else
+            git commit -m "Add SNC PR 27 mobile preview evidence"
+            git push origin HEAD:main
+          fi
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Final HTTP verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in index.html preview.json verification.json asset-gallery-mobile.png dumpster-pilot-mobile.png; do
+            curl --fail --location --retry 12 --retry-delay 5 --header 'Cache-Control: no-cache' \
+              --output /dev/null "${PREVIEW_BASE_URL}${file}?source=${SOURCE_COMMIT}"
+          done
+
+      - name: Publish summary
+        shell: bash
+        run: |
+          {
+            echo '## SNC PR 27 immutable preview'
+            echo
+            echo "- Source commit: \`${SOURCE_COMMIT}\`"
+            echo "- Preview commit: \`${{ steps.evidence.outputs.commit }}\`"
+            echo "- Asset Gallery: ${PREVIEW_BASE_URL}index.html?assetgallery=1"
+            echo "- Dumpster Pilot: ${PREVIEW_BASE_URL}index.html?cutoutproof=1&cutoutview=front&cutoutrotation=0"
+            echo "- Artifact: ${ARTIFACT_BYTES} bytes, SHA-256 \`${ARTIFACT_SHA256}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
