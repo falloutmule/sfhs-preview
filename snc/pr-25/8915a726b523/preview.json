@@ -1,0 +1,13 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "pullRequest": 25,
+  "candidateCommit": "8915a726b5231dbf487388a0edbb2157711edc3f",
+  "buildId": "runtimegallery4",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1582633,
+    "sha256": "66a5b37345790fd921074159973c6fbaefa766e55e9b8114cccb3e0cd44d9908"
+  },
+  "scope": "review-only; not production Pages"
+}
