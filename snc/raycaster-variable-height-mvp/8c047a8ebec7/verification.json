@@ -1,0 +1,41 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "8c047a8ebec76176412a194f0311adb24746a747",
+  "buildId": "heightfieldmvp1",
+  "artifactSha256": "f0b298f7305524fb53e4a212f725d82589a39be1cb1b99977bcb69438569690a",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "heightfieldBrowserProof": {
+    "queryGate": true,
+    "proof": true,
+    "depth": true,
+    "closeRange": true,
+    "topPlane": true,
+    "spriteOcclusion": true,
+    "poses": true,
+    "rotations": true,
+    "collision": true,
+    "saveIsolation": true,
+    "noErrors": true,
+    "worldDepthPixels": 100000,
+    "worldDepthBytes": 400000
+  },
+  "screenshots": {
+    "southFarRotation1Sha256": "bf9757eb4b58ac54af9b599553ce9e3815d0f28c811ed83caaf6f033c96a6382",
+    "topObliqueRotation1Sha256": "2f90fcefaf3f2c9f2b984bc52685eee1162d059bd7af98a8708eefe3df36cb7b"
+  },
+  "regressionGates": [
+    "runtime asset gallery",
+    "authored District 1 and save/load",
+    "render interpolation",
+    "far-field projection and final smoke",
+    "Chrome Pointer Event path",
+    "metadata, renderer-static, and build-proof routing",
+    "exact-source build check"
+  ],
+  "physicalSamsungAcceptance": "pending; geometry, top attachment, occlusion, and simultaneous MOVE plus LOOK pacing require a device verdict",
+  "productionRelease": "not-authorized"
+}
