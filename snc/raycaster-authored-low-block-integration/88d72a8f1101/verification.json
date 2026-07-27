@@ -1,0 +1,36 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "88d72a8f110132060c136469a81375139fb981df",
+  "baseCandidateCommit": "45890cb370e674df20732393b86550d403fe325f",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale1",
+  "artifactSha256": "50d143ae031697f8f65cd7478b61798203b8abc3cfc8db7b252baefc366506f6",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "worldHeightCalibration": {
+    "browserReport": "world-height-calibration-browser.json",
+    "result": "PASS",
+    "candidateSelectionStatus": "provisional-pending-samsung-selection",
+    "equalDepth": 6.5,
+    "measurements": {
+      "standing": { "worldHeight": 0.96, "projectedPixelHeight": 36.923076923076934, "topScreenY": 114.23076923076923, "groundScreenY": 151.15384615384616 },
+      "slumped": { "worldHeight": 0.68, "projectedPixelHeight": 26.15384615384616, "topScreenY": 125, "groundScreenY": 151.15384615384616 },
+      "can": { "worldHeight": 0.18, "projectedPixelHeight": 6.923076923076934, "topScreenY": 144.23076923076923, "groundScreenY": 151.15384615384616 },
+      "halfBlock": { "worldHeight": 0.5, "projectedPixelHeight": 19.230769230769226, "topScreenY": 131.92307692307693, "groundScreenY": 151.15384615384616 },
+      "fullWall": { "worldHeight": 1, "projectedPixelHeight": 38.46153846153847, "topScreenY": 112.6923076923077, "groundScreenY": 151.15384615384616 }
+    },
+    "standingClose": { "cameraDepth": 1.5, "projectedPixelHeight": 159.99999999999997, "topScreenY": 78.33333333333334, "groundScreenY": 238.33333333333331 }
+  },
+  "browserRegression": {
+    "heightfieldProof": "PASS; heightfield-proof-regression.json",
+    "assetGallery": "PASS; gallery-regression.json",
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "externalRequests": 0
+  },
+  "physicalSamsungAcceptance": "pending; select or revise the provisional world heights from equal-depth Samsung captures, then verify close standing scale, grounding, block/NPC/can occlusion, and simultaneous MOVE plus LOOK pacing",
+  "productionRelease": "not-authorized"
+}

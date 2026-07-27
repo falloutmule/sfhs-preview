@@ -1,0 +1,46 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
+  "candidateCommit": "88d72a8f110132060c136469a81375139fb981df",
+  "sourceTree": "132b978c01c83e5bb1dd938a29c11eca62151c5d",
+  "baseCandidateCommit": "45890cb370e674df20732393b86550d403fe325f",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale1",
+  "entryQuery": "?heightfield=1&hfcalibration=1&hfcalpose=equal-depth",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1670579,
+    "sha256": "50d143ae031697f8f65cd7478b61798203b8abc3cfc8db7b252baefc366506f6"
+  },
+  "worldHeightCalibration": {
+    "status": "provisional-pending-samsung-selection",
+    "cameraEyeZ": 0.68,
+    "standingWorldHeight": 0.96,
+    "slumpedWorldHeight": 0.68,
+    "canWorldHeight": 0.18,
+    "halfBlockWorldHeight": 0.5,
+    "fullWallWorldHeight": 1.0
+  },
+  "scope": "review-only variable-height sprite world-scale repair; not a production merge or deployment",
+  "screenshots": [
+    "equal-depth.png",
+    "standing-close.png",
+    "gallery-low-block-front-far-r0.png",
+    "gallery-low-block-front-far-r1.png",
+    "gallery-low-block-front-far-r2.png",
+    "gallery-low-block-front-far-r3.png",
+    "gallery-low-block-front-near-r1.png",
+    "gallery-low-block-front-corner-left-r1.png",
+    "gallery-low-block-front-corner-right-r1.png",
+    "gallery-low-block-east-near-r1.png",
+    "gallery-low-block-north-near-r1.png",
+    "gallery-low-block-west-near-r1.png",
+    "gallery-low-block-top-oblique-r1.png",
+    "gallery-low-block-can-side-r1.png",
+    "heightfield-can-south-far-r1.png",
+    "heightfield-can-can-side-r1.png",
+    "heightfield-npc-south-far-r1.png"
+  ],
+  "samsungAcceptance": "pending"
+}

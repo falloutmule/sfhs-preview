@@ -6,27 +6,28 @@
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
     "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
-    "sourceCommit": "45890cb370e674df20732393b86550d403fe325f",
-    "sourceTree": "377d32faed840ee1febd21c4dec8f9e768d136a7"
+    "sourceCommit": "88d72a8f110132060c136469a81375139fb981df",
+    "sourceTree": "132b978c01c83e5bb1dd938a29c11eca62151c5d"
   },
   "candidate": {
-    "candidateId": "snc-raycaster-authored-low-block-integration-001",
-    "buildId": "heightfieldintegration5",
-    "indexHtmlBytes": 1665572,
-    "indexHtmlSha256": "a0aeb4ac6f58957f9240c28ca90d514d3342e5abd5b73364e40ff1914883002f",
-    "scope": "runtime Asset Gallery integration of the accepted Z=0.5 heightfield, with deterministic opaque low_block_concrete_001 faces, collision, can occlusion, and NPC partial occlusion; review-only and not a production change",
-    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?assetgallery=1&gallerypose=front-far&galleryrot=1",
-    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-authored-low-block-integration/45890cb370e/?assetgallery=1&gallerypose=front-far&galleryrot=1"
+    "candidateId": "snc-raycaster-authored-low-block-integration-002-world-scale-calibration",
+    "buildId": "heightfieldworldscale1",
+    "indexHtmlBytes": 1670579,
+    "indexHtmlSha256": "50d143ae031697f8f65cd7478b61798203b8abc3cfc8db7b252baefc366506f6",
+    "scope": "provisional world-scale calibration repair for variable-height sprites: distinct legacy displayHeightScale and physical worldHeight fields, with equal-depth standing/slumped/can/half-block/full-wall evidence; review-only and not a production change",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth",
+    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-authored-low-block-integration/88d72a8f1101/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth"
   },
   "verification": {
     "assetGalleryBrowserProof": "PASS",
     "canOcclusionBrowserProof": "PASS",
     "npcPartialOcclusionBrowserProof": "PASS",
     "collisionBrowserProof": "PASS",
+    "worldHeightCalibrationBrowserProof": "PASS",
     "buildCheck": "PASS",
     "technicalChecker": "PASS",
     "finalSamsungAcceptance": "pending",
     "productionRelease": "not-authorized"
   },
-  "updatedAtUtc": "2026-07-27T14:39:26.5251207Z"
+  "updatedAtUtc": "2026-07-27T17:37:10.9576624Z"
 }

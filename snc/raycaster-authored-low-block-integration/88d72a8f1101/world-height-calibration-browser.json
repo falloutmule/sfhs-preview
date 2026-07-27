@@ -1,0 +1,127 @@
+{
+  "pass": true,
+  "checks": {
+    "queryGate": true,
+    "equalDepth": true,
+    "worldOrder": true,
+    "standingAboveEye": true,
+    "grounded": true,
+    "projectedOrder": true,
+    "closeRange": true,
+    "heightfield": true,
+    "noErrors": true
+  },
+  "observed": {
+    "pageErrors": [],
+    "consoleErrors": [],
+    "externalRequests": []
+  },
+  "measurements": {
+    "equalDepth": {
+      "pose": "equal-depth",
+      "subjects": [
+        {
+          "id": "standing",
+          "kind": "npc",
+          "worldHeight": 0.96,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 36.923076923076934,
+          "topScreenY": 114.23076923076923,
+          "groundScreenY": 151.15384615384616
+        },
+        {
+          "id": "slumped",
+          "kind": "npc",
+          "worldHeight": 0.68,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 26.15384615384616,
+          "topScreenY": 125,
+          "groundScreenY": 151.15384615384616
+        },
+        {
+          "id": "can",
+          "kind": "can",
+          "worldHeight": 0.18,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 6.923076923076934,
+          "topScreenY": 144.23076923076923,
+          "groundScreenY": 151.15384615384616
+        },
+        {
+          "id": "half-block",
+          "kind": "block",
+          "worldHeight": 0.5,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 19.230769230769226,
+          "topScreenY": 131.92307692307693,
+          "groundScreenY": 151.15384615384616
+        },
+        {
+          "id": "full-wall",
+          "kind": "wall",
+          "worldHeight": 1,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 38.46153846153847,
+          "topScreenY": 112.6923076923077,
+          "groundScreenY": 151.15384615384616
+        }
+      ]
+    },
+    "standingClose": {
+      "pose": "standing-close",
+      "subjects": [
+        {
+          "id": "standing",
+          "kind": "npc",
+          "worldHeight": 0.96,
+          "cameraDepth": 1.5,
+          "projectedPixelHeight": 159.99999999999997,
+          "topScreenY": 78.33333333333334,
+          "groundScreenY": 238.33333333333331
+        },
+        {
+          "id": "slumped",
+          "kind": "npc",
+          "worldHeight": 0.68,
+          "cameraDepth": 1.5000000000000002,
+          "projectedPixelHeight": 113.33333333333331,
+          "topScreenY": 125,
+          "groundScreenY": 238.33333333333331
+        },
+        {
+          "id": "can",
+          "kind": "can",
+          "worldHeight": 0.18,
+          "cameraDepth": 1.5000000000000002,
+          "projectedPixelHeight": 30,
+          "topScreenY": 208.33333333333331,
+          "groundScreenY": 238.33333333333331
+        },
+        {
+          "id": "half-block",
+          "kind": "block",
+          "worldHeight": 0.5,
+          "cameraDepth": 1.5000000000000004,
+          "projectedPixelHeight": 83.33333333333331,
+          "topScreenY": 155,
+          "groundScreenY": 238.33333333333331
+        },
+        {
+          "id": "full-wall",
+          "kind": "wall",
+          "worldHeight": 1,
+          "cameraDepth": 1.5000000000000004,
+          "projectedPixelHeight": 166.66666666666663,
+          "topScreenY": 71.66666666666669,
+          "groundScreenY": 238.33333333333331
+        }
+      ]
+    },
+    "screenshots": {
+      "equalDepthSha256": "d06b9763b9d708cccf42bac177f190e898309d8375156e80db919dc168b15577",
+      "standingCloseSha256": "f16df46328d38d5216027254263b767fd969e5b1884ac81b9dab2b59590aea2a"
+    }
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:62678/"
+}
