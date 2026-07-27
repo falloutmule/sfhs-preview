@@ -6,24 +6,25 @@
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
     "sourceBranch": "feature/snc-variable-height-raycaster-mvp",
-    "sourceCommit": "8c047a8ebec76176412a194f0311adb24746a747",
-    "sourceTree": "eaefeced1512687e2ace3da9da8754e15709c758"
+    "sourceCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+    "sourceTree": "28b6c1e9957906740603350437ade19503af55ae"
   },
   "candidate": {
-    "candidateId": "snc-raycaster-variable-height-mvp-001",
-    "buildId": "heightfieldmvp1",
-    "indexHtmlBytes": 1602310,
-    "indexHtmlSha256": "f0b298f7305524fb53e4a212f725d82589a39be1cb1b99977bcb69438569690a",
-    "scope": "query-gated 1x1 Z=0.5 variable-height raycaster proof; not a production change",
-    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hfpose=top-oblique&hfrot=1",
-    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-variable-height-mvp/8c047a8ebec7/?heightfield=1&hfpose=top-oblique&hfrot=1"
+    "candidateId": "snc-raycaster-variable-height-mvp-002-can-occlusion",
+    "buildId": "heightfieldmvp2",
+    "indexHtmlBytes": 1604799,
+    "indexHtmlSha256": "a590f3501e277f127260c12a59ae682022efc1c490d5b172801c92af423f33d9",
+    "scope": "query-gated 1x1 Z=0.5 variable-height proof with aligned can and independent NPC occlusion lanes; not a production change",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hftarget=can&hfpose=south-far&hfrot=1",
+    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-variable-height-mvp/a05222b26c9d/?heightfield=1&hftarget=can&hfpose=south-far&hfrot=1"
   },
   "verification": {
     "heightfieldBrowserProof": "PASS",
+    "canOcclusionBrowserProof": "PASS",
     "buildCheck": "PASS",
     "technicalChecker": "PASS",
     "finalSamsungAcceptance": "pending",
     "productionRelease": "not-authorized"
   },
-  "updatedAtUtc": "2026-07-26T22:34:29.0085702Z"
+  "updatedAtUtc": "2026-07-27T00:04:41.8344644Z"
 }

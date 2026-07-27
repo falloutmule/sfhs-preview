@@ -1,0 +1,22 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/snc-variable-height-raycaster-mvp",
+  "candidateCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "sourceTree": "28b6c1e9957906740603350437ade19503af55ae",
+  "baseCandidateCommit": "8c047a8ebec76176412a194f0311adb24746a747",
+  "buildId": "heightfieldmvp2",
+  "entryQuery": "?heightfield=1&hftarget=can&hfpose=south-far&hfrot=1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1604799,
+    "sha256": "a590f3501e277f127260c12a59ae682022efc1c490d5b172801c92af423f33d9"
+  },
+  "scope": "review-only can-occlusion proof repair; not production Pages",
+  "screenshots": [
+    "heightfield-can-south-far-r1.png",
+    "heightfield-can-can-side-r1.png",
+    "heightfield-npc-south-far-r1.png"
+  ],
+  "samsungAcceptance": "pending"
+}

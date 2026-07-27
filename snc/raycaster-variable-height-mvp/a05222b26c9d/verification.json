@@ -1,0 +1,42 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "baseCandidateCommit": "8c047a8ebec76176412a194f0311adb24746a747",
+  "buildId": "heightfieldmvp2",
+  "artifactSha256": "a590f3501e277f127260c12a59ae682022efc1c490d5b172801c92af423f33d9",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "canOcclusionProof": {
+    "alignedCanPosition": { "x": 11.5, "y": 5.7 },
+    "southFarVisibleOpaqueCanTexels": 0,
+    "southFarOccludedOpaqueCanTexels": "positive",
+    "sideVisibleOpaqueCanTexels": "positive",
+    "npcPartialVisibleOpaqueTexels": "positive",
+    "npcPartialOccludedOpaqueTexels": "positive"
+  },
+  "browserChecks": {
+    "queryGate": true,
+    "proof": true,
+    "depth": true,
+    "closeRange": true,
+    "topPlane": true,
+    "canOcclusion": true,
+    "canSideVisibility": true,
+    "npcPartialOcclusion": true,
+    "poses": true,
+    "rotations": true,
+    "collision": true,
+    "saveIsolation": true,
+    "noErrors": true
+  },
+  "screenshots": {
+    "canHidden": "heightfield-can-south-far-r1.png",
+    "canVisibleFromSide": "heightfield-can-can-side-r1.png",
+    "npcPartial": "heightfield-npc-south-far-r1.png"
+  },
+  "physicalSamsungAcceptance": "pending; verify hidden can, side-visible can, no edge leak, NPC partial occlusion, and simultaneous MOVE plus LOOK pacing",
+  "productionRelease": "not-authorized"
+}
