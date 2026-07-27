@@ -1,0 +1,40 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "45890cb370e674df20732393b86550d403fe325f",
+  "baseCandidateCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldintegration5",
+  "artifactSha256": "a0aeb4ac6f58957f9240c28ca90d514d3342e5abd5b73364e40ff1914883002f",
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "touch": true
+  },
+  "browserReview": {
+    "report": "browser-review.json",
+    "result": "PASS",
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "externalRequests": 0
+  },
+  "browserChecks": {
+    "assetGalleryBoot": true,
+    "galleryReadOnly": true,
+    "heightfieldActive": true,
+    "compiledMaterialsLoaded": true,
+    "canOcclusion": true,
+    "canSideVisibility": true,
+    "npcPartialOcclusion": true,
+    "topPlane": true,
+    "closeRange": true,
+    "rotations": true,
+    "collision": true,
+    "buildIdentity": true,
+    "noErrors": true
+  },
+  "reviewCoverage": {
+    "frontFarRotations": [0, 1, 2, 3],
+    "poses": ["front-near", "front-corner-left", "front-corner-right", "east-near", "north-near", "west-near", "top-oblique", "can-side"]
+  },
+  "physicalSamsungAcceptance": "pending; verify geometry, attached textured top, hidden aligned can, side-visible can, NPC partial occlusion, no edge leaks, and simultaneous MOVE plus LOOK pacing",
+  "productionRelease": "not-authorized"
+}

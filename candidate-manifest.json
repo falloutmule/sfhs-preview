@@ -5,26 +5,28 @@
   "project": {
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
-    "sourceBranch": "feature/snc-variable-height-raycaster-mvp",
-    "sourceCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
-    "sourceTree": "28b6c1e9957906740603350437ade19503af55ae"
+    "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
+    "sourceCommit": "45890cb370e674df20732393b86550d403fe325f",
+    "sourceTree": "377d32faed840ee1febd21c4dec8f9e768d136a7"
   },
   "candidate": {
-    "candidateId": "snc-raycaster-variable-height-mvp-002-can-occlusion",
-    "buildId": "heightfieldmvp2",
-    "indexHtmlBytes": 1604799,
-    "indexHtmlSha256": "a590f3501e277f127260c12a59ae682022efc1c490d5b172801c92af423f33d9",
-    "scope": "query-gated 1x1 Z=0.5 variable-height proof with aligned can and independent NPC occlusion lanes; not a production change",
-    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hftarget=can&hfpose=south-far&hfrot=1",
-    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-variable-height-mvp/a05222b26c9d/?heightfield=1&hftarget=can&hfpose=south-far&hfrot=1"
+    "candidateId": "snc-raycaster-authored-low-block-integration-001",
+    "buildId": "heightfieldintegration5",
+    "indexHtmlBytes": 1665572,
+    "indexHtmlSha256": "a0aeb4ac6f58957f9240c28ca90d514d3342e5abd5b73364e40ff1914883002f",
+    "scope": "runtime Asset Gallery integration of the accepted Z=0.5 heightfield, with deterministic opaque low_block_concrete_001 faces, collision, can occlusion, and NPC partial occlusion; review-only and not a production change",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?assetgallery=1&gallerypose=front-far&galleryrot=1",
+    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-authored-low-block-integration/45890cb370e/?assetgallery=1&gallerypose=front-far&galleryrot=1"
   },
   "verification": {
-    "heightfieldBrowserProof": "PASS",
+    "assetGalleryBrowserProof": "PASS",
     "canOcclusionBrowserProof": "PASS",
+    "npcPartialOcclusionBrowserProof": "PASS",
+    "collisionBrowserProof": "PASS",
     "buildCheck": "PASS",
     "technicalChecker": "PASS",
     "finalSamsungAcceptance": "pending",
     "productionRelease": "not-authorized"
   },
-  "updatedAtUtc": "2026-07-27T00:04:41.8344644Z"
+  "updatedAtUtc": "2026-07-27T14:39:26.5251207Z"
 }
