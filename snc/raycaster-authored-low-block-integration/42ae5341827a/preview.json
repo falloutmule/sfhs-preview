@@ -1,0 +1,43 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
+  "candidateCommit": "42ae5341827ad092ced4659834bcf5b78da2a23d",
+  "sourceTree": "a379b260fd1410ed6bad34ada7b04c4f7036fa6b",
+  "baseCandidateCommit": "88d72a8f110132060c136469a81375139fb981df",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale2",
+  "entryQuery": "?heightfield=1&hfcalibration=1&hfcalpose=equal-depth&hfcancomparison=1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1675176,
+    "sha256": "a3a41db8891738ff1dadaa782633b9866a0f7466707c63037fa03a93ae6b2e52"
+  },
+  "worldHeightCalibration": {
+    "status": "provisional-pending-samsung-selection",
+    "cameraEyeZ": 0.68,
+    "standingWorldHeight": 0.96,
+    "slumpedWorldHeight": 0.68,
+    "canWorldHeight": 0.26,
+    "canComparisonWorldHeights": [0.24, 0.26, 0.28],
+    "halfBlockWorldHeight": 0.5,
+    "fullWallWorldHeight": 1.0
+  },
+  "visibleBoundsGrounding": {
+    "contract": "visible alpha-bound bottom is world ground; full PNG canvas is not physical height",
+    "browserProof": "PASS",
+    "slumpedGrounding": "pending Samsung visual acceptance"
+  },
+  "scope": "review-only heightfield visible-alpha-bounds grounding and can world-scale repair; not a production merge or deployment",
+  "screenshots": [
+    "lineup-equal-depth.png",
+    "standing-close.png",
+    "can-size-comparison.png",
+    "heightfield-can-south-far-r1.png",
+    "heightfield-can-can-side-r1.png",
+    "heightfield-npc-south-far-r1.png",
+    "gallery-low-block-front-near-r1.png",
+    "gallery-low-block-top-oblique-r1.png"
+  ],
+  "samsungAcceptance": "pending"
+}

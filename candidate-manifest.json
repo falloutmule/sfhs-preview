@@ -6,28 +6,28 @@
     "id": "solidarity-not-charity-can-run",
     "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
     "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
-    "sourceCommit": "88d72a8f110132060c136469a81375139fb981df",
-    "sourceTree": "132b978c01c83e5bb1dd938a29c11eca62151c5d"
+    "sourceCommit": "42ae5341827ad092ced4659834bcf5b78da2a23d",
+    "sourceTree": "a379b260fd1410ed6bad34ada7b04c4f7036fa6b"
   },
   "candidate": {
-    "candidateId": "snc-raycaster-authored-low-block-integration-002-world-scale-calibration",
-    "buildId": "heightfieldworldscale1",
-    "indexHtmlBytes": 1670579,
-    "indexHtmlSha256": "50d143ae031697f8f65cd7478b61798203b8abc3cfc8db7b252baefc366506f6",
-    "scope": "provisional world-scale calibration repair for variable-height sprites: distinct legacy displayHeightScale and physical worldHeight fields, with equal-depth standing/slumped/can/half-block/full-wall evidence; review-only and not a production change",
-    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth",
-    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-authored-low-block-integration/88d72a8f1101/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth"
+    "candidateId": "snc-raycaster-authored-low-block-integration-003-visible-bounds-grounding",
+    "buildId": "heightfieldworldscale2",
+    "indexHtmlBytes": 1675176,
+    "indexHtmlSha256": "a3a41db8891738ff1dadaa782633b9866a0f7466707c63037fa03a93ae6b2e52",
+    "scope": "provisional visible-alpha-bounds grounding repair for variable-height sprites and a 0.26 default can world height; includes a 0.24/0.26/0.28 same-artifact Samsung comparison; review-only and not a production change",
+    "canonicalUrl": "https://falloutmule.github.io/sfhs-preview/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth&hfcancomparison=1",
+    "immutableUrl": "https://falloutmule.github.io/sfhs-preview/snc/raycaster-authored-low-block-integration/42ae5341827a/?heightfield=1&hfcalibration=1&hfcalpose=equal-depth&hfcancomparison=1"
   },
   "verification": {
     "assetGalleryBrowserProof": "PASS",
     "canOcclusionBrowserProof": "PASS",
     "npcPartialOcclusionBrowserProof": "PASS",
     "collisionBrowserProof": "PASS",
-    "worldHeightCalibrationBrowserProof": "PASS",
+    "worldHeightCalibrationBrowserProof": "PASS; visible alpha bounds and ground contact verified",
     "buildCheck": "PASS",
     "technicalChecker": "PASS",
     "finalSamsungAcceptance": "pending",
     "productionRelease": "not-authorized"
   },
-  "updatedAtUtc": "2026-07-27T17:37:10.9576624Z"
+  "updatedAtUtc": "2026-07-27T18:15:00Z"
 }
