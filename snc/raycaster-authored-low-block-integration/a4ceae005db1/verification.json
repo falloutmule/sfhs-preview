@@ -1,0 +1,38 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "a4ceae005db18b76eaa57a96bae8b55a454cf7f9",
+  "baseCandidateCommit": "e791568414e86ff1cf74b645a8d68df366ec3f9e",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale4",
+  "artifactSha256": "c01fb8b54c9402130d631173ad6fe443f54dc0932ba93de74a77437948e039fa",
+  "viewport": { "width": 390, "height": 844, "touch": true },
+  "worldHeightCalibration": {
+    "browserReport": "world-height-calibration-browser.json",
+    "result": "PASS",
+    "equalDepth": 6.5,
+    "measurements": {
+      "standing": { "worldHeight": 0.68, "projectedPixelHeight": 26.15384615384616, "topScreenY": 125, "groundScreenY": 151.15384615384616, "groundingErrorPixels": 0.8461538461538396 },
+      "standingClose": { "worldHeight": 0.68, "cameraDepth": 1.5, "projectedPixelHeight": 113.33333333333331, "topScreenY": 125, "groundScreenY": 238.33333333333331, "groundingErrorPixels": 0.6666666666666856 },
+      "slumped": { "worldHeight": 0.68, "projectedPixelHeight": 26.15384615384616, "groundScreenY": 151.15384615384616 },
+      "canDefault": { "worldHeight": 0.4, "projectedPixelHeight": 15.384615384615387, "groundScreenY": 151.15384615384616, "groundingErrorPixels": 0.8461538461538396 },
+      "halfBlock": { "worldHeight": 0.5, "projectedPixelHeight": 19.230769230769226 },
+      "canComparison": [
+        { "worldHeight": 0.36, "projectedPixelHeight": 13.84615384615384 },
+        { "worldHeight": 0.4, "projectedPixelHeight": 15.384615384615387 },
+        { "worldHeight": 0.44, "projectedPixelHeight": 16.923076923076934 }
+      ]
+    }
+  },
+  "browserRegression": {
+    "heightfieldProof": "PASS; heightfield-proof-browser.json",
+    "assetGallery": "PASS; gallery-browser.json",
+    "canFullyOccludedByHalfBlock": true,
+    "canSideVisible": true,
+    "npcPartialOcclusion": true,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "externalRequests": 0
+  },
+  "physicalSamsungAcceptance": "pending eye-level review",
+  "productionRelease": "not-authorized"
+}

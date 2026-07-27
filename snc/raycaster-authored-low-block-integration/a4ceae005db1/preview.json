@@ -1,0 +1,38 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
+  "candidateCommit": "a4ceae005db18b76eaa57a96bae8b55a454cf7f9",
+  "sourceTree": "59746a9618699b47d4041fbc4968051b61a169cf",
+  "baseCandidateCommit": "e791568414e86ff1cf74b645a8d68df366ec3f9e",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale4",
+  "entryQuery": "?heightfield=1&hfcalibration=1&hfcalpose=standing-close",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1675174,
+    "sha256": "c01fb8b54c9402130d631173ad6fe443f54dc0932ba93de74a77437948e039fa"
+  },
+  "worldHeightCalibration": {
+    "status": "standing-eye-level-pending-samsung-visual-acceptance",
+    "cameraEyeZ": 0.68,
+    "standingWorldHeight": 0.68,
+    "slumpedWorldHeight": 0.68,
+    "canWorldHeight": 0.4,
+    "canComparisonWorldHeights": [0.36, 0.4, 0.44],
+    "halfBlockWorldHeight": 0.5,
+    "fullWallWorldHeight": 1.0
+  },
+  "scope": "review-only standing eye-level candidate; .40 can and visible-alpha-bounds grounding remain active; no renderer, camera, DDA, collision, depth, production merge, or production deployment change",
+  "screenshots": [
+    "standing-close.png",
+    "lineup-equal-depth.png",
+    "can-size-comparison.png",
+    "heightfield-can-south-far-r1.png",
+    "heightfield-can-can-side-r1.png",
+    "heightfield-npc-south-far-r1.png",
+    "gallery-low-block-front-near-r1.png",
+    "gallery-low-block-top-oblique-r1.png"
+  ],
+  "samsungAcceptance": "pending"
+}
