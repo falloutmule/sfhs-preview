@@ -1,0 +1,38 @@
+{
+  "schema": "snc-immutable-review-preview-v1",
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/snc-raycaster-authored-low-block-integration",
+  "candidateCommit": "e791568414e86ff1cf74b645a8d68df366ec3f9e",
+  "sourceTree": "b3762fc267754df2677a5471f8dcfa4ebfdfd585",
+  "baseCandidateCommit": "42ae5341827ad092ced4659834bcf5b78da2a23d",
+  "acceptedGeometryCommit": "a05222b26c9d5de9df8f1cc9203306947b51d95e",
+  "buildId": "heightfieldworldscale3",
+  "entryQuery": "?heightfield=1&hfcalibration=1&hfcalpose=equal-depth&hfcancomparison=1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1675174,
+    "sha256": "b9dbe60cf5e96a73b01d179675049697e10f03a23100ff0bbee5ce8aeb21253e"
+  },
+  "worldHeightCalibration": {
+    "status": "selected-can-height-pending-samsung-visual-acceptance",
+    "cameraEyeZ": 0.68,
+    "standingWorldHeight": 0.96,
+    "slumpedWorldHeight": 0.68,
+    "canWorldHeight": 0.4,
+    "canComparisonWorldHeights": [0.36, 0.4, 0.44],
+    "halfBlockWorldHeight": 0.5,
+    "fullWallWorldHeight": 1.0
+  },
+  "scope": "review-only 0.40 can world-scale candidate; visible-alpha-bounds grounding remains active; standing and slumped scales unchanged; not a production merge or deployment",
+  "screenshots": [
+    "lineup-equal-depth.png",
+    "standing-close.png",
+    "can-size-comparison.png",
+    "heightfield-can-south-far-r1.png",
+    "heightfield-can-can-side-r1.png",
+    "heightfield-npc-south-far-r1.png",
+    "gallery-low-block-front-near-r1.png",
+    "gallery-low-block-top-oblique-r1.png"
+  ],
+  "samsungAcceptance": "pending"
+}
