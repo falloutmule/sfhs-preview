@@ -1,0 +1,14 @@
+{
+  "physicalCastStatic": "PASS",
+  "physicalCastBrowser": "PASS",
+  "heightfieldProofBrowser": "PASS",
+  "normalAssetGalleryBrowser": "PASS",
+  "worldHeightLocks": "PASS",
+  "independentVerticalPivotLocks": "PASS",
+  "buildCheck": "PASS",
+  "productionChanged": false,
+  "samsungSelectionRequired": [
+    "youth and composite physical-height classes",
+    "can worldHeight selection"
+  ]
+}

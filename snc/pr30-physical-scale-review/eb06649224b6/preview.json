@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "previewKind": "immutable-query-only-physical-scale-review",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "final/pr29-authored-low-block-integration",
+  "sourceCommit": "eb06649224b6f9ae25bee285e7bf9f259d5d2d13",
+  "baseCommit": "65f0e91910c81d6c766f639d1a2e3594e52baf47",
+  "buildId": "castscalereview1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1685600,
+    "sha256": "53fe4170f2eff0bcad426789889e4f076b8405af7808cb96ffcd97dca2e3765f"
+  },
+  "routes": {
+    "fullCast": "https://falloutmule.github.io/sfhs-preview/snc/pr30-physical-scale-review/eb06649224b6/index.html?heightfield=1&hfcastreview=1",
+    "castPage1": "https://falloutmule.github.io/sfhs-preview/snc/pr30-physical-scale-review/eb06649224b6/index.html?heightfield=1&hfcastreview=1&hfcastpage=1",
+    "canReview": "https://falloutmule.github.io/sfhs-preview/snc/pr30-physical-scale-review/eb06649224b6/index.html?heightfield=1&hfcanreview=1"
+  },
+  "canonicalDataChanged": false,
+  "productionChanged": false
+}
