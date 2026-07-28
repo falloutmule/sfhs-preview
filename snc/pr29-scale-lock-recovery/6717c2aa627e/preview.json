@@ -1,0 +1,21 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "repair/pr29-scale-lock-recovery",
+  "sourceCommit": "6717c2aa627e0b8b496724c10568f5e0ad3d6851",
+  "buildId": "heightfieldseatedground1",
+  "artifact": {
+    "path": "index.html",
+    "bytes": 1681377,
+    "sha256": "85d1729933f1cd1265d06ba7d3c5a66afea151d6414d9e7be5a38d0fe563c7fe"
+  },
+  "scope": {
+    "standingWorldHeight": 0.78,
+    "slumpedWorldHeight": 0.68,
+    "slumpedGroundContactSourceY": 184,
+    "canCalibration": "deferred",
+    "productionChanged": false,
+    "pr29Retargeted": false
+  },
+  "reviewRoute": "?heightfield=1&hfcalibration=1&hfselectedreview=1&hfgroundline=1&hfcalpose=equal-depth"
+}
