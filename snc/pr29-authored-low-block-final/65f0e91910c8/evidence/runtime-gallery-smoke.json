@@ -1,0 +1,632 @@
+{
+  "pass": true,
+  "checks": {
+    "galleryMenuLabel": true,
+    "galleryPlay": true,
+    "galleryReadonly": true,
+    "focusLabel": true,
+    "normalControlsMove": true,
+    "saveUntouched": true,
+    "keyboardIsolation": true,
+    "heightfieldActive": true,
+    "compiledMaterialsLoaded": true,
+    "canOcclusion": true,
+    "canSideVisibility": true,
+    "npcPartialOcclusion": true,
+    "topPlane": true,
+    "closeRange": true,
+    "rotations": true,
+    "collision": true,
+    "buildIdentity": true,
+    "noErrors": true
+  },
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:60449/",
+  "snapshot": {
+    "buildId": "authoredlowblockfinal1",
+    "runtime": {
+      "state": "play",
+      "paused": false,
+      "mobileMode": true,
+      "mobileInputActive": true,
+      "mobileAuto": true,
+      "customLevel": "asset-gallery-v1",
+      "levelType": "custom",
+      "assetGallery": {
+        "active": true,
+        "levelId": "asset-gallery-v1",
+        "exhibitCount": 23,
+        "environmentObjectCount": 1,
+        "environmentNpcCount": 1,
+        "focusId": "gallery-npc-household-dog-walker-001"
+      },
+      "MAP_W": 40,
+      "MAP_H": 24,
+      "mapAspect": 1.667,
+      "seed": 8128,
+      "district": 0,
+      "score": 0,
+      "player": {
+        "x": 5.913997488729827,
+        "y": 8.679279443255869,
+        "angle": -2.61,
+        "cans": 0,
+        "stamina": 60
+      },
+      "mapCell": {
+        "tx": 5,
+        "ty": 8,
+        "v": 0
+      },
+      "canStand": true,
+      "standProbe": [
+        {
+          "x": 5.69,
+          "y": 8.46,
+          "tx": 5,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 6.13,
+          "y": 8.46,
+          "tx": 6,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 5.69,
+          "y": 8.9,
+          "tx": 5,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 6.13,
+          "y": 8.9,
+          "tx": 6,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 5.91,
+          "y": 8.46,
+          "tx": 5,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 5.91,
+          "y": 8.9,
+          "tx": 5,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 5.69,
+          "y": 8.68,
+          "tx": 5,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 6.13,
+          "y": 8.68,
+          "tx": 6,
+          "ty": 8,
+          "walk": true,
+          "cell": 0
+        }
+      ],
+      "joy": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "dist": 0
+      },
+      "moveDbg": {
+        "joy": "0.000",
+        "active": false,
+        "paused": false,
+        "mobileMode": true,
+        "mm": true,
+        "st": "play",
+        "dpx": 0,
+        "dpy": 0,
+        "moveSteps": 0
+      },
+      "runActive": true,
+      "saveValid": false,
+      "canvas": {
+        "cssW": "390px",
+        "cssH": "844px",
+        "w": 390,
+        "h": 844,
+        "dpr": 1
+      },
+      "viewport": {
+        "w": 390,
+        "h": 844,
+        "visualW": 390,
+        "visualH": 844,
+        "offsetX": 0,
+        "offsetY": 0,
+        "appVhPx": "844px"
+      },
+      "mobileSettings": {
+        "lookSpeed": 1,
+        "lookSpeedLabel": "1.0x",
+        "turnSens": 0.0062,
+        "joySizePx": 110,
+        "buttonSizePx": 85,
+        "opacity": 0.6,
+        "minimapSizePx": 68,
+        "deadzonePx": 8,
+        "portrait": true
+      },
+      "sprint": {
+        "cost": 20,
+        "burstSec": 0.65,
+        "burstUntil": 0,
+        "blocks": 3
+      },
+      "storageKeys": {
+        "save": "cannedRun.save.v1",
+        "stats": "cannedRun.stats.v1",
+        "leaderboards": "cannedRun.leaderboards.v1",
+        "settings": "cannedRun.settings.v1",
+        "profile": "cannedRun.profile.v1",
+        "options": "cannedRun.options.v1",
+        "player": "cannedRun.player.v1"
+      },
+      "safeArea": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "fixedStep": {
+      "enabled": true,
+      "stepDt": 0.016666666666666666,
+      "maxFrameDt": 0.25,
+      "maxStepsPerFrame": 5,
+      "accumulator": 0.016633333333333448,
+      "lastFrameDt": 0.016700000000000045,
+      "lastSteps": 1,
+      "droppedFrames": 0
+    },
+    "performance": null,
+    "heightfield": {
+      "enabled": true,
+      "cameraZ": 0.68,
+      "occlusionSubject": null,
+      "profileCells": 1,
+      "verticalSegments": 400,
+      "topPixels": 0,
+      "worldDepthWrites": 18148,
+      "spriteVisiblePixels": 52319,
+      "spriteOccludedPixels": 0,
+      "canVisiblePixels": 0,
+      "canOccludedPixels": 0,
+      "npcVisiblePixels": 41245,
+      "npcOccludedPixels": 0,
+      "worldDepthBytes": 400000,
+      "worldDepthLength": 100000,
+      "allocations": 1,
+      "width": 400,
+      "height": 250,
+      "calibration": null
+    }
+  },
+  "reviewCases": [
+    {
+      "pose": "front-far",
+      "rotation": 0,
+      "screenshotSha256": "9d12380e447520fbb82f3cec56039cb490af058b998394f7c234400d2d9ff897",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 473,
+        "topPixels": 60,
+        "worldDepthWrites": 9523,
+        "spriteVisiblePixels": 162,
+        "spriteOccludedPixels": 266,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 51,
+        "npcVisiblePixels": 99,
+        "npcOccludedPixels": 117,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 15.2,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-far",
+      "rotation": 1,
+      "screenshotSha256": "b8f77be0dc31ad4ffaced920179c4cb1a4a014c02f66ece77f463ffdab615ce0",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 473,
+        "topPixels": 60,
+        "worldDepthWrites": 9523,
+        "spriteVisiblePixels": 162,
+        "spriteOccludedPixels": 266,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 51,
+        "npcVisiblePixels": 99,
+        "npcOccludedPixels": 117,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 15.2,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-far",
+      "rotation": 2,
+      "screenshotSha256": "a5922d2312f31ea9fb1597dbf80f023db24ce0dbef7e4399acf34de1e2a32819",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 473,
+        "topPixels": 60,
+        "worldDepthWrites": 9523,
+        "spriteVisiblePixels": 162,
+        "spriteOccludedPixels": 266,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 51,
+        "npcVisiblePixels": 99,
+        "npcOccludedPixels": 117,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 15.2,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-far",
+      "rotation": 3,
+      "screenshotSha256": "92ce0a08eea8b52c7b22a09dc08c1fa0fd8cedb780c03b905144c85f45c966ef",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 473,
+        "topPixels": 60,
+        "worldDepthWrites": 9523,
+        "spriteVisiblePixels": 162,
+        "spriteOccludedPixels": 266,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 51,
+        "npcVisiblePixels": 99,
+        "npcOccludedPixels": 117,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 15.2,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-near",
+      "rotation": 1,
+      "screenshotSha256": "251d745d69e38e2f0c292bc11c0d19e7544c81d55879b80080feb20060ff50a3",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 653,
+        "topPixels": 3070,
+        "worldDepthWrites": 34934,
+        "spriteVisiblePixels": 560,
+        "spriteOccludedPixels": 678,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 150,
+        "npcVisiblePixels": 374,
+        "npcOccludedPixels": 277,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 12.2,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-corner-left",
+      "rotation": 1,
+      "screenshotSha256": "0048cb8784fa245ec10acc5600e8a26aef19ad937cb0890105fc345968fadd63",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 532,
+        "topPixels": 295,
+        "worldDepthWrites": 13769,
+        "spriteVisiblePixels": 1100,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 111,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 571,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 24.1,
+        "y": 12.7,
+        "angle": -0.7419472680059176,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "front-corner-right",
+      "rotation": 1,
+      "screenshotSha256": "20913b6d00ddf977bac317e4999c3a79fe5d05a938037718fa6ac6d369702b7e",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 532,
+        "topPixels": 294,
+        "worldDepthWrites": 12667,
+        "spriteVisiblePixels": 2153,
+        "spriteOccludedPixels": 91,
+        "canVisiblePixels": 111,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 1131,
+        "npcOccludedPixels": 42,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 28.9,
+        "y": 12.7,
+        "angle": -2.3996453855838755,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "east-near",
+      "rotation": 1,
+      "screenshotSha256": "508e2cb97e2ee88e4a1ee54a49f97d29b3758a4c48850ae118e56e3fd94339bd",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 579,
+        "topPixels": 1272,
+        "worldDepthWrites": 19057,
+        "spriteVisiblePixels": 1753,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 857,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 28.7,
+        "y": 10.5,
+        "angle": 3.141592653589793,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "north-near",
+      "rotation": 1,
+      "screenshotSha256": "6d2305c625a409bcaa94123927538af9e854fa3e4e347fbfe6769307153d5960",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 489,
+        "topPixels": 154,
+        "worldDepthWrites": 10583,
+        "spriteVisiblePixels": 8148,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 1022,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 4061,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 26.5,
+        "y": 6.6,
+        "angle": 1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "west-near",
+      "rotation": 1,
+      "screenshotSha256": "231cfabf3f28a3e0e29afdfcfc560e556960ae2953490efeb0f77b3df8ffb56b",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 579,
+        "topPixels": 1272,
+        "worldDepthWrites": 21718,
+        "spriteVisiblePixels": 0,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 0,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 0,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 24.3,
+        "y": 10.5,
+        "angle": 0,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "top-oblique",
+      "rotation": 1,
+      "screenshotSha256": "8422b3dd0b8cb672386d0b298925e55d328baeaab35a71ee9b64102edb0c25c3",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 525,
+        "topPixels": 245,
+        "worldDepthWrites": 13189,
+        "spriteVisiblePixels": 917,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 89,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 471,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 24.3,
+        "y": 13.1,
+        "angle": -0.8685393952858896,
+        "cans": 0,
+        "stamina": 60
+      }
+    },
+    {
+      "pose": "can-side",
+      "rotation": 1,
+      "screenshotSha256": "76c900956a97e38f0edf7d04257ac683c844e1262038bec4bd0750786fc9e737",
+      "heightfield": {
+        "enabled": true,
+        "cameraZ": 0.68,
+        "occlusionSubject": null,
+        "profileCells": 1,
+        "verticalSegments": 419,
+        "topPixels": 7,
+        "worldDepthWrites": 5745,
+        "spriteVisiblePixels": 3900,
+        "spriteOccludedPixels": 0,
+        "canVisiblePixels": 386,
+        "canOccludedPixels": 0,
+        "npcVisiblePixels": 1871,
+        "npcOccludedPixels": 0,
+        "worldDepthBytes": 400000,
+        "worldDepthLength": 100000,
+        "allocations": 1,
+        "width": 400,
+        "height": 250,
+        "calibration": null
+      },
+      "player": {
+        "x": 29,
+        "y": 8.2,
+        "angle": 3.141592653589793,
+        "cans": 0,
+        "stamina": 60
+      }
+    }
+  ]
+}

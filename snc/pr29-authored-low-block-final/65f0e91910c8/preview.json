@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "previewKind": "immutable-normal-asset-gallery-candidate",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "final/pr29-authored-low-block-integration",
+  "sourceCommit": "65f0e91910c81d6c766f639d1a2e3594e52baf47",
+  "acceptedParentCommit": "7a8a931a1479c991d5aed32012a9d1f9c1fe6e8a",
+  "buildId": "authoredlowblockfinal1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1678958,
+    "sha256": "0e34d63aba8f0974561eb7b4c732bf6a0524dce87b1ae932ee9ea8ab40e74ca8"
+  },
+  "normalAssetGalleryUrl": "https://falloutmule.github.io/sfhs-preview/snc/pr29-authored-low-block-final/65f0e91910c8/index.html?assetgallery=1&gallerypose=front-far&galleryrot=1",
+  "productionChanged": false
+}

@@ -1,0 +1,20 @@
+{
+  "sourceBuild": "PASS",
+  "sourceBuildCheck": "PASS",
+  "visualLocks": "PASS",
+  "heightfieldProofBrowser": "PASS",
+  "standingSeatedGroundingBrowser": "PASS",
+  "worldHeightMeasurementBrowser": "PASS",
+  "normalAssetGalleryBrowser": "PASS",
+  "normalAssetGalleryChecks": [
+    "all 23 exhibits load",
+    "low-block material faces load",
+    "can occlusion and side visibility",
+    "NPC partial occlusion",
+    "raised top plane",
+    "close range and four rotations",
+    "collision and save isolation",
+    "no console/page errors or external requests"
+  ],
+  "productionChanged": false
+}

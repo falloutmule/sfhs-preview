@@ -1,0 +1,320 @@
+{
+  "pass": true,
+  "checks": {
+    "queryGate": true,
+    "equalDepth": true,
+    "worldOrder": true,
+    "standingAboveEye": true,
+    "grounded": true,
+    "visibleBounds": true,
+    "visibleGrounding": true,
+    "canonicalCan": true,
+    "projectedOrder": true,
+    "closeRange": true,
+    "heightfield": true,
+    "noErrors": true
+  },
+  "observed": {
+    "pageErrors": [],
+    "consoleErrors": [],
+    "externalRequests": []
+  },
+  "measurements": {
+    "equalDepth": {
+      "pose": "equal-depth",
+      "subjects": [
+        {
+          "id": "standing",
+          "kind": "npc",
+          "worldHeight": 0.78,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 30,
+          "topScreenY": 121.15384615384616,
+          "groundScreenY": 151.15384615384616,
+          "visibleBounds": {
+            "kind": "npc",
+            "worldHeight": 0.78,
+            "cameraDepth": 6.5,
+            "sourceCanvasWidth": 80,
+            "sourceCanvasHeight": 192,
+            "alphaBounds": {
+              "x": 3,
+              "y": 3,
+              "w": 74,
+              "h": 186
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 189,
+            "sourceContactRow": 189,
+            "alphaBoundBottomRow": 189,
+            "visibleTopScreenY": 121.15384615384616,
+            "projectedGroundY": 151.15384615384616,
+            "screenBottomY": 151.15384615384616,
+            "lowestPhysicalContactDestinationY": 151,
+            "lowestPhysicalContactSourceY": 188,
+            "groundingErrorPixels": 0.8461538461538396,
+            "opaquePixelsBelowContact": 0,
+            "sourceOpaquePixelsBelowContact": 0,
+            "physicalContactOpaquePixels": 249,
+            "projectedTopToGround": 30,
+            "scalePerSourcePixel": 0.16129032258064516,
+            "sourcePixelsAboveGround": 186,
+            "projectedPixelHeight": 30,
+            "screenH": 30
+          }
+        },
+        {
+          "id": "slumped",
+          "kind": "npc",
+          "worldHeight": 0.68,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 26.15384615384616,
+          "topScreenY": 125,
+          "groundScreenY": 151.15384615384616,
+          "visibleBounds": {
+            "kind": "npc",
+            "worldHeight": 0.68,
+            "cameraDepth": 6.5,
+            "sourceCanvasWidth": 167,
+            "sourceCanvasHeight": 192,
+            "alphaBounds": {
+              "x": 3,
+              "y": 3,
+              "w": 161,
+              "h": 186
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 182,
+            "sourceContactRow": 182,
+            "alphaBoundBottomRow": 189,
+            "visibleTopScreenY": 125.98428453267164,
+            "projectedGroundY": 151.15384615384616,
+            "screenBottomY": 152.1381306865178,
+            "lowestPhysicalContactDestinationY": 151,
+            "lowestPhysicalContactSourceY": 180,
+            "groundingErrorPixels": 0.8461538461538396,
+            "opaquePixelsBelowContact": 4,
+            "sourceOpaquePixelsBelowContact": 390,
+            "physicalContactOpaquePixels": 424,
+            "projectedTopToGround": 26.153846153846153,
+            "scalePerSourcePixel": 0.14061207609594706,
+            "sourcePixelsAboveGround": 179,
+            "projectedPixelHeight": 26.153846153846153,
+            "screenH": 26.153846153846153
+          }
+        },
+        {
+          "id": "can",
+          "kind": "can",
+          "worldHeight": 0.26,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 10,
+          "topScreenY": 141.15384615384616,
+          "groundScreenY": 151.15384615384616,
+          "visibleBounds": {
+            "kind": "can",
+            "worldHeight": 0.26,
+            "cameraDepth": 6.5,
+            "sourceCanvasWidth": 20,
+            "sourceCanvasHeight": 22,
+            "alphaBounds": {
+              "x": 2,
+              "y": 2,
+              "w": 16,
+              "h": 20
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 22,
+            "sourceContactRow": 22,
+            "alphaBoundBottomRow": 22,
+            "visibleTopScreenY": 141.15384615384616,
+            "projectedGroundY": 151.15384615384616,
+            "screenBottomY": 151.15384615384616,
+            "lowestPhysicalContactDestinationY": 151,
+            "lowestPhysicalContactSourceY": 21,
+            "groundingErrorPixels": 0.8461538461538396,
+            "opaquePixelsBelowContact": 0,
+            "sourceOpaquePixelsBelowContact": 0,
+            "physicalContactOpaquePixels": 62,
+            "projectedTopToGround": 10,
+            "scalePerSourcePixel": 0.5,
+            "sourcePixelsAboveGround": 20,
+            "projectedPixelHeight": 10,
+            "screenH": 10
+          }
+        },
+        {
+          "id": "half-block",
+          "kind": "block",
+          "worldHeight": 0.5,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 19.230769230769226,
+          "topScreenY": 131.92307692307693,
+          "groundScreenY": 151.15384615384616,
+          "visibleBounds": null
+        },
+        {
+          "id": "full-wall",
+          "kind": "wall",
+          "worldHeight": 1,
+          "cameraDepth": 6.5,
+          "projectedPixelHeight": 38.46153846153847,
+          "topScreenY": 112.6923076923077,
+          "groundScreenY": 151.15384615384616,
+          "visibleBounds": null
+        }
+      ]
+    },
+    "standingClose": {
+      "pose": "standing-close",
+      "subjects": [
+        {
+          "id": "standing",
+          "kind": "npc",
+          "worldHeight": 0.78,
+          "cameraDepth": 1.5,
+          "projectedPixelHeight": 129.99999999999997,
+          "topScreenY": 108.33333333333334,
+          "groundScreenY": 238.33333333333331,
+          "visibleBounds": {
+            "kind": "npc",
+            "worldHeight": 0.78,
+            "cameraDepth": 1.5,
+            "sourceCanvasWidth": 80,
+            "sourceCanvasHeight": 192,
+            "alphaBounds": {
+              "x": 3,
+              "y": 3,
+              "w": 74,
+              "h": 186
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 189,
+            "sourceContactRow": 189,
+            "alphaBoundBottomRow": 189,
+            "visibleTopScreenY": 108.33333333333331,
+            "projectedGroundY": 238.33333333333331,
+            "screenBottomY": 238.33333333333331,
+            "lowestPhysicalContactDestinationY": 238,
+            "lowestPhysicalContactSourceY": 188,
+            "groundingErrorPixels": 0.6666666666666856,
+            "opaquePixelsBelowContact": 0,
+            "sourceOpaquePixelsBelowContact": 0,
+            "physicalContactOpaquePixels": 4624,
+            "projectedTopToGround": 130,
+            "scalePerSourcePixel": 0.6989247311827957,
+            "sourcePixelsAboveGround": 186,
+            "projectedPixelHeight": 130,
+            "screenH": 130
+          }
+        },
+        {
+          "id": "slumped",
+          "kind": "npc",
+          "worldHeight": 0.68,
+          "cameraDepth": 1.5000000000000002,
+          "projectedPixelHeight": 113.33333333333331,
+          "topScreenY": 125,
+          "groundScreenY": 238.33333333333331,
+          "visibleBounds": {
+            "kind": "npc",
+            "worldHeight": 0.68,
+            "cameraDepth": 1.5000000000000002,
+            "sourceCanvasWidth": 167,
+            "sourceCanvasHeight": 192,
+            "alphaBounds": {
+              "x": 3,
+              "y": 3,
+              "w": 161,
+              "h": 186
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 182,
+            "sourceContactRow": 182,
+            "alphaBoundBottomRow": 189,
+            "visibleTopScreenY": 129.26523297491042,
+            "projectedGroundY": 238.33333333333331,
+            "screenBottomY": 242.59856630824373,
+            "lowestPhysicalContactDestinationY": -1,
+            "lowestPhysicalContactSourceY": -1,
+            "groundingErrorPixels": null,
+            "opaquePixelsBelowContact": 0,
+            "sourceOpaquePixelsBelowContact": 390,
+            "physicalContactOpaquePixels": 0,
+            "projectedTopToGround": 113.33333333333331,
+            "scalePerSourcePixel": 0.6093189964157705,
+            "sourcePixelsAboveGround": 179,
+            "projectedPixelHeight": 113.33333333333331,
+            "screenH": 113.33333333333331
+          }
+        },
+        {
+          "id": "can",
+          "kind": "can",
+          "worldHeight": 0.26,
+          "cameraDepth": 1.5000000000000002,
+          "projectedPixelHeight": 43.333333333333314,
+          "topScreenY": 195,
+          "groundScreenY": 238.33333333333331,
+          "visibleBounds": {
+            "kind": "can",
+            "worldHeight": 0.26,
+            "cameraDepth": 1.5000000000000002,
+            "sourceCanvasWidth": 20,
+            "sourceCanvasHeight": 22,
+            "alphaBounds": {
+              "x": 2,
+              "y": 2,
+              "w": 16,
+              "h": 20
+            },
+            "anchorX": 0.5,
+            "groundSourceY": 22,
+            "sourceContactRow": 22,
+            "alphaBoundBottomRow": 22,
+            "visibleTopScreenY": 195,
+            "projectedGroundY": 238.33333333333331,
+            "screenBottomY": 238.33333333333331,
+            "lowestPhysicalContactDestinationY": -1,
+            "lowestPhysicalContactSourceY": -1,
+            "groundingErrorPixels": null,
+            "opaquePixelsBelowContact": 0,
+            "sourceOpaquePixelsBelowContact": 0,
+            "physicalContactOpaquePixels": 0,
+            "projectedTopToGround": 43.33333333333333,
+            "scalePerSourcePixel": 2.1666666666666665,
+            "sourcePixelsAboveGround": 20,
+            "projectedPixelHeight": 43.33333333333333,
+            "screenH": 43.33333333333333
+          }
+        },
+        {
+          "id": "half-block",
+          "kind": "block",
+          "worldHeight": 0.5,
+          "cameraDepth": 1.5000000000000004,
+          "projectedPixelHeight": 83.33333333333331,
+          "topScreenY": 155,
+          "groundScreenY": 238.33333333333331,
+          "visibleBounds": null
+        },
+        {
+          "id": "full-wall",
+          "kind": "wall",
+          "worldHeight": 1,
+          "cameraDepth": 1.5000000000000004,
+          "projectedPixelHeight": 166.66666666666663,
+          "topScreenY": 71.66666666666669,
+          "groundScreenY": 238.33333333333331,
+          "visibleBounds": null
+        }
+      ]
+    },
+    "screenshots": {
+      "equalDepthSha256": "74b5a6f93e67c9c312c7e9f156fc572c709444a38cfed8ab05fce622f928545d",
+      "standingCloseSha256": "9d3eaf1fe286d55d230cdfbebcddf3efa672480d4e536e7b59935a5071154e79"
+    }
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:53093/"
+}
