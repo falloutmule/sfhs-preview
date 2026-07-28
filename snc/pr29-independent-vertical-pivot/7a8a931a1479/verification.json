@@ -1,0 +1,35 @@
+{
+  "sourceCommit": "7a8a931a1479c991d5aed32012a9d1f9c1fe6e8a",
+  "buildId": "heightfieldpivot1",
+  "artifact": {
+    "bytes": 1681835,
+    "sha256": "7cf04e3cbc980324e5c54ae7c387aa9652b7a8b35c142b3404fa1b022754f718"
+  },
+  "results": {
+    "charactersRuntime": "PASS",
+    "worldHeightContract": "PASS",
+    "independentVerticalPivot": "PASS",
+    "selectedStandingSeatedBrowser": "PASS",
+    "heightfieldGenericContract": "PASS",
+    "multiHeightDda": "PASS",
+    "raisedPlane": "PASS",
+    "heightfieldCanFixture": "PASS",
+    "heightfieldProof": "PASS",
+    "assetGallerySmoke": "PASS",
+    "authoredDistrict1": "PASS",
+    "authoredDistrict1SaveLoad": "PASS",
+    "renderInterpolation": "PASS",
+    "farFieldProjection": "PASS",
+    "chromePointerPath": "PASS",
+    "sourceBuildParity": "PASS",
+    "metadataTruth": "PASS"
+  },
+  "groundContact": {
+    "seatedWorldHeight": 0.68,
+    "groundContactSourceY": 182,
+    "shoeSourceRows": [173, 181],
+    "equalDepthGroundingErrorInternalPixels": 0.8461538461538396,
+    "closeGroundingErrorInternalPixels": 0.6666666666666856
+  },
+  "productionRelease": "not-authorized"
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "previewRepository": "falloutmule/sfhs-preview",
+  "immutable": true,
+  "project": {
+    "id": "solidarity-not-charity-can-run",
+    "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+    "sourceBranch": "repair/pr29-independent-vertical-pivot",
+    "sourceCommit": "7a8a931a1479c991d5aed32012a9d1f9c1fe6e8a"
+  },
+  "candidate": {
+    "candidateId": "pr29-independent-vertical-pivot-001",
+    "buildId": "heightfieldpivot1",
+    "indexHtmlBytes": 1681835,
+    "indexHtmlSha256": "7cf04e3cbc980324e5c54ae7c387aa9652b7a8b35c142b3404fa1b022754f718",
+    "scope": "Standing worldHeight 0.78 is locked; seated worldHeight 0.68 is locked; generic row-182 vertical pivot repair only; no can calibration.",
+    "equalDepthUrl": "https://falloutmule.github.io/sfhs-preview/snc/pr29-independent-vertical-pivot/7a8a931a1479/index.html?heightfield=1&hfcalibration=1&hfselectedreview=1&hfgroundline=1&hfcalpose=equal-depth",
+    "seatedCloseUrl": "https://falloutmule.github.io/sfhs-preview/snc/pr29-independent-vertical-pivot/7a8a931a1479/index.html?heightfield=1&hfcalibration=1&hfselectedreview=1&hfgroundline=1&hfcalpose=seated-close"
+  },
+  "publication": {
+    "productionRelease": "not-authorized",
+    "pullRequest29": "unchanged",
+    "previewRepositoryOnly": true
+  }
+}
