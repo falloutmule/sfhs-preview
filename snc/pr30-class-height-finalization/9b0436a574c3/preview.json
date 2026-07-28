@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "final/pr29-authored-low-block-integration",
+  "sourceCommit": "9b0436a574c3834e216a1f0b00d786d013ad7f03",
+  "buildId": "authoredlowblockclassfinal1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1683106,
+    "sha256": "7ed374bc79835199800cbaa3b86e94fba66c969fd5fd325477ca2aed24368cc6"
+  },
+  "scope": "PR #30 class-based character and can world-height candidate; draft preview only, with no production merge or deployment.",
+  "normalAssetGalleryUrl": "https://falloutmule.github.io/sfhs-preview/snc/pr30-class-height-finalization/9b0436a574c3/index.html?assetgallery=1",
+  "productionRelease": "not-authorized"
+}
