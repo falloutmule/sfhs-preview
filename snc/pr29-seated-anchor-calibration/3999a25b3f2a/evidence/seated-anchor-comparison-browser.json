@@ -1,0 +1,151 @@
+{
+  "pass": true,
+  "checks": {
+    "queryOnlyMode": true,
+    "exactCandidates": true,
+    "equalDepth": true,
+    "actualOpaqueFootContact": true,
+    "shortMarkers": true,
+    "noFullScreenGroundLine": true,
+    "locksUnchanged": true,
+    "noCansOrStandingFixture": true,
+    "noErrors": true
+  },
+  "observed": {
+    "pageErrors": [],
+    "consoleErrors": [],
+    "externalRequests": []
+  },
+  "measurements": {
+    "pose": "equal-depth",
+    "markers": [
+      {
+        "id": "seated-anchor-a",
+        "groundContactSourceY": 182,
+        "screenCenterX": 70,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ffe14c",
+        "expected": [
+          255,
+          225,
+          76
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-b",
+        "groundContactSourceY": 178,
+        "screenCenterX": 200,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff9a3d",
+        "expected": [
+          255,
+          154,
+          61
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-c",
+        "groundContactSourceY": 174,
+        "screenCenterX": 330,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff4ecb",
+        "expected": [
+          255,
+          78,
+          203
+        ],
+        "exactPixels": 30
+      }
+    ],
+    "subjects": [
+      {
+        "id": "seated-anchor-a",
+        "worldHeight": 0.68,
+        "cameraDepth": 3.5,
+        "projectedGroundY": 174,
+        "projectedPixelHeight": 48.571428571428555,
+        "groundContactSourceY": 182,
+        "lowestVisibleFootContactY": 173,
+        "groundingErrorPixels": 0.4285714285714448
+      },
+      {
+        "id": "seated-anchor-b",
+        "worldHeight": 0.68,
+        "cameraDepth": 3.5,
+        "projectedGroundY": 174,
+        "projectedPixelHeight": 48.571428571428555,
+        "groundContactSourceY": 178,
+        "lowestVisibleFootContactY": 173,
+        "groundingErrorPixels": 0.4285714285714448
+      },
+      {
+        "id": "seated-anchor-c",
+        "worldHeight": 0.68,
+        "cameraDepth": 3.5,
+        "projectedGroundY": 174,
+        "projectedPixelHeight": 48.571428571428555,
+        "groundContactSourceY": 174,
+        "lowestVisibleFootContactY": 173,
+        "groundingErrorPixels": 0.4285714285714448
+      }
+    ],
+    "markerPixels": [
+      {
+        "id": "seated-anchor-a",
+        "groundContactSourceY": 182,
+        "screenCenterX": 70,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ffe14c",
+        "expected": [
+          255,
+          225,
+          76
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-b",
+        "groundContactSourceY": 178,
+        "screenCenterX": 200,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff9a3d",
+        "expected": [
+          255,
+          154,
+          61
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-c",
+        "groundContactSourceY": 174,
+        "screenCenterX": 330,
+        "projectedGroundY": 174,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff4ecb",
+        "expected": [
+          255,
+          78,
+          203
+        ],
+        "exactPixels": 30
+      }
+    ],
+    "screenshotSha256": "0c2f1a2e87985fed8216eae7afcd4e4b3d00e4795a9d150f444bf15e54ed681d"
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:53571/"
+}

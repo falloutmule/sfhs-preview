@@ -1,0 +1,42 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "calibration/pr29-seated-anchor-comparison",
+  "sourceCommit": "3999a25b3f2a697dce225bfe144f9b587dae8ec9",
+  "buildId": "heightfieldseatedanchor1",
+  "artifact": {
+    "path": "index.html",
+    "bytes": 1686496,
+    "sha256": "ba9267eb997dc79b228433fe344fbd3a91d80898e9e1032aa0bd4e33569c9933"
+  },
+  "scope": {
+    "standingWorldHeight": 0.78,
+    "slumpedWorldHeight": 0.68,
+    "canonicalSlumpedGroundContactSourceY": 184,
+    "cameraEyeZ": 0.68,
+    "halfBlockHeight": 0.5,
+    "fullWallHeight": 1.0,
+    "canCalibration": "deferred",
+    "canonicalManifestChanged": false,
+    "generatedRuntimeAssetsChanged": false,
+    "normalGalleryChanged": false,
+    "lockedRendererChanged": false,
+    "acceptanceTestsChanged": false,
+    "productionChanged": false,
+    "pr29Retargeted": false
+  },
+  "comparison": {
+    "assetId": "npc_unhoused_slumped_001",
+    "cameraDepth": 3.5,
+    "sourceFootContactPixelRow": 181,
+    "candidates": {
+      "A": 182,
+      "B": 178,
+      "C": 174
+    },
+    "projectedGroundY": 174,
+    "lowestVisibleFootContactY": 173,
+    "groundingErrorPixels": 0.4285714285714448
+  },
+  "reviewRoute": "?heightfield=1&hfcalibration=1&hfseatedanchorcomparison=1"
+}
