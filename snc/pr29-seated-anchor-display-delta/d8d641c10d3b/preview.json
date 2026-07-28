@@ -1,0 +1,43 @@
+{
+  "schema": "snc-immutable-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "calibration/pr29-seated-anchor-display-delta",
+  "sourceCommit": "d8d641c10d3b63bf9642d42e477b17a0710b8617",
+  "buildId": "heightfieldseatedanchordelta1",
+  "artifact": {
+    "path": "index.html",
+    "bytes": 1693463,
+    "sha256": "735973764b1ec56dead043d3f8d29c82c6b924f90da30f7794c0405fd65e93ca"
+  },
+  "scope": {
+    "standingWorldHeight": 0.78,
+    "slumpedWorldHeight": 0.68,
+    "canonicalSlumpedGroundContactSourceY": 184,
+    "cameraEyeZ": 0.68,
+    "halfBlockHeight": 0.5,
+    "fullWallHeight": 1.0,
+    "canCalibration": "deferred",
+    "canonicalManifestChanged": false,
+    "generatedRuntimeAssetsChanged": false,
+    "normalGalleryChanged": false,
+    "lockedRendererChanged": false,
+    "acceptanceTestsChanged": false,
+    "productionChanged": false,
+    "pr29Retargeted": false
+  },
+  "comparison": {
+    "assetId": "npc_unhoused_slumped_001",
+    "cameraDepth": 6.5,
+    "visibleSourceHeight": 186,
+    "projectedVisibleHeight": 26.153846153846153,
+    "internalPixelsPerSourcePixel": 0.14061207609594706,
+    "firstOrderRequiredSourceDeltas": [0, 28, 57],
+    "sourceRows": { "A": 182, "B": 159, "C": 140 },
+    "sourceDeltasFromA": { "A": 0, "B": 23, "C": 42 },
+    "actualLowestOpaqueShoeY": { "A": 151, "B": 155, "C": 159 },
+    "projectedGroundY": { "A": 151, "B": 151, "C": 151 },
+    "actualDisplayDeltas": { "A": 0, "B": 4, "C": 8 },
+    "shoeGroundingErrorPixels": { "A": 1, "B": 5, "C": 9 }
+  },
+  "reviewRoute": "?heightfield=1&hfcalibration=1&hfseatedanchordisplaydelta=1"
+}

@@ -1,0 +1,16 @@
+{
+  "sourceDiagnostic": "PASS",
+  "seatedAnchorDisplayDeltaBrowser": "PASS: actual opaque shoe raster rows are A=151, B=155, C=159; 4 px and 8 px separation verified",
+  "heightfieldProofBrowser": "PASS",
+  "runtimeAssetGallery": "PASS",
+  "runtimeAssetGallerySmoke": "PASS",
+  "authoredDistrict1": "PASS",
+  "authoredDistrict1SaveLoad": "PASS",
+  "renderInterpolation": "PASS",
+  "farFieldProjection": "PASS",
+  "chromePointerPath": "PASS",
+  "metadataTruth": "PASS",
+  "buildCheck": "PASS",
+  "visualLocks": "NOT RUN AS PASS: the existing recovery baseline differs from its older 42ae534 artifact/registry hash lock; the lock and every protected source file remain unchanged.",
+  "productionRelease": "not-authorized"
+}

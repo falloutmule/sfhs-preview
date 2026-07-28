@@ -1,0 +1,238 @@
+{
+  "pass": true,
+  "checks": {
+    "queryOnlyMode": true,
+    "exactCandidates": true,
+    "equalDepth": true,
+    "actualOpaqueFootContact": true,
+    "targetDisplayDifferences": true,
+    "shortMarkers": true,
+    "labelsOutsideWorldImage": true,
+    "noFullScreenGroundLine": true,
+    "locksUnchanged": true,
+    "noCansOrStandingFixture": true,
+    "noErrors": true
+  },
+  "observed": {
+    "pageErrors": [],
+    "consoleErrors": [],
+    "externalRequests": []
+  },
+  "measurements": {
+    "pose": "equal-depth",
+    "sourceProjection": {
+      "projectedHeight": 26.153846153846153,
+      "internalPixelsPerSourcePixel": 0.14061207609594706,
+      "firstOrderSourceDeltas": [
+        0,
+        28,
+        57
+      ],
+      "sourceRows": [
+        182,
+        159,
+        140
+      ],
+      "sourceDeltas": [
+        0,
+        23,
+        42
+      ],
+      "measuredInternalPixelDeltas": [
+        0,
+        4,
+        8
+      ]
+    },
+    "markers": [
+      {
+        "id": "seated-anchor-a",
+        "groundContactSourceY": 182,
+        "screenCenterX": 130,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ffe14c",
+        "label": "A",
+        "targetInternalPixelDelta": 0,
+        "sourceDelta": 0,
+        "expected": [
+          255,
+          225,
+          76
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-b",
+        "groundContactSourceY": 159,
+        "screenCenterX": 200,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff9a3d",
+        "label": "B",
+        "targetInternalPixelDelta": 4,
+        "sourceDelta": 23,
+        "expected": [
+          255,
+          154,
+          61
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-c",
+        "groundContactSourceY": 140,
+        "screenCenterX": 270,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff4ecb",
+        "label": "C",
+        "targetInternalPixelDelta": 8,
+        "sourceDelta": 42,
+        "expected": [
+          255,
+          78,
+          203
+        ],
+        "exactPixels": 30
+      }
+    ],
+    "subjects": [
+      {
+        "id": "seated-anchor-a",
+        "worldHeight": 0.68,
+        "cameraDepth": 6.5,
+        "projectedGroundY": 151,
+        "projectedPixelHeight": 26.15384615384616,
+        "groundContactSourceY": 182,
+        "sourceDeltaFromA": 0,
+        "targetInternalPixelDelta": 0,
+        "actualOpaqueShoeSourcePixels": 788,
+        "actualLowestOpaqueShoeY": 151,
+        "actualDisplayDeltaFromA": 0,
+        "shoeGroundingErrorPixels": 1,
+        "lowestVisibleFootContactY": 151,
+        "groundingErrorPixels": 0.8461538461538396
+      },
+      {
+        "id": "seated-anchor-b",
+        "worldHeight": 0.68,
+        "cameraDepth": 6.5,
+        "projectedGroundY": 151,
+        "projectedPixelHeight": 26.15384615384616,
+        "groundContactSourceY": 159,
+        "sourceDeltaFromA": 23,
+        "targetInternalPixelDelta": 4,
+        "actualOpaqueShoeSourcePixels": 788,
+        "actualLowestOpaqueShoeY": 155,
+        "actualDisplayDeltaFromA": 4,
+        "shoeGroundingErrorPixels": 5,
+        "lowestVisibleFootContactY": 151,
+        "groundingErrorPixels": 0.8461538461538396
+      },
+      {
+        "id": "seated-anchor-c",
+        "worldHeight": 0.68,
+        "cameraDepth": 6.5,
+        "projectedGroundY": 151,
+        "projectedPixelHeight": 26.15384615384616,
+        "groundContactSourceY": 140,
+        "sourceDeltaFromA": 42,
+        "targetInternalPixelDelta": 8,
+        "actualOpaqueShoeSourcePixels": 788,
+        "actualLowestOpaqueShoeY": 159,
+        "actualDisplayDeltaFromA": 8,
+        "shoeGroundingErrorPixels": 9,
+        "lowestVisibleFootContactY": 151,
+        "groundingErrorPixels": 0.8461538461538396
+      }
+    ],
+    "markerPixels": [
+      {
+        "id": "seated-anchor-a",
+        "groundContactSourceY": 182,
+        "screenCenterX": 130,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ffe14c",
+        "label": "A",
+        "targetInternalPixelDelta": 0,
+        "sourceDelta": 0,
+        "expected": [
+          255,
+          225,
+          76
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-b",
+        "groundContactSourceY": 159,
+        "screenCenterX": 200,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff9a3d",
+        "label": "B",
+        "targetInternalPixelDelta": 4,
+        "sourceDelta": 23,
+        "expected": [
+          255,
+          154,
+          61
+        ],
+        "exactPixels": 30
+      },
+      {
+        "id": "seated-anchor-c",
+        "groundContactSourceY": 140,
+        "screenCenterX": 270,
+        "projectedGroundY": 151,
+        "width": 15,
+        "paintedPixels": 30,
+        "color": "#ff4ecb",
+        "label": "C",
+        "targetInternalPixelDelta": 8,
+        "sourceDelta": 42,
+        "expected": [
+          255,
+          78,
+          203
+        ],
+        "exactPixels": 30
+      }
+    ],
+    "worldScreenshotSha256": "b93606713b3fc48b371e39a9b36a1d296b7b98ac68c261be37a67707a2402527",
+    "browserScreenshotSha256": "f3a157e61c0d570f43a5765521b9d3a89c85b0ed270e67f65ec6fa27df77f2af",
+    "shoeCrops": [
+      {
+        "id": "seated-anchor-a",
+        "x": 110,
+        "y": 121,
+        "width": 40,
+        "height": 44
+      },
+      {
+        "id": "seated-anchor-b",
+        "x": 180,
+        "y": 121,
+        "width": 40,
+        "height": 44
+      },
+      {
+        "id": "seated-anchor-c",
+        "x": 250,
+        "y": 121,
+        "width": 40,
+        "height": 44
+      }
+    ],
+    "shoeCropsSha256": "d45ce8b842d0a699d0505250f57b2d4166d6abdb08b4a146a59a7f718a107e14"
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:49353/"
+}
