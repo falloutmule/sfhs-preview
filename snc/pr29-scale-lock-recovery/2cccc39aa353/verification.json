@@ -1,0 +1,43 @@
+{
+  "schema": "snc-preview-verification-v1",
+  "sourceCommit": "2cccc39aa353ef1fe1238f17aa173efd2f28dd53",
+  "acceptedBaselineCommit": "42ae5341827ad092ced4659834bcf5b78da2a23d",
+  "archivedRejectedCommit": "a4ceae005db18b76eaa57a96bae8b55a454cf7f9",
+  "buildId": "heightfieldworldscale2",
+  "calibrationBuildId": "pr29-scale-lock-005-standing",
+  "artifactSha256": "80fa0cfcc86453947aa105ff0abf8989b37dc0cf47a40159db6d42ada891a1ed",
+  "viewport": { "width": 390, "height": 844, "touch": true },
+  "visualLock": {
+    "result": "PASS",
+    "acceptedArtifactSha256": "a3a41db8891738ff1dadaa782633b9866a0f7466707c63037fa03a93ae6b2e52",
+    "slumpedWorldHeight": 0.68,
+    "halfBlockHeight": 0.5,
+    "cameraEyeZ": 0.68,
+    "fullWallHeight": 1.0
+  },
+  "standingCalibration": {
+    "browserReport": "standing-calibration-browser.json",
+    "result": "PASS",
+    "equalDepth": 6.5,
+    "candidates": [
+      { "worldHeight": 0.78, "projectedPixelHeight": 30.0 },
+      { "worldHeight": 0.82, "projectedPixelHeight": 31.538461538461547 },
+      { "worldHeight": 0.86, "projectedPixelHeight": 33.07692307692308 }
+    ],
+    "lockedSeated": { "worldHeight": 0.68, "projectedPixelHeight": 26.15384615384616, "groundingErrorPixels": 0.8461538461538396 },
+    "noCanCandidates": true,
+    "overridesDisappearOutsideQuery": true,
+    "consoleErrors": 0,
+    "pageErrors": 0,
+    "externalRequests": 0
+  },
+  "canonicalWorldHeightContract": {
+    "result": "PASS",
+    "standingWorldHeight": 0.96,
+    "slumpedWorldHeight": 0.68,
+    "canWorldHeight": 0.26,
+    "cameraEyeZ": 0.68
+  },
+  "physicalSamsungAcceptance": "pending a single standing-height selection; can calibration intentionally not shown",
+  "productionRelease": "not-authorized"
+}
