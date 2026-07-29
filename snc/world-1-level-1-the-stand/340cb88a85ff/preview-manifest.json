@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "project": "solidarity-not-charity-can-run",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/world-1-level-1-the-stand",
+  "sourceCommit": "340cb88a85ffe7a5013ec9becf09e71c3e2135c1",
+  "candidate": "world-1-level-1-the-stand",
+  "buildId": "world1thestand1",
+  "indexHtmlBytes": 1684985,
+  "indexHtmlSha256": "c5546fed1f001cd61a33859857720875ca4219ee59f523ec91101eb3083cf230",
+  "reviewUrl": "https://falloutmule.github.io/sfhs-preview/snc/world-1-level-1-the-stand/340cb88a85ff/?mobile=on&portraitlayout=1",
+  "verification": {
+    "authoredLevel": "PASS",
+    "saveLoad": "PASS",
+    "tiledRoundTrip": "PASS",
+    "lowBlockAndRenderer": "PASS",
+    "portraitSmoke": "PASS",
+    "productionRelease": "not-authorized",
+    "finalSamsungGameplayJudgment": "pending"
+  }
+}

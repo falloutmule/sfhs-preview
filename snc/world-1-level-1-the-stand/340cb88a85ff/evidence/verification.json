@@ -1,0 +1,24 @@
+{
+  "sourceCommit": "340cb88a85ffe7a5013ec9becf09e71c3e2135c1",
+  "artifact": {
+    "bytes": 1684985,
+    "sha256": "c5546fed1f001cd61a33859857720875ca4219ee59f523ec91101eb3083cf230"
+  },
+  "checks": [
+    "test:authored-d1",
+    "test:authored-d1-save",
+    "test:tiled-d1-roundtrip",
+    "heightfield generic and solid-height asset checks",
+    "test:renderer-static-regression",
+    "test:custom-next",
+    "test:farfield-resolution",
+    "test:render-interpolation",
+    "test:farfield-angle",
+    "test:chrome-pointer-path",
+    "test:mobile-ui-cache",
+    "test:mobile-options-persistence",
+    "test:farfield-final-smoke",
+    "build and build:check"
+  ],
+  "result": "PASS"
+}
