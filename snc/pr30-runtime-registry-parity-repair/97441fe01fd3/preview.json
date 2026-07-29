@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "repair/pr30-runtime-character-registry-parity",
+  "sourceCommit": "97441fe01fd3afe67bbc5dddffc1e1691cef9301",
+  "buildId": "authoredlowblockregistryparity1",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 1683142,
+    "sha256": "572205a9e219532cc58aa2ca8598ffeecd08c71ac5bcd4b9afcdbc3276afd776"
+  },
+  "scope": "PR #30 post-merge runtime-character registry generation parity repair; draft preview only, with no production merge or deployment.",
+  "normalAssetGalleryUrl": "https://falloutmule.github.io/sfhs-preview/snc/pr30-runtime-registry-parity-repair/97441fe01fd3/index.html?assetgallery=1",
+  "productionRelease": "not-authorized"
+}
