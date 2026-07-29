@@ -1,0 +1,146 @@
+{
+  "pass": true,
+  "screenshots": [
+    {
+      "name": "01-start-stand-minimap",
+      "file": "test-results/world-1-level-1-visual-refinement/01-start-stand-minimap.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "02-central-planter-cluster",
+      "file": "test-results/world-1-level-1-visual-refinement/02-central-planter-cluster.png",
+      "state": {
+        "x": 7.8,
+        "y": 13.4,
+        "angle": -0.7684506335910433,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "03-outer-planter-cluster",
+      "file": "test-results/world-1-level-1-visual-refinement/03-outer-planter-cluster.png",
+      "state": {
+        "x": 26,
+        "y": 15.5,
+        "angle": -0.6781193077490455,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "04-central-route",
+      "file": "test-results/world-1-level-1-visual-refinement/04-central-route.png",
+      "state": {
+        "x": 13.5,
+        "y": 14.5,
+        "angle": 0,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "05-outer-route-market",
+      "file": "test-results/world-1-level-1-visual-refinement/05-outer-route-market.png",
+      "state": {
+        "x": 34,
+        "y": 16,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "06-neighbor-delivery-area",
+      "file": "test-results/world-1-level-1-visual-refinement/06-neighbor-delivery-area.png",
+      "state": {
+        "x": 8.5,
+        "y": 12.5,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "07-family-delivery-area",
+      "file": "test-results/world-1-level-1-visual-refinement/07-family-delivery-area.png",
+      "state": {
+        "x": 20.5,
+        "y": 6.5,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "08-elder-delivery-area",
+      "file": "test-results/world-1-level-1-visual-refinement/08-elder-delivery-area.png",
+      "state": {
+        "x": 32.5,
+        "y": 15.5,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "09-inactive-portal-at-stand",
+      "file": "test-results/world-1-level-1-visual-refinement/09-inactive-portal-at-stand.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.5707963267948966,
+        "portalActive": false,
+        "helped": 0,
+        "delivered": 0
+      }
+    },
+    {
+      "name": "10-active-portal-at-stand",
+      "file": "test-results/world-1-level-1-visual-refinement/10-active-portal-at-stand.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.5707963267948966,
+        "portalActive": true,
+        "helped": 3,
+        "delivered": 5
+      }
+    }
+  ],
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "checks": {
+    "exactPortraitViewport": true,
+    "captures": true,
+    "minimapVisible": true,
+    "inactivePortalCaptured": true,
+    "finalDeliveryActivatesPortal": true,
+    "activePortalCaptured": true,
+    "noErrors": true
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:63528/",
+  "delivery": {
+    "helped": 3,
+    "delivered": 5,
+    "portalActive": true
+  }
+}

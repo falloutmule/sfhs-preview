@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "da3161703f9dbbb47531f953bbd50f309971c154",
+  "artifact": {
+    "bytes": 1687305,
+    "sha256": "a9a7a2d29603eba9d63b39c150037fc3a80afd429c4c09b2c83a02151f0f2436"
+  },
+  "checks": [
+    "test:authored-d1",
+    "test:authored-d1-save",
+    "test:tiled-d1-roundtrip",
+    "test:runtime-asset-gallery and runtime-asset-gallery-smoke",
+    "test:renderer-static-regression",
+    "solid-height, generic heightfield, can fixture, and world-height contracts",
+    "test:mobile-ui-cache and test:mobile-options-persistence",
+    "test:farfield-final-smoke (no external requests)",
+    "characters:check-runtime",
+    "build and build:check",
+    "world1_visual_capture (10 Samsung-portrait review poses)"
+  ],
+  "result": "PASS"
+}
