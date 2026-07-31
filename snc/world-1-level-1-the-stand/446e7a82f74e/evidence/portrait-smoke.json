@@ -1,0 +1,208 @@
+{
+  "pass": true,
+  "buildId": "world1thestand1",
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "checks": {
+    "noMutableCr": true,
+    "diagnosticsAvailable": true,
+    "playReached": true,
+    "hudVisible": true,
+    "buildId": true,
+    "fixedStep": true,
+    "noErrors": true
+  },
+  "diagnostics": {
+    "buildId": "world1thestand1",
+    "runtime": {
+      "state": "play",
+      "paused": false,
+      "mobileMode": true,
+      "mobileInputActive": true,
+      "mobileAuto": true,
+      "customLevel": null,
+      "levelType": "procedural",
+      "assetGallery": null,
+      "MAP_W": 40,
+      "MAP_H": 20,
+      "mapAspect": 2,
+      "seed": 686342733,
+      "district": 1,
+      "score": 0,
+      "player": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.5707963267948966,
+        "cans": 0,
+        "stamina": 60
+      },
+      "mapCell": {
+        "tx": 20,
+        "ty": 14,
+        "v": 0
+      },
+      "canStand": true,
+      "standProbe": [
+        {
+          "x": 20.28,
+          "y": 14.28,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.72,
+          "y": 14.28,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.28,
+          "y": 14.72,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.72,
+          "y": 14.72,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.5,
+          "y": 14.28,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.5,
+          "y": 14.72,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.28,
+          "y": 14.5,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        },
+        {
+          "x": 20.72,
+          "y": 14.5,
+          "tx": 20,
+          "ty": 14,
+          "walk": true,
+          "cell": 0
+        }
+      ],
+      "joy": {
+        "active": false,
+        "x": 0,
+        "y": 0,
+        "dist": 0
+      },
+      "moveDbg": null,
+      "runActive": true,
+      "saveValid": true,
+      "canvas": {
+        "cssW": "390px",
+        "cssH": "844px",
+        "w": 390,
+        "h": 844,
+        "dpr": 1
+      },
+      "viewport": {
+        "w": 390,
+        "h": 844,
+        "visualW": 390,
+        "visualH": 844,
+        "offsetX": 0,
+        "offsetY": 0,
+        "appVhPx": "844px"
+      },
+      "mobileSettings": {
+        "lookSpeed": 1,
+        "lookSpeedLabel": "1.0x",
+        "turnSens": 0.0062,
+        "joySizePx": 110,
+        "buttonSizePx": 85,
+        "opacity": 0.6,
+        "minimapSizePx": 68,
+        "deadzonePx": 8,
+        "portrait": true
+      },
+      "sprint": {
+        "cost": 20,
+        "burstSec": 0.65,
+        "burstUntil": 0,
+        "blocks": 3
+      },
+      "storageKeys": {
+        "save": "cannedRun.save.v1",
+        "stats": "cannedRun.stats.v1",
+        "leaderboards": "cannedRun.leaderboards.v1",
+        "settings": "cannedRun.settings.v1",
+        "profile": "cannedRun.profile.v1",
+        "options": "cannedRun.options.v1",
+        "player": "cannedRun.player.v1"
+      },
+      "safeArea": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      }
+    },
+    "fixedStep": {
+      "enabled": true,
+      "stepDt": 0.016666666666666666,
+      "maxFrameDt": 0.25,
+      "maxStepsPerFrame": 5,
+      "accumulator": 2.0816681711721685e-17,
+      "lastFrameDt": 0.016799999999999954,
+      "lastSteps": 2,
+      "droppedFrames": 0
+    },
+    "performance": null,
+    "heightfield": {
+      "enabled": true,
+      "cameraZ": 0.68,
+      "occlusionSubject": null,
+      "profileCells": 6,
+      "verticalSegments": 400,
+      "topPixels": 0,
+      "worldDepthWrites": 21253,
+      "spriteDepthWrites": 4068,
+      "spriteVisiblePixels": 4068,
+      "spriteOccludedPixels": 771,
+      "canVisiblePixels": 0,
+      "canOccludedPixels": 60,
+      "npcVisiblePixels": 0,
+      "npcOccludedPixels": 75,
+      "worldDepthBytes": 400000,
+      "worldDepthLength": 100000,
+      "allocations": 1,
+      "width": 400,
+      "height": 250,
+      "calibration": null
+    }
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:50234/"
+}

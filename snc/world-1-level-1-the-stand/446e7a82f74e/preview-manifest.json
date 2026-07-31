@@ -1,0 +1,19 @@
+{
+  "schema": "snc-nonproduction-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/world-1-level-1-the-stand",
+  "sourceCommit": "446e7a82f74ee8edaf3028d590b59cf06715e377",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 4000304,
+    "sha256": "ea1dde7440e9989289168f8c6b63e51550f7a7518a31df28daaaf68e11238b59"
+  },
+  "scope": "World 1 Level 1 foliage integration; non-production review only",
+  "evidence": {
+    "foliageCapture": "evidence/foliage-capture.json",
+    "portraitSmoke": "evidence/portrait-smoke.json",
+    "lowBlockProof": "evidence/heightfield-proof.json",
+    "spriteDepthProof": "evidence/billboard-opacity.json",
+    "signRegression": "evidence/sign-pack.json"
+  }
+}
