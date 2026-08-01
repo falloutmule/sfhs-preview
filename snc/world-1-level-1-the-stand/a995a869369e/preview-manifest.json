@@ -1,0 +1,13 @@
+{
+  "repository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "fix/world1-stand-give-touch-regression",
+  "sourceCommit": "a995a869369ed8f4e4ce435d0d747698503f57a9",
+  "buildId": "world1thestand1-givetouch1",
+  "artifact": {
+    "file": "index.html",
+    "bytes": 4747802,
+    "sha256": "a17c8b136c17c3ac5de545a1959ba7a85646d0b300a96c4bb859ac72bf879ff0"
+  },
+  "scope": "GIVE touch compatibility regression repair",
+  "publishedAt": "2026-08-01"
+}
