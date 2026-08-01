@@ -1,0 +1,21 @@
+{
+  "schema": "snc-nonproduction-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/world-1-level-1-the-stand",
+  "sourceCommit": "53b012149c9fd8abb8331893f3711c6d594a7012",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 5119103,
+    "sha256": "19901c89c28513c4d1d6347b34f670336620d1800463f9eb49e56615846b61e3"
+  },
+  "scope": "World 1 Level 1 deterministic procedural grass and authored path-pack integration; non-production review only",
+  "evidence": {
+    "groundCapture": "evidence/ground-capture.json",
+    "portraitSmoke": "evidence/portrait-smoke.json",
+    "lowBlockProof": "evidence/heightfield-proof.json",
+    "spriteDepthProof": "evidence/billboard-occlusion.json",
+    "foliageRegression": "evidence/foliage-regression.json",
+    "signRegression": "evidence/sign-regression.json",
+    "screenshots": "evidence/screenshots/"
+  }
+}

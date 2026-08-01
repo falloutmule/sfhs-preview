@@ -1,0 +1,188 @@
+{
+  "pass": true,
+  "screenshots": [
+    {
+      "name": "01-stand-start-minimap",
+      "file": "test-results/ground-path-integration/01-stand-start-minimap.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.892546881191539,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "02-neighbor-close",
+      "file": "test-results/ground-path-integration/02-neighbor-close.png",
+      "state": {
+        "x": 9,
+        "y": 9.55,
+        "angle": -1.5707963267948966,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "03-neighbor-interaction",
+      "file": "test-results/ground-path-integration/03-neighbor-interaction.png",
+      "state": {
+        "x": 8.5,
+        "y": 12.5,
+        "angle": -1.457645345204412,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "04-neighbor-medium-angle",
+      "file": "test-results/ground-path-integration/04-neighbor-medium-angle.png",
+      "state": {
+        "x": 5.5,
+        "y": 8.1,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "05-neighbor-planter-occlusion",
+      "file": "test-results/ground-path-integration/05-neighbor-planter-occlusion.png",
+      "state": {
+        "x": 11.5,
+        "y": 12,
+        "angle": -2.140836790494607,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "06-family-delivery",
+      "file": "test-results/ground-path-integration/06-family-delivery.png",
+      "state": {
+        "x": 14.5,
+        "y": 5.5,
+        "angle": -0.11379200714370817,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "07-outer-market-landmark",
+      "file": "test-results/ground-path-integration/07-outer-market-landmark.png",
+      "state": {
+        "x": 25.5,
+        "y": 10.8,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "08-elder-neighbor-delivery",
+      "file": "test-results/ground-path-integration/08-elder-neighbor-delivery.png",
+      "state": {
+        "x": 32.5,
+        "y": 15.5,
+        "angle": -1.460139105621001,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "09-inactive-drop-off",
+      "file": "test-results/ground-path-integration/09-inactive-drop-off.png",
+      "state": {
+        "x": 20.5,
+        "y": 12.5,
+        "angle": -0.9707461133931429,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "10-active-drop-off-portal",
+      "file": "test-results/ground-path-integration/10-active-drop-off-portal.png",
+      "state": {
+        "x": 20.5,
+        "y": 12.5,
+        "angle": -0.9707461133931429,
+        "portalActive": true
+      }
+    }
+  ],
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "checks": {
+    "captures": true,
+    "exactPortraitViewport": true,
+    "fiveRuntimeAssets": true,
+    "naturalAspectAndGrounding": true,
+    "tallDropOffDataClass": true,
+    "finalDeliveryActivatesPortal": true,
+    "noErrors": true
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:64706/",
+  "delivery": {
+    "helped": 3,
+    "delivered": 5,
+    "portalActive": true
+  },
+  "projection": [
+    {
+      "assetId": "sign_snc_can_station_001",
+      "className": "landmark",
+      "aspect": 0.9611510791366906,
+      "metadataAspect": 0.9611510791366906,
+      "sourceGround": 695,
+      "textureHeight": 695,
+      "legacyGrounded": true,
+      "worldHeight": 0.82
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "className": "tall",
+      "aspect": 0.630709426627794,
+      "metadataAspect": 0.630709426627794,
+      "sourceGround": 1029,
+      "textureHeight": 1029,
+      "legacyGrounded": true,
+      "worldHeight": 0.9
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "className": "standard",
+      "aspect": 1.0466786355475763,
+      "metadataAspect": 1.0466786355475763,
+      "sourceGround": 557,
+      "textureHeight": 557,
+      "legacyGrounded": true,
+      "worldHeight": 0.62
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "className": "standard",
+      "aspect": 1.0189982728842832,
+      "metadataAspect": 1.0189982728842832,
+      "sourceGround": 579,
+      "textureHeight": 579,
+      "legacyGrounded": true,
+      "worldHeight": 0.62
+    },
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "className": "landmark",
+      "aspect": 1.0467445742904842,
+      "metadataAspect": 1.0467445742904842,
+      "sourceGround": 599,
+      "textureHeight": 599,
+      "legacyGrounded": true,
+      "worldHeight": 0.82
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "className": "standard",
+      "aspect": 1.0466786355475763,
+      "metadataAspect": 1.0466786355475763,
+      "sourceGround": 557,
+      "textureHeight": 557,
+      "legacyGrounded": true,
+      "worldHeight": 0.62
+    }
+  ]
+}
