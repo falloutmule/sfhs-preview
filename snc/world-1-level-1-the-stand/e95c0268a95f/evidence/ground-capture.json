@@ -1,0 +1,567 @@
+{
+  "pass": true,
+  "screenshots": [
+    {
+      "name": "01-start-stand-path",
+      "file": "test-results/post-merge-pr33/01-start-stand-path.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.892546881191539,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 34108,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 214
+      }
+    },
+    {
+      "name": "02-central-route",
+      "file": "test-results/post-merge-pr33/02-central-route.png",
+      "state": {
+        "x": 15,
+        "y": 14.5,
+        "angle": -2.32590073027357,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 30758,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 174
+      }
+    },
+    {
+      "name": "03-outer-route",
+      "file": "test-results/post-merge-pr33/03-outer-route.png",
+      "state": {
+        "x": 21.5,
+        "y": 16,
+        "angle": 0,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 29158,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 166
+      }
+    },
+    {
+      "name": "04-market-wear",
+      "file": "test-results/post-merge-pr33/04-market-wear.png",
+      "state": {
+        "x": 25,
+        "y": 10.8,
+        "angle": 0.094951706342756,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 12668,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 168
+      }
+    },
+    {
+      "name": "05-neighbor-gathering-area",
+      "file": "test-results/post-merge-pr33/05-neighbor-gathering-area.png",
+      "state": {
+        "x": 5.5,
+        "y": 8.4,
+        "angle": 0.03332099587824708,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 20531,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 172
+      }
+    },
+    {
+      "name": "06-tree-dirt-treatment",
+      "file": "test-results/post-merge-pr33/06-tree-dirt-treatment.png",
+      "state": {
+        "x": 22.5,
+        "y": 16,
+        "angle": 0,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 31877,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 172
+      }
+    },
+    {
+      "name": "07-crossover-junction",
+      "file": "test-results/post-merge-pr33/07-crossover-junction.png",
+      "state": {
+        "x": 27.2,
+        "y": 9.8,
+        "angle": -2.3373288041706735,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 26056,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 201
+      }
+    },
+    {
+      "name": "08-inactive-portal-path",
+      "file": "test-results/post-merge-pr33/08-inactive-portal-path.png",
+      "state": {
+        "x": 20.5,
+        "y": 12.5,
+        "angle": -0.9707461133931429,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 34423,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 199
+      }
+    },
+    {
+      "name": "09-long-grass-view",
+      "file": "test-results/post-merge-pr33/09-long-grass-view.png",
+      "state": {
+        "x": 5.5,
+        "y": 15.5,
+        "angle": -0.6652894278305355,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 5532,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 170
+      }
+    },
+    {
+      "name": "10-close-clean-decal-edge",
+      "file": "test-results/post-merge-pr33/10-close-clean-decal-edge.png",
+      "state": {
+        "x": 14.3,
+        "y": 14.4,
+        "angle": 0,
+        "portalActive": false
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 35904,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 217
+      }
+    },
+    {
+      "name": "11-active-portal-path",
+      "file": "test-results/post-merge-pr33/11-active-portal-path.png",
+      "state": {
+        "x": 20.5,
+        "y": 12.5,
+        "angle": -0.9707461133931429,
+        "portalActive": true
+      },
+      "frameGround": {
+        "visible": 50000,
+        "opaque": 50000,
+        "nearBlack": 0,
+        "warmBrown": 34423,
+        "minRgb": [
+          45,
+          72,
+          42
+        ],
+        "uniqueRgb": 199
+      }
+    }
+  ],
+  "checks": {
+    "captures": true,
+    "exactPortraitViewport": true,
+    "selectedRuntimeAssets": true,
+    "broadRoutes": true,
+    "groundCached": true,
+    "decalsComposited": true,
+    "worldStable": true,
+    "grassVaried": true,
+    "dirtWarmAndTextured": true,
+    "finalGroundHasNoDarkHoles": true,
+    "finalDeliveryActivatesPortal": true,
+    "noErrors": true
+  },
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:49341/",
+  "initial": {
+    "stats": {
+      "atlasBuilds": 1,
+      "atlasBytes": 819200,
+      "atlasWidth": 640,
+      "atlasHeight": 320,
+      "decalsRendered": 6,
+      "pathAssetsReady": 6,
+      "frameBufferAllocations": 1,
+      "framePixels": 50000
+    },
+    "samples": [
+      3166252,
+      8281655,
+      9465151,
+      10648906,
+      3166252
+    ],
+    "dirtAtlas": {
+      "visible": 55148,
+      "opaque": 55148,
+      "nearBlack": 0,
+      "warmBrown": 54306,
+      "minRgb": [
+        45,
+        76,
+        42
+      ],
+      "uniqueRgb": 354
+    },
+    "decals": {
+      "path_modular_corner_001": {
+        "visible": 32081,
+        "opaque": 16491,
+        "nearBlack": 0,
+        "warmBrown": 31531,
+        "minRgb": [
+          122,
+          0,
+          0
+        ],
+        "uniqueRgb": 500
+      },
+      "path_modular_cross_001": {
+        "visible": 28898,
+        "opaque": 12753,
+        "nearBlack": 0,
+        "warmBrown": 28351,
+        "minRgb": [
+          122,
+          0,
+          0
+        ],
+        "uniqueRgb": 470
+      },
+      "path_modular_straight_001": {
+        "visible": 40390,
+        "opaque": 13237,
+        "nearBlack": 0,
+        "warmBrown": 39499,
+        "minRgb": [
+          121,
+          0,
+          0
+        ],
+        "uniqueRgb": 550
+      },
+      "path_modular_t_junction_001": {
+        "visible": 49972,
+        "opaque": 31713,
+        "nearBlack": 0,
+        "warmBrown": 49301,
+        "minRgb": [
+          121,
+          0,
+          0
+        ],
+        "uniqueRgb": 560
+      },
+      "path_organic_tree_wear_001": {
+        "visible": 42699,
+        "opaque": 14251,
+        "nearBlack": 0,
+        "warmBrown": 41929,
+        "minRgb": [
+          122,
+          0,
+          0
+        ],
+        "uniqueRgb": 550
+      },
+      "path_organic_wear_001": {
+        "visible": 43674,
+        "opaque": 15092,
+        "nearBlack": 0,
+        "warmBrown": 42732,
+        "minRgb": [
+          122,
+          0,
+          0
+        ],
+        "uniqueRgb": 560
+      }
+    }
+  },
+  "delivery": {
+    "helped": 3,
+    "delivered": 5,
+    "portalActive": true
+  },
+  "final": {
+    "stats": {
+      "atlasBuilds": 1,
+      "atlasBytes": 819200,
+      "atlasWidth": 640,
+      "atlasHeight": 320,
+      "decalsRendered": 6,
+      "pathAssetsReady": 6,
+      "frameBufferAllocations": 1,
+      "framePixels": 50000
+    },
+    "samples": [
+      3166252,
+      8281655,
+      9465151,
+      10648906,
+      3166252
+    ],
+    "surface": {
+      "schema": "snc-authored-ground-surface-v1",
+      "grassSeed": 219124915,
+      "routes": [
+        {
+          "id": "central-loop",
+          "width": 2.5,
+          "points": [
+            [
+              20.5,
+              14.5
+            ],
+            [
+              15,
+              14.5
+            ],
+            [
+              11.2,
+              12.2
+            ],
+            [
+              10.2,
+              9.4
+            ],
+            [
+              13.8,
+              6.6
+            ],
+            [
+              18.5,
+              5.3
+            ],
+            [
+              24.6,
+              7.1
+            ],
+            [
+              24.6,
+              11.8
+            ],
+            [
+              20.5,
+              14.5
+            ]
+          ]
+        },
+        {
+          "id": "outer-loop",
+          "width": 2.7,
+          "points": [
+            [
+              20.5,
+              14.5
+            ],
+            [
+              26.5,
+              16
+            ],
+            [
+              33.8,
+              15.2
+            ],
+            [
+              35.8,
+              10.3
+            ],
+            [
+              34,
+              5.5
+            ],
+            [
+              28,
+              5.1
+            ],
+            [
+              24.6,
+              7.1
+            ]
+          ]
+        }
+      ],
+      "wornAreas": [
+        {
+          "x": 20.5,
+          "y": 11.4,
+          "radius": 2.3
+        },
+        {
+          "x": 29.2,
+          "y": 11.2,
+          "radius": 1.8
+        },
+        {
+          "x": 8.5,
+          "y": 8.5,
+          "radius": 1.25
+        },
+        {
+          "x": 20.5,
+          "y": 4.8,
+          "radius": 1.45
+        },
+        {
+          "x": 32.5,
+          "y": 12.4,
+          "radius": 1.3
+        },
+        {
+          "x": 26.4,
+          "y": 16,
+          "radius": 1
+        }
+      ],
+      "decals": [
+        {
+          "id": "path-straight-central",
+          "assetId": "path_modular_straight_001",
+          "x": 15.1,
+          "y": 14.4,
+          "width": 4.1,
+          "height": 1.45,
+          "rotationRadians": 0
+        },
+        {
+          "id": "path-corner-central",
+          "assetId": "path_modular_corner_001",
+          "x": 12.1,
+          "y": 10,
+          "width": 2.25,
+          "height": 2.25,
+          "rotationRadians": 0.35
+        },
+        {
+          "id": "wear-stand-portal",
+          "assetId": "path_organic_wear_001",
+          "x": 20.5,
+          "y": 11.25,
+          "width": 3.2,
+          "height": 2.15,
+          "rotationRadians": 0
+        },
+        {
+          "id": "path-cross-crossover",
+          "assetId": "path_modular_cross_001",
+          "x": 24.6,
+          "y": 7.1,
+          "width": 2.35,
+          "height": 2.55,
+          "rotationRadians": 0
+        },
+        {
+          "id": "path-t-market",
+          "assetId": "path_modular_t_junction_001",
+          "x": 29.2,
+          "y": 11.2,
+          "width": 3.5,
+          "height": 1.75,
+          "rotationRadians": 0
+        },
+        {
+          "id": "wear-tree-outer",
+          "assetId": "path_organic_tree_wear_001",
+          "x": 26.4,
+          "y": 16,
+          "width": 2.55,
+          "height": 1.45,
+          "rotationRadians": 0.1
+        }
+      ]
+    }
+  }
+}

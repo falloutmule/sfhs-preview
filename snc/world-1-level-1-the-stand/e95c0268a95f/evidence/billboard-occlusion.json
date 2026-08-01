@@ -1,0 +1,268 @@
+{
+  "pass": true,
+  "cases": [
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "background": "billboard",
+      "backdropPixels": 322,
+      "overlapPixels": 318,
+      "exteriorBackdropPixels": 4,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1712
+    },
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "background": "npc",
+      "backdropPixels": 232,
+      "overlapPixels": 218,
+      "exteriorBackdropPixels": 14,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1725
+    },
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "background": "can",
+      "backdropPixels": 174,
+      "overlapPixels": 129,
+      "exteriorBackdropPixels": 45,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1798
+    },
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "background": "planter",
+      "backdropPixels": 1579,
+      "overlapPixels": 807,
+      "exteriorBackdropPixels": 772,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1708
+    },
+    {
+      "assetId": "sign_summer_loop_market_001",
+      "background": "wall",
+      "backdropPixels": 1591,
+      "overlapPixels": 1306,
+      "exteriorBackdropPixels": 285,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1708
+    },
+    {
+      "assetId": "sign_snc_can_station_001",
+      "background": "billboard",
+      "backdropPixels": 322,
+      "overlapPixels": 322,
+      "exteriorBackdropPixels": 0,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1377
+    },
+    {
+      "assetId": "sign_snc_can_station_001",
+      "background": "npc",
+      "backdropPixels": 232,
+      "overlapPixels": 217,
+      "exteriorBackdropPixels": 15,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1395
+    },
+    {
+      "assetId": "sign_snc_can_station_001",
+      "background": "can",
+      "backdropPixels": 174,
+      "overlapPixels": 119,
+      "exteriorBackdropPixels": 55,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1487
+    },
+    {
+      "assetId": "sign_snc_can_station_001",
+      "background": "planter",
+      "backdropPixels": 1579,
+      "overlapPixels": 516,
+      "exteriorBackdropPixels": 1063,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1377
+    },
+    {
+      "assetId": "sign_snc_can_station_001",
+      "background": "wall",
+      "backdropPixels": 1591,
+      "overlapPixels": 1095,
+      "exteriorBackdropPixels": 496,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1377
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "background": "billboard",
+      "backdropPixels": 322,
+      "overlapPixels": 318,
+      "exteriorBackdropPixels": 4,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1155
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "background": "npc",
+      "backdropPixels": 232,
+      "overlapPixels": 205,
+      "exteriorBackdropPixels": 27,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1182
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "background": "can",
+      "backdropPixels": 174,
+      "overlapPixels": 105,
+      "exteriorBackdropPixels": 69,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1289
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "background": "planter",
+      "backdropPixels": 1579,
+      "overlapPixels": 434,
+      "exteriorBackdropPixels": 1145,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1151
+    },
+    {
+      "assetId": "sign_drop_off_cans_001",
+      "background": "wall",
+      "backdropPixels": 1591,
+      "overlapPixels": 1051,
+      "exteriorBackdropPixels": 540,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1151
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "background": "billboard",
+      "backdropPixels": 322,
+      "overlapPixels": 279,
+      "exteriorBackdropPixels": 43,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1031
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "background": "npc",
+      "backdropPixels": 232,
+      "overlapPixels": 181,
+      "exteriorBackdropPixels": 51,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1041
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "background": "can",
+      "backdropPixels": 174,
+      "overlapPixels": 159,
+      "exteriorBackdropPixels": 15,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1018
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "background": "planter",
+      "backdropPixels": 1579,
+      "overlapPixels": 822,
+      "exteriorBackdropPixels": 757,
+      "leakPixels": 0,
+      "spriteDepthWrites": 988
+    },
+    {
+      "assetId": "sign_neighbor_1_can_001",
+      "background": "wall",
+      "backdropPixels": 1591,
+      "overlapPixels": 800,
+      "exteriorBackdropPixels": 791,
+      "leakPixels": 0,
+      "spriteDepthWrites": 988
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "background": "billboard",
+      "backdropPixels": 322,
+      "overlapPixels": 322,
+      "exteriorBackdropPixels": 0,
+      "leakPixels": 0,
+      "spriteDepthWrites": 978
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "background": "npc",
+      "backdropPixels": 232,
+      "overlapPixels": 195,
+      "exteriorBackdropPixels": 37,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1019
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "background": "can",
+      "backdropPixels": 174,
+      "overlapPixels": 145,
+      "exteriorBackdropPixels": 29,
+      "leakPixels": 0,
+      "spriteDepthWrites": 1036
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "background": "planter",
+      "backdropPixels": 1579,
+      "overlapPixels": 722,
+      "exteriorBackdropPixels": 857,
+      "leakPixels": 0,
+      "spriteDepthWrites": 978
+    },
+    {
+      "assetId": "sign_family_3_cans_001",
+      "background": "wall",
+      "backdropPixels": 1591,
+      "overlapPixels": 875,
+      "exteriorBackdropPixels": 716,
+      "leakPixels": 0,
+      "spriteDepthWrites": 978
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "01-market-billboard",
+      "file": "test-results/post-merge-pr33/01-market-billboard.png"
+    },
+    {
+      "name": "02-station-npc",
+      "file": "test-results/post-merge-pr33/02-station-npc.png"
+    },
+    {
+      "name": "03-drop-off-can",
+      "file": "test-results/post-merge-pr33/03-drop-off-can.png"
+    },
+    {
+      "name": "04-neighbor-planter",
+      "file": "test-results/post-merge-pr33/04-neighbor-planter.png"
+    },
+    {
+      "name": "05-family-wall",
+      "file": "test-results/post-merge-pr33/05-family-wall.png"
+    }
+  ],
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "checks": {
+    "exactCaseCount": true,
+    "allBackdropsOverlap": true,
+    "opaquePixelsHideBackdrops": true,
+    "transparentExteriorShowsBackdrops": true,
+    "spriteDepthWrites": true,
+    "screenshots": true,
+    "noErrors": true
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:49762/"
+}

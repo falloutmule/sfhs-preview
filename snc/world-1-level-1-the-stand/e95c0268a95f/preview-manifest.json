@@ -1,0 +1,23 @@
+{
+  "schema": "snc-nonproduction-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "feature/runtime-asset-gallery-level",
+  "sourceCommit": "e95c0268a95f68ab886e8bb7a8450b37eaa026e7",
+  "candidate": "world-1-level-1-the-stand",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 4746518,
+    "sha256": "a291a14df7662451aac559299768645e2bfcba795eacbba6d008872105521ec0",
+    "buildId": "world1thestand1"
+  },
+  "scope": "World 1 Level 1 The Stand phase closure; non-production review only",
+  "evidence": {
+    "ground": "evidence/ground-capture.json",
+    "heightfield": "evidence/heightfield-proof.json",
+    "billboardOcclusion": "evidence/billboard-occlusion.json",
+    "foliage": "evidence/foliage-regression.json",
+    "signs": "evidence/sign-regression.json",
+    "assetGallery": "evidence/gallery-smoke.json",
+    "portraitSmoke": "evidence/farfield-smoke.json"
+  }
+}

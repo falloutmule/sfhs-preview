@@ -1,0 +1,308 @@
+{
+  "pass": true,
+  "screenshots": [
+    {
+      "name": "01-stand-with-foliage-minimap",
+      "file": "test-results/post-merge-pr33/01-stand-with-foliage-minimap.png",
+      "state": {
+        "x": 20.5,
+        "y": 14.5,
+        "angle": -1.892546881191539,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "02-central-route",
+      "file": "test-results/post-merge-pr33/02-central-route.png",
+      "state": {
+        "x": 15,
+        "y": 14.5,
+        "angle": -2.50452232431411,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "03-outer-loop-tree-landmark",
+      "file": "test-results/post-merge-pr33/03-outer-loop-tree-landmark.png",
+      "state": {
+        "x": 21.5,
+        "y": 16,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "04-planter-bush-grass",
+      "file": "test-results/post-merge-pr33/04-planter-bush-grass.png",
+      "state": {
+        "x": 14,
+        "y": 13,
+        "angle": -2.6387494426619327,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "05-market-area",
+      "file": "test-results/post-merge-pr33/05-market-area.png",
+      "state": {
+        "x": 25,
+        "y": 10.8,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "06-neighbor-delivery-area",
+      "file": "test-results/post-merge-pr33/06-neighbor-delivery-area.png",
+      "state": {
+        "x": 5.5,
+        "y": 8.4,
+        "angle": 0.03224688243525381,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "07-tree-close",
+      "file": "test-results/post-merge-pr33/07-tree-close.png",
+      "state": {
+        "x": 25.1,
+        "y": 16,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "08-tree-route-distance",
+      "file": "test-results/post-merge-pr33/08-tree-route-distance.png",
+      "state": {
+        "x": 18.5,
+        "y": 16,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "09-foliage-planter-occlusion",
+      "file": "test-results/post-merge-pr33/09-foliage-planter-occlusion.png"
+    },
+    {
+      "name": "10-signs-readable-through-park",
+      "file": "test-results/post-merge-pr33/10-signs-readable-through-park.png",
+      "state": {
+        "x": 25,
+        "y": 10.8,
+        "angle": 0,
+        "portalActive": false
+      }
+    },
+    {
+      "name": "11-active-portal-with-foliage",
+      "file": "test-results/post-merge-pr33/11-active-portal-with-foliage.png",
+      "state": {
+        "x": 20.5,
+        "y": 12.5,
+        "angle": -0.9707461133931429,
+        "portalActive": true
+      }
+    }
+  ],
+  "observed": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "externalRequests": []
+  },
+  "checks": {
+    "captures": true,
+    "exactPortraitViewport": true,
+    "selectedRuntimeAssets": true,
+    "allAuthoredFoliageLoaded": true,
+    "naturalAspectAndGrounding": true,
+    "planterOccludesFoliage": true,
+    "finalDeliveryActivatesPortal": true,
+    "noErrors": true
+  },
+  "errors": [],
+  "url": "http://127.0.0.1:53545/",
+  "occlusion": {
+    "spriteVisiblePixels": 311,
+    "spriteOccludedPixels": 596,
+    "spriteDepthWrites": 311
+  },
+  "delivery": {
+    "helped": 3,
+    "delivered": 5,
+    "portalActive": true
+  },
+  "projection": [
+    {
+      "assetId": "foliage_groundcover_wide_001",
+      "aspect": 3.0555555555555554,
+      "metadataAspect": 3.0555555555555554,
+      "sourceGround": 144,
+      "textureHeight": 144,
+      "legacyGrounded": true,
+      "worldHeight": 0.18,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_tuft_medium_001",
+      "aspect": 1.75,
+      "metadataAspect": 1.75,
+      "sourceGround": 48,
+      "textureHeight": 48,
+      "legacyGrounded": true,
+      "worldHeight": 0.16,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_bush_low_001",
+      "aspect": 1.683168316831683,
+      "metadataAspect": 1.683168316831683,
+      "sourceGround": 101,
+      "textureHeight": 101,
+      "legacyGrounded": true,
+      "worldHeight": 0.38,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_patch_long_001",
+      "aspect": 1.4745762711864407,
+      "metadataAspect": 1.4745762711864407,
+      "sourceGround": 59,
+      "textureHeight": 59,
+      "legacyGrounded": true,
+      "worldHeight": 0.22,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_bush_low_001",
+      "aspect": 1.683168316831683,
+      "metadataAspect": 1.683168316831683,
+      "sourceGround": 101,
+      "textureHeight": 101,
+      "legacyGrounded": true,
+      "worldHeight": 0.38,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_groundcover_wide_001",
+      "aspect": 3.0555555555555554,
+      "metadataAspect": 3.0555555555555554,
+      "sourceGround": 144,
+      "textureHeight": 144,
+      "legacyGrounded": true,
+      "worldHeight": 0.18,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_tuft_medium_001",
+      "aspect": 1.75,
+      "metadataAspect": 1.75,
+      "sourceGround": 48,
+      "textureHeight": 48,
+      "legacyGrounded": true,
+      "worldHeight": 0.16,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_tree_low_canopy_001",
+      "aspect": 1.0909090909090908,
+      "metadataAspect": 1.0909090909090908,
+      "sourceGround": 187,
+      "textureHeight": 187,
+      "legacyGrounded": true,
+      "worldHeight": 1.14,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_patch_long_001",
+      "aspect": 1.4745762711864407,
+      "metadataAspect": 1.4745762711864407,
+      "sourceGround": 59,
+      "textureHeight": 59,
+      "legacyGrounded": true,
+      "worldHeight": 0.22,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_patch_long_001",
+      "aspect": 1.4745762711864407,
+      "metadataAspect": 1.4745762711864407,
+      "sourceGround": 59,
+      "textureHeight": 59,
+      "legacyGrounded": true,
+      "worldHeight": 0.22,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_bush_low_001",
+      "aspect": 1.683168316831683,
+      "metadataAspect": 1.683168316831683,
+      "sourceGround": 101,
+      "textureHeight": 101,
+      "legacyGrounded": true,
+      "worldHeight": 0.38,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_tree_round_large_001",
+      "aspect": 0.9573863636363636,
+      "metadataAspect": 0.9573863636363636,
+      "sourceGround": 352,
+      "textureHeight": 352,
+      "legacyGrounded": true,
+      "worldHeight": 1.55,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_tree_low_canopy_001",
+      "aspect": 1.0909090909090908,
+      "metadataAspect": 1.0909090909090908,
+      "sourceGround": 187,
+      "textureHeight": 187,
+      "legacyGrounded": true,
+      "worldHeight": 1.14,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_groundcover_wide_001",
+      "aspect": 3.0555555555555554,
+      "metadataAspect": 3.0555555555555554,
+      "sourceGround": 144,
+      "textureHeight": 144,
+      "legacyGrounded": true,
+      "worldHeight": 0.18,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_tuft_medium_001",
+      "aspect": 1.75,
+      "metadataAspect": 1.75,
+      "sourceGround": 48,
+      "textureHeight": 48,
+      "legacyGrounded": true,
+      "worldHeight": 0.16,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_tree_slender_001",
+      "aspect": 0.6616541353383458,
+      "metadataAspect": 0.6616541353383458,
+      "sourceGround": 266,
+      "textureHeight": 266,
+      "legacyGrounded": true,
+      "worldHeight": 1.36,
+      "softAlpha": true
+    },
+    {
+      "assetId": "foliage_grass_tuft_medium_001",
+      "aspect": 1.75,
+      "metadataAspect": 1.75,
+      "sourceGround": 48,
+      "textureHeight": 48,
+      "legacyGrounded": true,
+      "worldHeight": 0.16,
+      "softAlpha": true
+    }
+  ]
+}
