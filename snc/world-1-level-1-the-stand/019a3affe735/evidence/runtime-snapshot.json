@@ -1,0 +1,1819 @@
+{
+  "pass": true,
+  "consoleErrors": [],
+  "pageErrors": [],
+  "externalRequests": [],
+  "captures": [
+    "01-start-stand.png",
+    "02-stand-front.png",
+    "03-planter-side.png",
+    "04-planter-top.png",
+    "05-market-facade.png",
+    "06-legacy-mural-west.png",
+    "07-legacy-mural-east.png",
+    "08-can-close.png",
+    "09-can-medium.png",
+    "10-sky-north.png",
+    "11-sky-east.png",
+    "12-sky-south.png",
+    "13-sky-west.png",
+    "14-perimeter-south.png",
+    "15-perimeter-west.png",
+    "16-perimeter-north.png",
+    "17-perimeter-east.png",
+    "18-active-portal.png",
+    "19-asset-gallery.png"
+  ],
+  "url": "http://127.0.0.1:60082/",
+  "runtime": {
+    "buildId": "world1thestand1-nomurals1",
+    "map": [
+      "8888888888888888888888888888888888888888",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000001111110008",
+      "8000000000000000000000000000001111110008",
+      "8000000000000000000000000000001111110008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000011111100000000000000008",
+      "8000000000000000011111100000000000000008",
+      "8000000000000000011111100000000000000008",
+      "8000000000808000000000000000000000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000800000000000000000808000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000008000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000000000000008",
+      "8000000000000000000000000000000000000008",
+      "8888888888888888888888888888888888888888"
+    ],
+    "buildings": {
+      "1": {
+        "bid": 1,
+        "id": "snc-stand",
+        "assetId": "custom_next_001",
+        "renderMode": "importedWholeFaceAsset",
+        "x": 17,
+        "y": 7,
+        "x0": 17,
+        "y0": 7,
+        "rotation": 0,
+        "widthCells": 6,
+        "depthCells": 3,
+        "w": 6,
+        "h": 3,
+        "footprint": {
+          "widthCells": 6,
+          "depthCells": 3
+        },
+        "front": "south"
+      },
+      "2": {
+        "bid": 2,
+        "id": "outer-street-market",
+        "assetId": "strip_mall_001",
+        "renderMode": "importedWholeFaceAsset",
+        "x": 30,
+        "y": 2,
+        "x0": 30,
+        "y0": 2,
+        "rotation": 0,
+        "widthCells": 6,
+        "depthCells": 3,
+        "w": 6,
+        "h": 3,
+        "footprint": {
+          "widthCells": 6,
+          "depthCells": 3
+        },
+        "front": "south"
+      }
+    },
+    "environment": [
+      {
+        "id": "central-planter-00",
+        "assetId": "low_block_concrete_001",
+        "x": 10,
+        "y": 10,
+        "rotation": 0,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      },
+      {
+        "id": "central-planter-01",
+        "assetId": "low_block_concrete_001",
+        "x": 10,
+        "y": 12,
+        "rotation": 0,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      },
+      {
+        "id": "central-planter-02",
+        "assetId": "low_block_concrete_001",
+        "x": 12,
+        "y": 10,
+        "rotation": 1,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      },
+      {
+        "id": "outer-planter-00",
+        "assetId": "low_block_concrete_001",
+        "x": 28,
+        "y": 12,
+        "rotation": 2,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      },
+      {
+        "id": "outer-planter-01",
+        "assetId": "low_block_concrete_001",
+        "x": 30,
+        "y": 12,
+        "rotation": 2,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      },
+      {
+        "id": "outer-planter-02",
+        "assetId": "low_block_concrete_001",
+        "x": 30,
+        "y": 14,
+        "rotation": 3,
+        "widthCells": 1,
+        "depthCells": 1,
+        "profileId": 3
+      }
+    ],
+    "props": [
+      {
+        "id": "prop-00",
+        "x": 19.2,
+        "y": 10.6,
+        "kind": "signboard",
+        "label": "SNC\nCAN STAND",
+        "assetId": "sign_snc_can_station_001",
+        "signSizeClass": "landmark",
+        "wob": 0
+      },
+      {
+        "id": "prop-01",
+        "x": 21.8,
+        "y": 10.6,
+        "kind": "signboard",
+        "label": "DROP OFF\nCANS",
+        "assetId": "sign_drop_off_cans_001",
+        "signSizeClass": "tall",
+        "wob": 0
+      },
+      {
+        "id": "prop-02",
+        "x": 17.2,
+        "y": 10.9,
+        "kind": "crate_stack",
+        "wob": 0
+      },
+      {
+        "id": "prop-03",
+        "x": 22.8,
+        "y": 10.9,
+        "kind": "cooler",
+        "wob": 0
+      },
+      {
+        "id": "prop-04",
+        "x": 18,
+        "y": 11.9,
+        "kind": "bench",
+        "wob": 0
+      },
+      {
+        "id": "prop-05",
+        "x": 22,
+        "y": 11.9,
+        "kind": "bench",
+        "wob": 0
+      },
+      {
+        "id": "prop-06",
+        "x": 15.8,
+        "y": 12.9,
+        "kind": "foliage",
+        "assetId": "foliage_groundcover_wide_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-07",
+        "x": 24.2,
+        "y": 13.2,
+        "kind": "foliage",
+        "assetId": "foliage_grass_tuft_medium_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-08",
+        "x": 9,
+        "y": 8.1,
+        "kind": "signboard",
+        "label": "NEIGHBOR\n1 CAN",
+        "assetId": "sign_neighbor_1_can_001",
+        "signSizeClass": "standard",
+        "wob": 0
+      },
+      {
+        "id": "prop-09",
+        "x": 7.2,
+        "y": 9.5,
+        "kind": "bench",
+        "wob": 0
+      },
+      {
+        "id": "prop-10",
+        "x": 9.4,
+        "y": 10.9,
+        "kind": "foliage",
+        "assetId": "foliage_bush_low_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-11",
+        "x": 11.1,
+        "y": 9.4,
+        "kind": "foliage",
+        "assetId": "foliage_grass_patch_long_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-12",
+        "x": 12.9,
+        "y": 11,
+        "kind": "foliage",
+        "assetId": "foliage_bush_low_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-13",
+        "x": 7,
+        "y": 11.4,
+        "kind": "foliage",
+        "assetId": "foliage_groundcover_wide_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-14",
+        "x": 12.7,
+        "y": 12.9,
+        "kind": "foliage",
+        "assetId": "foliage_grass_tuft_medium_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-15",
+        "x": 18,
+        "y": 5.1,
+        "kind": "signboard",
+        "label": "FAMILY\n3 CANS",
+        "assetId": "sign_family_3_cans_001",
+        "signSizeClass": "standard",
+        "wob": 0
+      },
+      {
+        "id": "prop-16",
+        "x": 22.7,
+        "y": 5.1,
+        "kind": "shopping_cart",
+        "wob": 0
+      },
+      {
+        "id": "prop-17",
+        "x": 20.5,
+        "y": 5.6,
+        "kind": "cooler",
+        "wob": 0
+      },
+      {
+        "id": "prop-18",
+        "x": 13.1,
+        "y": 5.8,
+        "kind": "foliage",
+        "assetId": "foliage_tree_low_canopy_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-19",
+        "x": 15.2,
+        "y": 3.2,
+        "kind": "foliage",
+        "assetId": "foliage_grass_patch_long_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-20",
+        "x": 29,
+        "y": 10.8,
+        "kind": "signboard",
+        "label": "OUTER LOOP\nMARKET",
+        "assetId": "sign_summer_loop_market_001",
+        "signSizeClass": "landmark",
+        "wob": 0
+      },
+      {
+        "id": "prop-21",
+        "x": 31,
+        "y": 11.1,
+        "kind": "bench",
+        "wob": 0
+      },
+      {
+        "id": "prop-22",
+        "x": 28.4,
+        "y": 13.5,
+        "kind": "foliage",
+        "assetId": "foliage_grass_patch_long_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-23",
+        "x": 31.4,
+        "y": 13.8,
+        "kind": "foliage",
+        "assetId": "foliage_bush_low_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-24",
+        "x": 33,
+        "y": 11,
+        "kind": "signboard",
+        "label": "NEIGHBOR\n1 CAN",
+        "assetId": "sign_neighbor_1_can_001",
+        "signSizeClass": "standard",
+        "wob": 0
+      },
+      {
+        "id": "prop-25",
+        "x": 26.4,
+        "y": 16,
+        "kind": "foliage",
+        "assetId": "foliage_tree_round_large_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-26",
+        "x": 35.3,
+        "y": 7.7,
+        "kind": "foliage",
+        "assetId": "foliage_tree_low_canopy_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-27",
+        "x": 29.6,
+        "y": 15.8,
+        "kind": "foliage",
+        "assetId": "foliage_groundcover_wide_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-28",
+        "x": 32.2,
+        "y": 15,
+        "kind": "foliage",
+        "assetId": "foliage_grass_tuft_medium_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-29",
+        "x": 34.2,
+        "y": 13,
+        "kind": "mailbox",
+        "wob": 0
+      },
+      {
+        "id": "prop-30",
+        "x": 26.5,
+        "y": 15.5,
+        "kind": "utility_box",
+        "wob": 0
+      },
+      {
+        "id": "prop-31",
+        "x": 6.5,
+        "y": 15.5,
+        "kind": "bench",
+        "wob": 0
+      },
+      {
+        "id": "prop-32",
+        "x": 5.2,
+        "y": 13.4,
+        "kind": "foliage",
+        "assetId": "foliage_tree_slender_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-33",
+        "x": 8.1,
+        "y": 14.2,
+        "kind": "foliage",
+        "assetId": "foliage_grass_tuft_medium_001",
+        "wob": 0
+      },
+      {
+        "id": "prop-34",
+        "x": 35,
+        "y": 15.5,
+        "kind": "mailbox",
+        "wob": 0
+      }
+    ],
+    "npcs": [
+      {
+        "id": "npc-00",
+        "x": 8.5,
+        "y": 8.5,
+        "kind": "hungry",
+        "assetId": "npc_unhoused_work_jacket_001",
+        "need": 1,
+        "helped": false,
+        "wob": 0,
+        "thank": ""
+      },
+      {
+        "id": "npc-01",
+        "x": 20.5,
+        "y": 4.5,
+        "kind": "family",
+        "assetId": "npc_household_parent_child_001",
+        "need": 3,
+        "helped": false,
+        "wob": 0,
+        "thank": ""
+      },
+      {
+        "id": "npc-02",
+        "x": 32.5,
+        "y": 12.5,
+        "kind": "elder",
+        "assetId": "npc_volunteer_elder_cane_001",
+        "need": 1,
+        "helped": false,
+        "wob": 0,
+        "thank": ""
+      }
+    ],
+    "pickups": [
+      {
+        "id": "can-socket-00",
+        "x": 15.5,
+        "y": 12.5,
+        "amt": 1,
+        "taken": false,
+        "wob": 0
+      },
+      {
+        "id": "can-socket-01",
+        "x": 24.5,
+        "y": 12.5,
+        "amt": 1,
+        "taken": false,
+        "wob": 0
+      },
+      {
+        "id": "can-socket-02",
+        "x": 13.5,
+        "y": 12.5,
+        "amt": 1,
+        "taken": false,
+        "wob": 0
+      },
+      {
+        "id": "can-socket-05",
+        "x": 15.5,
+        "y": 4.5,
+        "amt": 1,
+        "taken": false,
+        "wob": 0
+      },
+      {
+        "id": "can-socket-06",
+        "x": 29.5,
+        "y": 10.5,
+        "amt": 1,
+        "taken": false,
+        "wob": 0
+      }
+    ],
+    "exit": {
+      "x": 20.5,
+      "y": 10.7,
+      "active": false
+    },
+    "signs": {
+      "sign_drop_off_cans_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.9,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 649,
+          "height": 1029,
+          "alpha": {
+            "zero": 290958,
+            "partial": 0,
+            "opaque": 376863
+          }
+        }
+      },
+      "sign_family_3_cans_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.62,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 590,
+          "height": 579,
+          "alpha": {
+            "zero": 137909,
+            "partial": 0,
+            "opaque": 203701
+          }
+        }
+      },
+      "sign_neighbor_1_can_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.62,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 583,
+          "height": 557,
+          "alpha": {
+            "zero": 123855,
+            "partial": 0,
+            "opaque": 200876
+          }
+        }
+      },
+      "sign_snc_can_station_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.82,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 668,
+          "height": 695,
+          "alpha": {
+            "zero": 212449,
+            "partial": 0,
+            "opaque": 251811
+          }
+        }
+      },
+      "sign_summer_loop_market_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.82,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 627,
+          "height": 599,
+          "alpha": {
+            "zero": 142509,
+            "partial": 0,
+            "opaque": 233064
+          }
+        }
+      }
+    },
+    "foliage": {
+      "foliage_bush_low_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.38,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 170,
+          "height": 101,
+          "alpha": {
+            "zero": 4506,
+            "partial": 418,
+            "opaque": 12246
+          }
+        }
+      },
+      "foliage_grass_patch_long_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.22,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 87,
+          "height": 59,
+          "alpha": {
+            "zero": 1593,
+            "partial": 235,
+            "opaque": 3305
+          }
+        }
+      },
+      "foliage_grass_tuft_medium_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.16,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 84,
+          "height": 48,
+          "alpha": {
+            "zero": 1693,
+            "partial": 192,
+            "opaque": 2147
+          }
+        }
+      },
+      "foliage_groundcover_wide_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.18,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 440,
+          "height": 144,
+          "alpha": {
+            "zero": 18725,
+            "partial": 1140,
+            "opaque": 43495
+          }
+        }
+      },
+      "foliage_tree_low_canopy_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 1.14,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 204,
+          "height": 187,
+          "alpha": {
+            "zero": 9801,
+            "partial": 1130,
+            "opaque": 27217
+          }
+        }
+      },
+      "foliage_tree_round_large_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 1.55,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 337,
+          "height": 352,
+          "alpha": {
+            "zero": 43532,
+            "partial": 2271,
+            "opaque": 72821
+          }
+        }
+      },
+      "foliage_tree_slender_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 1.36,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": null,
+        "image": {
+          "width": 176,
+          "height": 266,
+          "alpha": {
+            "zero": 16533,
+            "partial": 1331,
+            "opaque": 28952
+          }
+        }
+      }
+    },
+    "characters": {
+      "npc_civilian_backpack_youth_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 54,
+          "height": 192,
+          "alpha": {
+            "zero": 4087,
+            "partial": 1787,
+            "opaque": 4494
+          }
+        }
+      },
+      "npc_civilian_beanie_messenger_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 52,
+          "height": 192,
+          "alpha": {
+            "zero": 3915,
+            "partial": 1840,
+            "opaque": 4229
+          }
+        }
+      },
+      "npc_civilian_grocery_carrier_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 71,
+          "height": 192,
+          "alpha": {
+            "zero": 5275,
+            "partial": 1908,
+            "opaque": 6449
+          }
+        }
+      },
+      "npc_household_dog_walker_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 52,
+          "height": 192,
+          "alpha": {
+            "zero": 3405,
+            "partial": 2040,
+            "opaque": 4539
+          }
+        }
+      },
+      "npc_household_parent_child_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 51,
+          "height": 192,
+          "alpha": {
+            "zero": 3628,
+            "partial": 1847,
+            "opaque": 4317
+          }
+        }
+      },
+      "npc_unhoused_bicycle_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 163,
+          "height": 192,
+          "alpha": {
+            "zero": 11006,
+            "partial": 2446,
+            "opaque": 17844
+          }
+        }
+      },
+      "npc_unhoused_blanket_wrap_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 106,
+          "height": 192,
+          "alpha": {
+            "zero": 7871,
+            "partial": 1931,
+            "opaque": 10550
+          }
+        }
+      },
+      "npc_unhoused_cane_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 123,
+          "height": 192,
+          "alpha": {
+            "zero": 9929,
+            "partial": 2402,
+            "opaque": 11285
+          }
+        }
+      },
+      "npc_unhoused_cart_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 159,
+          "height": 192,
+          "alpha": {
+            "zero": 11137,
+            "partial": 2192,
+            "opaque": 17199
+          }
+        }
+      },
+      "npc_unhoused_dog_companion_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 134,
+          "height": 192,
+          "alpha": {
+            "zero": 12197,
+            "partial": 2702,
+            "opaque": 10829
+          }
+        }
+      },
+      "npc_unhoused_dyed_hair_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 96,
+          "height": 192,
+          "alpha": {
+            "zero": 7952,
+            "partial": 2179,
+            "opaque": 8301
+          }
+        }
+      },
+      "npc_unhoused_slumped_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.68,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 167,
+          "height": 192,
+          "alpha": {
+            "zero": 10870,
+            "partial": 2350,
+            "opaque": 18844
+          }
+        }
+      },
+      "npc_unhoused_work_jacket_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 80,
+          "height": 192,
+          "alpha": {
+            "zero": 5910,
+            "partial": 1931,
+            "opaque": 7519
+          }
+        }
+      },
+      "npc_volunteer_elder_cane_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 58,
+          "height": 192,
+          "alpha": {
+            "zero": 4107,
+            "partial": 1612,
+            "opaque": 5417
+          }
+        }
+      },
+      "npc_volunteer_miguel_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 61,
+          "height": 192,
+          "alpha": {
+            "zero": 4680,
+            "partial": 1794,
+            "opaque": 5238
+          }
+        }
+      },
+      "npc_volunteer_tote_001": {
+        "sourcePath": null,
+        "runtimePath": null,
+        "worldHeight": 0.78,
+        "anchor": {
+          "x": 0.5,
+          "y": 1
+        },
+        "approvalStatus": "candidate",
+        "image": {
+          "width": 53,
+          "height": 192,
+          "alpha": {
+            "zero": 4190,
+            "partial": 1815,
+            "opaque": 4171
+          }
+        }
+      }
+    },
+    "tex": {
+      "hungry": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 576,
+          "partial": 152,
+          "opaque": 560
+        }
+      },
+      "family": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 567,
+          "partial": 173,
+          "opaque": 548
+        }
+      },
+      "elder": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 536,
+          "partial": 147,
+          "opaque": 605
+        }
+      },
+      "volunteer": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "hall_volunteer": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "hall_elder": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 536,
+          "partial": 147,
+          "opaque": 605
+        }
+      },
+      "hall_pantry": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "hall_street": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 559,
+          "partial": 151,
+          "opaque": 578
+        }
+      },
+      "hall_quiet": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "hall_kitchen": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "hall_servant": {
+        "width": 28,
+        "height": 46,
+        "alpha": {
+          "zero": 632,
+          "partial": 170,
+          "opaque": 486
+        }
+      },
+      "can": {
+        "width": 20,
+        "height": 22,
+        "alpha": {
+          "zero": 204,
+          "partial": 60,
+          "opaque": 176
+        }
+      },
+      "crate": {
+        "width": 28,
+        "height": 22,
+        "alpha": {
+          "zero": 160,
+          "partial": 24,
+          "opaque": 432
+        }
+      },
+      "exit": {
+        "width": 48,
+        "height": 80,
+        "alpha": {
+          "zero": 452,
+          "partial": 2364,
+          "opaque": 1024
+        }
+      }
+    },
+    "canProjection": [
+      {
+        "distance": 1.1,
+        "screenW": 86.77685950413222,
+        "screenH": 95.45454545454544,
+        "topY": 160.53719008264463
+      },
+      {
+        "distance": 2.5,
+        "screenW": 38.18181818181818,
+        "screenH": 42,
+        "topY": 140.63636363636363
+      },
+      {
+        "distance": 5,
+        "screenW": 19.09090909090909,
+        "screenH": 21,
+        "topY": 132.8181818181818
+      }
+    ],
+    "heightfield": {
+      "enabled": true,
+      "cameraZ": 0.68,
+      "occlusionSubject": null,
+      "profileCells": 6,
+      "verticalSegments": 400,
+      "topPixels": 0,
+      "worldDepthWrites": 21253,
+      "spriteDepthWrites": 4068,
+      "spriteVisiblePixels": 4068,
+      "spriteOccludedPixels": 771,
+      "canVisiblePixels": 0,
+      "canOccludedPixels": 60,
+      "npcVisiblePixels": 0,
+      "npcOccludedPixels": 75,
+      "worldDepthBytes": 400000,
+      "worldDepthLength": 100000,
+      "allocations": 1,
+      "width": 400,
+      "height": 250,
+      "calibration": null
+    },
+    "ground": {
+      "atlasBuilds": 1,
+      "atlasBytes": 819200,
+      "atlasWidth": 640,
+      "atlasHeight": 320,
+      "decalsRendered": 6,
+      "pathAssetsReady": 6,
+      "frameBufferAllocations": 1,
+      "framePixels": 50000
+    }
+  },
+  "billboards": [
+    {
+      "id": "sign_snc_can_station_001",
+      "kind": "signboard",
+      "classification": "APPROVED",
+      "placements": [
+        {
+          "id": "prop-00",
+          "x": 19.2,
+          "y": 10.6,
+          "kind": "signboard"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 668,
+      "height": 695,
+      "imageFile": "billboard-assets/sign_snc_can_station_001.png"
+    },
+    {
+      "id": "sign_drop_off_cans_001",
+      "kind": "signboard",
+      "classification": "APPROVED",
+      "placements": [
+        {
+          "id": "prop-01",
+          "x": 21.8,
+          "y": 10.6,
+          "kind": "signboard"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 649,
+      "height": 1029,
+      "imageFile": "billboard-assets/sign_drop_off_cans_001.png"
+    },
+    {
+      "id": "foliage_groundcover_wide_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-06",
+          "x": 15.8,
+          "y": 12.9,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-13",
+          "x": 7,
+          "y": 11.4,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-27",
+          "x": 29.6,
+          "y": 15.8,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 440,
+      "height": 144,
+      "imageFile": "billboard-assets/foliage_groundcover_wide_001.png"
+    },
+    {
+      "id": "foliage_grass_tuft_medium_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-07",
+          "x": 24.2,
+          "y": 13.2,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-14",
+          "x": 12.7,
+          "y": 12.9,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-28",
+          "x": 32.2,
+          "y": 15,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-33",
+          "x": 8.1,
+          "y": 14.2,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 84,
+      "height": 48,
+      "imageFile": "billboard-assets/foliage_grass_tuft_medium_001.png"
+    },
+    {
+      "id": "sign_neighbor_1_can_001",
+      "kind": "signboard",
+      "classification": "APPROVED",
+      "placements": [
+        {
+          "id": "prop-08",
+          "x": 9,
+          "y": 8.1,
+          "kind": "signboard"
+        },
+        {
+          "id": "prop-24",
+          "x": 33,
+          "y": 11,
+          "kind": "signboard"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 583,
+      "height": 557,
+      "imageFile": "billboard-assets/sign_neighbor_1_can_001.png"
+    },
+    {
+      "id": "foliage_bush_low_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-10",
+          "x": 9.4,
+          "y": 10.9,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-12",
+          "x": 12.9,
+          "y": 11,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-23",
+          "x": 31.4,
+          "y": 13.8,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 170,
+      "height": 101,
+      "imageFile": "billboard-assets/foliage_bush_low_001.png"
+    },
+    {
+      "id": "foliage_grass_patch_long_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-11",
+          "x": 11.1,
+          "y": 9.4,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-19",
+          "x": 15.2,
+          "y": 3.2,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-22",
+          "x": 28.4,
+          "y": 13.5,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 87,
+      "height": 59,
+      "imageFile": "billboard-assets/foliage_grass_patch_long_001.png"
+    },
+    {
+      "id": "sign_family_3_cans_001",
+      "kind": "signboard",
+      "classification": "APPROVED",
+      "placements": [
+        {
+          "id": "prop-15",
+          "x": 18,
+          "y": 5.1,
+          "kind": "signboard"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 590,
+      "height": 579,
+      "imageFile": "billboard-assets/sign_family_3_cans_001.png"
+    },
+    {
+      "id": "foliage_tree_low_canopy_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-18",
+          "x": 13.1,
+          "y": 5.8,
+          "kind": "foliage"
+        },
+        {
+          "id": "prop-26",
+          "x": 35.3,
+          "y": 7.7,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 204,
+      "height": 187,
+      "imageFile": "billboard-assets/foliage_tree_low_canopy_001.png"
+    },
+    {
+      "id": "sign_summer_loop_market_001",
+      "kind": "signboard",
+      "classification": "APPROVED",
+      "placements": [
+        {
+          "id": "prop-20",
+          "x": 29,
+          "y": 10.8,
+          "kind": "signboard"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 627,
+      "height": 599,
+      "imageFile": "billboard-assets/sign_summer_loop_market_001.png"
+    },
+    {
+      "id": "foliage_tree_round_large_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-25",
+          "x": 26.4,
+          "y": 16,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 337,
+      "height": 352,
+      "imageFile": "billboard-assets/foliage_tree_round_large_001.png"
+    },
+    {
+      "id": "foliage_tree_slender_001",
+      "kind": "foliage",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-32",
+          "x": 5.2,
+          "y": 13.4,
+          "kind": "foliage"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 176,
+      "height": 266,
+      "imageFile": "billboard-assets/foliage_tree_slender_001.png"
+    },
+    {
+      "id": "npc_unhoused_work_jacket_001",
+      "kind": "npc",
+      "classification": "REQUIRED_GAMEPLAY",
+      "placements": [
+        {
+          "id": "npc-00",
+          "x": 8.5,
+          "y": 8.5,
+          "kind": "hungry"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 80,
+      "height": 192,
+      "imageFile": "billboard-assets/npc_unhoused_work_jacket_001.png"
+    },
+    {
+      "id": "npc_household_parent_child_001",
+      "kind": "npc",
+      "classification": "REQUIRED_GAMEPLAY",
+      "placements": [
+        {
+          "id": "npc-01",
+          "x": 20.5,
+          "y": 4.5,
+          "kind": "family"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 51,
+      "height": 192,
+      "imageFile": "billboard-assets/npc_household_parent_child_001.png"
+    },
+    {
+      "id": "npc_volunteer_elder_cane_001",
+      "kind": "npc",
+      "classification": "REQUIRED_GAMEPLAY",
+      "placements": [
+        {
+          "id": "npc-02",
+          "x": 32.5,
+          "y": 12.5,
+          "kind": "elder"
+        }
+      ],
+      "source": {
+        "sourcePath": null,
+        "runtimePath": null
+      },
+      "width": 58,
+      "height": 192,
+      "imageFile": "billboard-assets/npc_volunteer_elder_cane_001.png"
+    },
+    {
+      "id": "procedural-can",
+      "kind": "can",
+      "classification": "REQUIRED_GAMEPLAY",
+      "placements": [
+        {
+          "id": "can-socket-00",
+          "x": 15.5,
+          "y": 12.5,
+          "kind": "can"
+        },
+        {
+          "id": "can-socket-01",
+          "x": 24.5,
+          "y": 12.5,
+          "kind": "can"
+        },
+        {
+          "id": "can-socket-02",
+          "x": 13.5,
+          "y": 12.5,
+          "kind": "can"
+        },
+        {
+          "id": "can-socket-05",
+          "x": 15.5,
+          "y": 4.5,
+          "kind": "can"
+        },
+        {
+          "id": "can-socket-06",
+          "x": 29.5,
+          "y": 10.5,
+          "kind": "can"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 20,
+      "height": 22,
+      "imageFile": "billboard-assets/procedural-can.png"
+    },
+    {
+      "id": "procedural-exit",
+      "kind": "portal",
+      "classification": "REQUIRED_GAMEPLAY",
+      "placements": [
+        {
+          "id": "exit",
+          "x": 20.5,
+          "y": 10.7,
+          "kind": "exit"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 48,
+      "height": 80,
+      "imageFile": "billboard-assets/procedural-exit.png"
+    },
+    {
+      "id": "procedural-crate_stack",
+      "kind": "crate_stack",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-02",
+          "x": 17.2,
+          "y": 10.9,
+          "kind": "crate_stack"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 48,
+      "height": 34,
+      "imageFile": "billboard-assets/procedural-crate_stack.png"
+    },
+    {
+      "id": "procedural-cooler",
+      "kind": "cooler",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-03",
+          "x": 22.8,
+          "y": 10.9,
+          "kind": "cooler"
+        },
+        {
+          "id": "prop-17",
+          "x": 20.5,
+          "y": 5.6,
+          "kind": "cooler"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 46,
+      "height": 42,
+      "imageFile": "billboard-assets/procedural-cooler.png"
+    },
+    {
+      "id": "procedural-bench",
+      "kind": "bench",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-04",
+          "x": 18,
+          "y": 11.9,
+          "kind": "bench"
+        },
+        {
+          "id": "prop-05",
+          "x": 22,
+          "y": 11.9,
+          "kind": "bench"
+        },
+        {
+          "id": "prop-09",
+          "x": 7.2,
+          "y": 9.5,
+          "kind": "bench"
+        },
+        {
+          "id": "prop-21",
+          "x": 31,
+          "y": 11.1,
+          "kind": "bench"
+        },
+        {
+          "id": "prop-31",
+          "x": 6.5,
+          "y": 15.5,
+          "kind": "bench"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 52,
+      "height": 44,
+      "imageFile": "billboard-assets/procedural-bench.png"
+    },
+    {
+      "id": "procedural-shopping_cart",
+      "kind": "shopping_cart",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-16",
+          "x": 22.7,
+          "y": 5.1,
+          "kind": "shopping_cart"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 54,
+      "height": 30,
+      "imageFile": "billboard-assets/procedural-shopping_cart.png"
+    },
+    {
+      "id": "procedural-mailbox",
+      "kind": "mailbox",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-29",
+          "x": 34.2,
+          "y": 13,
+          "kind": "mailbox"
+        },
+        {
+          "id": "prop-34",
+          "x": 35,
+          "y": 15.5,
+          "kind": "mailbox"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 38,
+      "height": 50,
+      "imageFile": "billboard-assets/procedural-mailbox.png"
+    },
+    {
+      "id": "procedural-utility_box",
+      "kind": "utility_box",
+      "classification": "REQUIRED_ENVIRONMENT",
+      "placements": [
+        {
+          "id": "prop-30",
+          "x": 26.5,
+          "y": 15.5,
+          "kind": "utility_box"
+        }
+      ],
+      "source": {
+        "source": "src/js/game-15-section-6-procedural-assets.js"
+      },
+      "width": 42,
+      "height": 40,
+      "imageFile": "billboard-assets/procedural-utility_box.png"
+    }
+  ]
+}

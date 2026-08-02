@@ -1,0 +1,24 @@
+{
+  "schema": "snc-nonproduction-preview-v1",
+  "sourceRepository": "falloutmule/solidarity-not-charity-can-run",
+  "sourceBranch": "fix/d1-remove-legacy-murals",
+  "sourceCommit": "019a3affe73517a9c38c9b6ff12b2eb55760d150",
+  "artifact": {
+    "path": "index.html",
+    "byteLength": 4747718,
+    "sha256": "316f583652b5e1dcd79db1bcda31db1bee997a8ef6ea9f1efdbf0690c00f5f87",
+    "buildId": "world1thestand1-nomurals1"
+  },
+  "scope": "D1 legacy mural removal; non-production visual review only",
+  "evidence": {
+    "runtimeCapture": "evidence/runtime-snapshot.json",
+    "preRemovalInventory": "evidence/pre-removal-inventory.md",
+    "postRemovalSummary": "evidence/post-removal-summary.md",
+    "screenshots": [
+      "evidence/screenshots/01-start-stand.png",
+      "evidence/screenshots/06-former-mural-west.png",
+      "evidence/screenshots/07-former-mural-east.png",
+      "evidence/screenshots/19-asset-gallery.png"
+    ]
+  }
+}
